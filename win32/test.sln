@@ -1,0 +1,29 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "..\test\test\test.vcproj", "{A3A99C6E-8FB5-49E0-BF69-D85BEFC31C7B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{54BBE558-8915-47A1-B18E-00F9DC06ED3B} = {54BBE558-8915-47A1-B18E-00F9DC06ED3B}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fdms2lib", "..\fdms2lib\fdms2lib.vcproj", "{54BBE558-8915-47A1-B18E-00F9DC06ED3B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A3A99C6E-8FB5-49E0-BF69-D85BEFC31C7B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A3A99C6E-8FB5-49E0-BF69-D85BEFC31C7B}.Debug|Win32.Build.0 = Debug|Win32
+		{A3A99C6E-8FB5-49E0-BF69-D85BEFC31C7B}.Release|Win32.ActiveCfg = Release|Win32
+		{A3A99C6E-8FB5-49E0-BF69-D85BEFC31C7B}.Release|Win32.Build.0 = Release|Win32
+		{54BBE558-8915-47A1-B18E-00F9DC06ED3B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{54BBE558-8915-47A1-B18E-00F9DC06ED3B}.Debug|Win32.Build.0 = Debug|Win32
+		{54BBE558-8915-47A1-B18E-00F9DC06ED3B}.Release|Win32.ActiveCfg = Release|Win32
+		{54BBE558-8915-47A1-B18E-00F9DC06ED3B}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

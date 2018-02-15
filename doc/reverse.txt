@@ -1,0 +1,69 @@
+FOSTEX Disk Management System reverse engineering documentation
+author: Barna Faragó 2006
+
+Preliminary version.
+
+=======================================
+00000 - 0FFFF CATALOGES ONE
+10000 - 1FFFF CATALOGES TWO
+20000 - 4FFFF FILLED BY $FF (EMPTY)
+50060 -       AUDIO DATA
+
+
+
+=======================================
+CATALOGES
+=======================================
+ 000 -  1FF
+ 200 -  2FF	X
+ 400 -  7FF	A	1k  2block
+ 800 -  FFF	B	2k  4block
+1000 - 1FFF	X	4K  8block
+2000 - 3FFF	A	8K 16block 
+4000 - 5FFF	A	8k 16block
+---------PROGRAM 1---------------------
+6000 - 61FF	C	512byte 1 block
+6200 - 67FF	X
+6800 - 6FFF	B	2k  4block
+7000 - 77FF	D	2k  4block
+7800 - 7FFF	E	2k  4block
+---------PROGRAM 2---------------------
+8000 - 81FF	C	512byte 1 block
+8200 - 87FF	X
+8800 - 8FFF	B	2k  4block
+9000 - 97FF	D	2k  4block
+9800 - 9FFF	E	2k  4block
+---------PROGRAM 3---------------------
+A000 - A1FF	C	512byte 1 block
+A200 - A7FF	X
+A800 - AFFF	B	2k  4block
+B000 - B7FF	D	2k  4block
+B800 - BFFF	E	2k  4block
+---------PROGRAM 4---------------------
+C000 - C1FF	C	512byte 1 block
+C200 - C7FF	X
+C800 - CFFF	B	2k  4block
+D000 - D7FF	D	2k  4block
+D800 - DFFF	E	2k  4block
+---------PROGRAM 5---------------------
+E000 - E1FF	C	512byte 1 block
+E200 - E7FF	X
+E800 - EFFF	B	2k  4block
+F000 - F7FF	D	2k  4block
+F800 - FFFF	E	2k  4block
+=======================================
+
+=======================================
+B block
+Index?
+=======================================
+D block
+Tactus 
+ 01 00 04 04  : 
+ start bar: 0001, 4/4
+=======================================
+E block
+Metrum 
+ 01 00 00 01 20 01 00 00:
+ start bar: 0001, tempo: 120, 1/4
+=======================================

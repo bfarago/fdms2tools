@@ -1,0 +1,734 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Neutral (Default) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEUD)
+#ifdef _WIN32
+LANGUAGE LANG_NEUTRAL, SUBLANG_DEFAULT
+#pragma code_page(1250)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
+IDR_TOOLBAR_TRANSPORT   BITMAP                  "res\\toolbar1.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR  16, 15
+BEGIN
+    BUTTON      ID_FILE_NEW
+    BUTTON      ID_FILE_OPEN
+    BUTTON      ID_FILE_SAVE
+    SEPARATOR
+    BUTTON      ID_EDIT_CUT
+    BUTTON      ID_EDIT_COPY
+    BUTTON      ID_EDIT_PASTE
+    SEPARATOR
+    BUTTON      ID_FILE_PRINT
+    BUTTON      ID_APP_ABOUT
+    BUTTON      ID_CONTEXT_HELP
+    BUTTON      ID_BUTTON_FDMSPROP
+    BUTTON      ID_BUTTON_MAP
+END
+
+IDR_TOOLBAR_TRANSPORT TOOLBAR  16, 15
+BEGIN
+    BUTTON      ID_BUTTON_TP_REC
+    BUTTON      ID_BUTTON_TP_STOP
+    BUTTON      ID_BUTTON_TP_PLAY
+    BUTTON      ID_BUTTON_TP_REW
+    BUTTON      ID_BUTTON_TP_FF
+    BUTTON      ID_BUTTON_TP_BEGIN
+    BUTTON      ID_BUTTON_TP_END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    ID_BUTTON_FDMSPROP      "Properties"
+    ID_BUTTON_TP_REC        "Record\nRecord"
+    ID_BUTTON_TP_STOP       "Stop playing audio\nStop"
+    ID_BUTTON_TP_PLAY       "Play audio from cursor\nPlay"
+    ID_BUTTON_TP_REW        "Rewind"
+    ID_BUTTON_TP_FF         "FForward"
+    ID_BUTTON_MAP           "Map"
+END
+
+#endif    // Neutral (Default) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "res\\fdms2view.ico"
+IDR_fdms2viewTYPE       ICON                    "res\\fdms2view_doc.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&Help Topics",                ID_HELP_FINDER
+        MENUITEM SEPARATOR
+        MENUITEM "&About fdms2view...",         ID_APP_ABOUT
+    END
+END
+
+IDR_fdms2viewTYPE MENU 
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM "&Close",                      ID_FILE_CLOSE
+        MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
+        MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
+        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
+        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
+        MENUITEM SEPARATOR
+        MENUITEM "Play",                        ID_EDIT_PLAY
+        MENUITEM "Stop",                        ID_EDIT_STOP
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+        MENUITEM "M&ode\tF3",                   ID_VIEW_MODE
+        MENUITEM "&dB",                         ID_VIEW_DB
+        MENUITEM SEPARATOR
+        MENUITEM "Program 1",                   ID_VIEW_PROGRAM1, CHECKED
+        MENUITEM "Program 2",                   ID_VIEW_PROGRAM2
+        MENUITEM "Program 3",                   ID_VIEW_PROGRAM3
+        MENUITEM "Program 4",                   ID_VIEW_PROGRAM4
+        MENUITEM "Program 5",                   ID_VIEW_PROGRAM5
+        MENUITEM SEPARATOR
+        MENUITEM "FDMS2 &Properties\tF2",       ID_VIEW_FDMS2PROPERTIES
+        MENUITEM "Tempo &Map",                  ID_VIEW_TEMPOMAP
+        MENUITEM "&Fragment map",               ID_VIEW_FRAGMENTMAP
+        MENUITEM "Mi&x",                        ID_VIEW_MIX
+        MENUITEM SEPARATOR
+        POPUP "Zoom X"
+        BEGIN
+            MENUITEM "1:1",                         ID_ZOOM_1
+            MENUITEM "1:44100",                     ID_ZOOM_2
+            MENUITEM SEPARATOR
+            MENUITEM "Full",                        ID_ZOOM_FULL
+        END
+        POPUP "Zoom Y"
+        BEGIN
+            MENUITEM "Max",                         ID_ZOOMY_MAX
+            MENUITEM "-12dB",                       ID_ZOOMY_12DB
+            MENUITEM "-24dB",                       ID_ZOOMY_24DB
+        END
+    END
+    POPUP "E&xport"
+    BEGIN
+        MENUITEM "Multitrack",                  ID_EXPORT_MULTITRACK
+    END
+    POPUP "&Device"
+    BEGIN
+        MENUITEM "&Audio",                      ID_DEVICE_SOUNDCARD
+    END
+    POPUP "&Window"
+    BEGIN
+        MENUITEM "&New Window",                 ID_WINDOW_NEW
+        MENUITEM "&Cascade",                    ID_WINDOW_CASCADE
+        MENUITEM "&Tile",                       ID_WINDOW_TILE_HORZ
+        MENUITEM "&Arrange Icons",              ID_WINDOW_ARRANGE
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&Help Topics",                ID_HELP_FINDER
+        MENUITEM SEPARATOR
+        MENUITEM "&About Fdms2View...",         ID_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS 
+BEGIN
+    VK_F1,          ID_CONTEXT_HELP,        VIRTKEY, SHIFT, NOINVERT
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    VK_SPACE,       ID_EDIT_PLAY_TOGGLE,    VIRTKEY, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
+    VK_F1,          ID_HELP,                VIRTKEY, NOINVERT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    VK_F2,          ID_VIEW_FDMS2PROPERTIES, VIRTKEY, NOINVERT
+    VK_F3,          ID_VIEW_MIX,            VIRTKEY, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 235, 55
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About Fdms2View"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "Fdms2View Version 1.0",IDC_STATIC,40,10,119,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2006 Barna Faragó",IDC_STATIC,40,25,119,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,16,WS_GROUP
+END
+
+IDD_DIALOG_FDMSPROP DIALOGEX 0, 0, 290, 106
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "FDMS2 Properties"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,233,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,233,24,50,14
+    LTEXT           "Filename:",IDC_STATIC,7,7,42,9
+    EDITTEXT        IDC_EDIT_FileName,53,7,133,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_BUTTON_FN_Browse,190,7,28,14
+    GROUPBOX        "Partition mode",IDC_STATIC,7,36,209,52
+    CONTROL         "Normal partitions",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | WS_GROUP,11,47,70,10
+    CONTROL         "Normal partitions and the rest of the disk",IDC_RADIO2,
+                    "Button",BS_AUTORADIOBUTTON,11,65,147,10
+    CONTROL         "Whole disk without original partitions",IDC_RADIO3,
+                    "Button",BS_AUTORADIOBUTTON,11,77,133,10
+END
+
+IDD_DIALOGMetr DIALOGEX 0, 0, 331, 235
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Metrum and Tempo"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,274,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,274,24,50,14
+    LISTBOX         IDC_LIST_METR,14,17,154,70,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT1,172,40,21,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,205,40,23,14,ES_AUTOHSCROLL
+    LTEXT           "/",IDC_STATIC,196,45,8,8
+    EDITTEXT        IDC_EDIT_BAR,172,17,40,14,ES_AUTOHSCROLL
+    LTEXT           "bar",IDC_STATIC,214,22,12,8
+    EDITTEXT        IDC_EDIT_Q,230,17,17,14,ES_AUTOHSCROLL
+    LTEXT           "/4",IDC_STATIC,250,22,8,8
+    GROUPBOX        "Metrum",IDC_STATIC,7,3,259,91
+    PUSHBUTTON      "< ADD",IDC_BUTTON_MADD,173,61,50,14
+    GROUPBOX        "Tempo",IDC_STATIC,7,97,259,94
+    LISTBOX         IDC_LIST_TEMPO,14,106,152,84,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    EDITTEXT        IDC_EDIT_MBAR,172,106,40,14,ES_AUTOHSCROLL
+    LTEXT           "bar",IDC_STATIC,214,111,12,8
+    EDITTEXT        IDC_EDIT_Q2,230,106,17,14,ES_AUTOHSCROLL
+    LTEXT           "/4",IDC_STATIC,250,111,8,8
+    EDITTEXT        IDC_EDIT_TEMPO,171,134,40,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "< ADD",IDC_BUTTON_TADD,171,171,50,14
+    GROUPBOX        "MTC offset",IDC_STATIC,7,197,259,31
+    EDITTEXT        IDC_EDIT_MTCO_H,24,207,16,14,ES_AUTOHSCROLL
+    LTEXT           "H:",IDC_STATIC,13,208,8,8
+    LTEXT           "M:",IDC_STATIC,47,208,9,8
+    EDITTEXT        IDC_EDIT_MTCO_M,58,207,18,14,ES_AUTOHSCROLL
+    LTEXT           "S:",IDC_STATIC,81,208,8,8
+    EDITTEXT        IDC_EDIT_MTCO_S,92,207,18,14,ES_AUTOHSCROLL
+    LTEXT           "F:",IDC_STATIC,115,208,8,8
+    EDITTEXT        IDC_EDIT_MTCO_F,125,207,18,14,ES_AUTOHSCROLL
+    LTEXT           "SF:",IDC_STATIC,148,208,12,8
+    EDITTEXT        IDC_EDIT_MTCO_SF,160,207,18,14,ES_AUTOHSCROLL
+END
+
+IDD_DIALOG_FRAG DIALOGEX 0, 0, 312, 223
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Fragmentations"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,255,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,255,24,50,14
+    GROUPBOX        "Fragments",IDC_STATIC,7,7,233,209
+    LISTBOX         IDC_LIST_FRAG,10,18,228,196,LBS_SORT | LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_DIALOG_EXPORT DIALOGEX 0, 0, 273, 162
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Export"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,216,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,216,24,50,14
+    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",WS_BORDER,7,144,259,11
+    LTEXT           "Prefix:",IDC_STATIC,7,7,22,10
+    EDITTEXT        IDC_EDIT_PREFIX,35,7,162,14,ES_AUTOHSCROLL
+    CONTROL         "Ch1",IDC_CHECK1,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,31,29,10
+    CONTROL         "Ch2",IDC_CHECK2,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,42,29,10
+    CONTROL         "Ch3",IDC_CHECK3,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,53,29,10
+    CONTROL         "Ch4",IDC_CHECK4,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,64,29,10
+    CONTROL         "Ch5",IDC_CHECK5,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,75,29,10
+    CONTROL         "Ch6",IDC_CHECK6,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,86,29,10
+    CONTROL         "Ch7",IDC_CHECK7,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,97,29,10
+    CONTROL         "Ch8",IDC_CHECK8,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,108,29,10
+    CONTROL         "All",IDC_CHECKALL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,126,23,10
+    COMBOBOX        IDC_COMBO1,87,23,110,67,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Format:",IDC_STATIC,58,25,26,8
+    GROUPBOX        "Output progress",IDC_STATIC,131,105,135,37
+    LTEXT           "Static",IDC_OUT_LPOS,184,125,73,8
+    LTEXT           "Pos. Writed:",IDC_STATIC,135,125,41,8
+    LTEXT           "Static",IDC_OUT_LPOS_REMAIN,184,132,73,8
+    LTEXT           "Pos. Remain:",IDC_STATIC,135,132,43,8
+    LTEXT           "Time Remain:",IDC_STATIC,135,114,44,8
+    LTEXT           "Static",IDC_OUT_TIME_REMAIN,184,114,73,8
+END
+
+IDD_DIALOG_MIX1 DIALOGEX 0, 0, 146, 169
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Mix"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_SLIDER1,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,7,83,13,79
+    CONTROL         "",IDC_SLIDER2,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,20,83,13,79
+    CONTROL         "",IDC_SLIDER3,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,32,83,13,79
+    CONTROL         "",IDC_SLIDER4,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,44,83,13,79
+    CONTROL         "",IDC_SLIDER5,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,56,83,13,79
+    CONTROL         "",IDC_SLIDER6,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,68,83,13,79
+    CONTROL         "",IDC_SLIDER7,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,80,83,13,79
+    CONTROL         "",IDC_SLIDER8,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,91,83,13,79
+    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",WS_BORDER | 0x4,8,7,9,73
+    CONTROL         "",IDC_PROGRESS2,"msctls_progress32",WS_BORDER | 0x4,20,7,9,73
+    CONTROL         "",IDC_PROGRESS3,"msctls_progress32",WS_BORDER | 0x4,32,7,9,73
+    CONTROL         "",IDC_PROGRESS4,"msctls_progress32",WS_BORDER | 0x4,43,7,9,73
+    CONTROL         "",IDC_PROGRESS5,"msctls_progress32",WS_BORDER | 0x4,55,7,9,73
+    CONTROL         "",IDC_PROGRESS6,"msctls_progress32",WS_BORDER | 0x4,67,7,9,73
+    CONTROL         "",IDC_PROGRESS7,"msctls_progress32",WS_BORDER | 0x4,80,7,9,73
+    CONTROL         "",IDC_PROGRESS8,"msctls_progress32",WS_BORDER | 0x4,92,7,9,73
+    CONTROL         "",IDC_PROGRESS9,"msctls_progress32",WS_BORDER | 0x4,119,7,9,73
+    CONTROL         "",IDC_PROGRESS10,"msctls_progress32",WS_BORDER | 0x4,130,7,9,73
+    CONTROL         "",IDC_SLIDER9,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,123,83,13,79
+END
+
+IDD_DIALOG_AUDIODEVICE DIALOGEX 0, 0, 249, 71
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Audio Device Setup"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,192,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,192,24,50,14
+    COMBOBOX        IDC_SOUND_DEVICE_COMBO,39,15,144,73,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_CAPTURE_DEVICE_COMBO,38,44,143,55,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Capture",IDC_STATIC,7,34,180,31
+    GROUPBOX        "Output",IDC_STATIC,7,7,180,25
+    LTEXT           "Device:",IDC_STATIC,13,17,25,8
+    LTEXT           "Device:",IDC_STATIC,12,47,25,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904e4"
+        BEGIN
+            VALUE "CompanyName", "Barna Faragó"
+            VALUE "FileDescription", "FDMS2 Viewer"
+            VALUE "FileVersion", "1.0.0.2"
+            VALUE "InternalName", "fdms2view.exe"
+            VALUE "LegalCopyright", "(c) Barna Faragó.  All rights reserved."
+            VALUE "OriginalFilename", "fdms2view.exe"
+            VALUE "ProductName", "fdms2view"
+            VALUE "ProductVersion", "1.0.0.2"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_DIALOG_FDMSPROP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 283
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 99
+    END
+
+    IDD_DIALOGMetr, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 324
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 228
+    END
+
+    IDD_DIALOG_FRAG, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 305
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 216
+    END
+
+    IDD_DIALOG_EXPORT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 266
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 155
+    END
+
+    IDD_DIALOG_MIX1, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 139
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 162
+    END
+
+    IDD_DIALOG_AUDIODEVICE, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 242
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 64
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
+    IDP_SOCKETS_INIT_FAILED "Windows sockets initialization failed."
+END
+
+STRINGTABLE 
+BEGIN
+    IDR_MAINFRAME           "Fdms2View"
+    IDR_fdms2viewTYPE       "\nFDMS2View\nFdms2View\nFdms2View Files (*.f2vproj)\n.f2vproj\nfdms2view.Document\nfdms2view.Document"
+    ID_VIEW_FDMS2PROPERTIES "Change Fdms2 format properties\nFdms format properties"
+    ID_VIEW_TEMPOMAP        "Midi tempo map\nMidi map"
+    ID_VIEW_PROGRAM1        "Program 1\nProgram 1"
+    ID_VIEW_PROGRAM2        "Program 2\nProgram 2"
+    ID_VIEW_PROGRAM3        "Program 3\nProgram 3"
+    ID_VIEW_PROGRAM4        "Program 4\nProgram 4"
+    ID_VIEW_PROGRAM5        "Program 5\nProgram 5"
+    ID_VIEW_FRAGMENTMAP     "Audio snipet partition fragmentation map\nAudio fragment map"
+    ID_EXPORT_EIGHTWAV      "Export selected region\nRegion export"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_APP_TITLE       "fdms2view"
+    AFX_IDS_IDLEMESSAGE     "For Help, press F1"
+    AFX_IDS_HELPMODEMESSAGE "Select an object on which to get Help"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_NEW             "Create a new document\nNew"
+    ID_FILE_OPEN            "Open an existing document\nOpen"
+    ID_FILE_CLOSE           "Close the active document\nClose"
+    ID_FILE_SAVE            "Save the active document\nSave"
+    ID_FILE_SAVE_AS         "Save the active document with a new name\nSave As"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
+    ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
+    ID_HELP_INDEX           "Opens Help\nHelp Topics"
+    ID_HELP_FINDER          "List Help topics\nHelp Topics"
+    ID_HELP_USING           "Display instructions about how to use help\nHelp"
+    ID_CONTEXT_HELP         "Display help for clicked on buttons, menus and windows\nHelp"
+    ID_HELP                 "Display help for current task or command\nHelp"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_FILE_MRU_FILE1       "Open this document"
+    ID_FILE_MRU_FILE2       "Open this document"
+    ID_FILE_MRU_FILE3       "Open this document"
+    ID_FILE_MRU_FILE4       "Open this document"
+    ID_FILE_MRU_FILE5       "Open this document"
+    ID_FILE_MRU_FILE6       "Open this document"
+    ID_FILE_MRU_FILE7       "Open this document"
+    ID_FILE_MRU_FILE8       "Open this document"
+    ID_FILE_MRU_FILE9       "Open this document"
+    ID_FILE_MRU_FILE10      "Open this document"
+    ID_FILE_MRU_FILE11      "Open this document"
+    ID_FILE_MRU_FILE12      "Open this document"
+    ID_FILE_MRU_FILE13      "Open this document"
+    ID_FILE_MRU_FILE14      "Open this document"
+    ID_FILE_MRU_FILE15      "Open this document"
+    ID_FILE_MRU_FILE16      "Open this document"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
+    ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_WINDOW_NEW           "Open another window for the active document\nNew Window"
+    ID_WINDOW_ARRANGE       "Arrange icons at the bottom of the window\nArrange Icons"
+    ID_WINDOW_CASCADE       "Arrange windows so they overlap\nCascade Windows"
+    ID_WINDOW_TILE_HORZ     "Arrange windows as non-overlapping tiles\nTile Windows"
+    ID_WINDOW_TILE_VERT     "Arrange windows as non-overlapping tiles\nTile Windows"
+    ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_EDIT_CLEAR           "Erase the selection\nErase"
+    ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
+    ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
+    ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
+    ID_EDIT_FIND            "Find the specified text\nFind"
+    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
+    ID_EDIT_REPEAT          "Repeat the last action\nRepeat"
+    ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
+    ID_EDIT_SELECT_ALL      "Select the entire document\nSelect All"
+    ID_EDIT_UNDO            "Undo the last action\nUndo"
+    ID_EDIT_REDO            "Redo the previously undone action\nRedo"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
+    ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_SCSIZE          "Change the window size"
+    AFX_IDS_SCMOVE          "Change the window position"
+    AFX_IDS_SCMINIMIZE      "Reduce the window to an icon"
+    AFX_IDS_SCMAXIMIZE      "Enlarge the window to full size"
+    AFX_IDS_SCNEXTWINDOW    "Switch to the next document window"
+    AFX_IDS_SCPREVWINDOW    "Switch to the previous document window"
+    AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
+END
+
+STRINGTABLE 
+BEGIN
+    AFX_IDS_SCRESTORE       "Restore the window to normal size"
+    AFX_IDS_SCTASKLIST      "Activate Task List"
+    AFX_IDS_MDICHILD        "Activate this window"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_MIX             "Mix plane\nMixer window"
+    ID_EDIT_PLAY            "Play audio\nPlay"
+    ID_EDIT_STOP            "Stop playing\nStop"
+    ID_DEVICE_SOUNDCARD     "Sound Card settings\nSound card"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_MODE            "Change View Mode\nMode"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_DB              "Switch Display Mode to deci Bell scale\ndeci Bell scale"
+    ID_EXPORT_MULTITRACK    "Multitrack export. Export selected region to multiple files.\nMultitrack export"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// German (Austria) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEA)
+#ifdef _WIN32
+LANGUAGE LANG_GERMAN, SUBLANG_GERMAN_AUSTRIAN
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#include ""res\\fdms2view.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#endif\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // German (Austria) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#include "res\fdms2view.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#endif
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
