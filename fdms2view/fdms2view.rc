@@ -16,10 +16,8 @@
 // Neutral (Default) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEUD)
-#ifdef _WIN32
 LANGUAGE LANG_NEUTRAL, SUBLANG_DEFAULT
 #pragma code_page(1250)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -27,14 +25,16 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_DEFAULT
 //
 
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
+
 IDR_TOOLBAR_TRANSPORT   BITMAP                  "res\\toolbar1.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR  16, 15
+IDR_MAINFRAME TOOLBAR 16, 15
 BEGIN
     BUTTON      ID_FILE_NEW
     BUTTON      ID_FILE_OPEN
@@ -51,7 +51,7 @@ BEGIN
     BUTTON      ID_BUTTON_MAP
 END
 
-IDR_TOOLBAR_TRANSPORT TOOLBAR  16, 15
+IDR_TOOLBAR_TRANSPORT TOOLBAR 16, 15
 BEGIN
     BUTTON      ID_BUTTON_TP_REC
     BUTTON      ID_BUTTON_TP_STOP
@@ -68,7 +68,7 @@ END
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_BUTTON_FDMSPROP      "Properties"
     ID_BUTTON_TP_REC        "Record\nRecord"
@@ -84,13 +84,11 @@ END
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (U.S.) resources
+// English (United States) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
-#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
-#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -100,14 +98,16 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\fdms2view.ico"
+
 IDR_fdms2viewTYPE       ICON                    "res\\fdms2view_doc.ico"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-IDR_MAINFRAME MENU 
+IDR_MAINFRAME MENU
 BEGIN
     POPUP "&File"
     BEGIN
@@ -132,7 +132,7 @@ BEGIN
     END
 END
 
-IDR_fdms2viewTYPE MENU 
+IDR_fdms2viewTYPE MENU
 BEGIN
     POPUP "&File"
     BEGIN
@@ -218,7 +218,7 @@ END
 // Accelerator
 //
 
-IDR_MAINFRAME ACCELERATORS 
+IDR_MAINFRAME ACCELERATORS
 BEGIN
     VK_F1,          ID_CONTEXT_HELP,        VIRTKEY, SHIFT, NOINVERT
     "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
@@ -252,8 +252,8 @@ CAPTION "About Fdms2View"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
-    LTEXT           "Fdms2View Version 1.0",IDC_STATIC,40,10,119,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2006 Barna Faragó",IDC_STATIC,40,25,119,8
+    LTEXT           "Fdms2View Version 1.0.1",IDC_STATIC,40,10,119,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2006-2018 Barna Faragó",IDC_STATIC,37,26,191,22
     DEFPUSHBUTTON   "OK",IDOK,178,7,50,16,WS_GROUP
 END
 
@@ -367,16 +367,16 @@ BEGIN
     CONTROL         "",IDC_SLIDER6,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,68,83,13,79
     CONTROL         "",IDC_SLIDER7,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,80,83,13,79
     CONTROL         "",IDC_SLIDER8,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,91,83,13,79
-    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",WS_BORDER | 0x4,8,7,9,73
-    CONTROL         "",IDC_PROGRESS2,"msctls_progress32",WS_BORDER | 0x4,20,7,9,73
-    CONTROL         "",IDC_PROGRESS3,"msctls_progress32",WS_BORDER | 0x4,32,7,9,73
-    CONTROL         "",IDC_PROGRESS4,"msctls_progress32",WS_BORDER | 0x4,43,7,9,73
-    CONTROL         "",IDC_PROGRESS5,"msctls_progress32",WS_BORDER | 0x4,55,7,9,73
-    CONTROL         "",IDC_PROGRESS6,"msctls_progress32",WS_BORDER | 0x4,67,7,9,73
-    CONTROL         "",IDC_PROGRESS7,"msctls_progress32",WS_BORDER | 0x4,80,7,9,73
-    CONTROL         "",IDC_PROGRESS8,"msctls_progress32",WS_BORDER | 0x4,92,7,9,73
-    CONTROL         "",IDC_PROGRESS9,"msctls_progress32",WS_BORDER | 0x4,119,7,9,73
-    CONTROL         "",IDC_PROGRESS10,"msctls_progress32",WS_BORDER | 0x4,130,7,9,73
+    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",PBS_VERTICAL | WS_BORDER,8,7,9,73
+    CONTROL         "",IDC_PROGRESS2,"msctls_progress32",PBS_VERTICAL | WS_BORDER,20,7,9,73
+    CONTROL         "",IDC_PROGRESS3,"msctls_progress32",PBS_VERTICAL | WS_BORDER,32,7,9,73
+    CONTROL         "",IDC_PROGRESS4,"msctls_progress32",PBS_VERTICAL | WS_BORDER,43,7,9,73
+    CONTROL         "",IDC_PROGRESS5,"msctls_progress32",PBS_VERTICAL | WS_BORDER,55,7,9,73
+    CONTROL         "",IDC_PROGRESS6,"msctls_progress32",PBS_VERTICAL | WS_BORDER,67,7,9,73
+    CONTROL         "",IDC_PROGRESS7,"msctls_progress32",PBS_VERTICAL | WS_BORDER,80,7,9,73
+    CONTROL         "",IDC_PROGRESS8,"msctls_progress32",PBS_VERTICAL | WS_BORDER,92,7,9,73
+    CONTROL         "",IDC_PROGRESS9,"msctls_progress32",PBS_VERTICAL | WS_BORDER,119,7,9,73
+    CONTROL         "",IDC_PROGRESS10,"msctls_progress32",PBS_VERTICAL | WS_BORDER,130,7,9,73
     CONTROL         "",IDC_SLIDER9,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,123,83,13,79
 END
 
@@ -402,8 +402,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
+ FILEVERSION 1,0,1,1
+ PRODUCTVERSION 1,0,1,1
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -420,12 +420,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Barna Faragó"
             VALUE "FileDescription", "FDMS2 Viewer"
-            VALUE "FileVersion", "1.0.0.2"
+            VALUE "FileVersion", "1.0.1.1"
             VALUE "InternalName", "fdms2view.exe"
             VALUE "LegalCopyright", "(c) Barna Faragó.  All rights reserved."
             VALUE "OriginalFilename", "fdms2view.exe"
             VALUE "ProductName", "fdms2view"
-            VALUE "ProductVersion", "1.0.0.2"
+            VALUE "ProductVersion", "1.0.1.1"
         END
     END
     BLOCK "VarFileInfo"
@@ -441,7 +441,7 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO 
+GUIDELINES DESIGNINFO
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
@@ -504,16 +504,27 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_ABOUTBOX AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 // String Table
 //
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
     IDP_SOCKETS_INIT_FAILED "Windows sockets initialization failed."
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     IDR_MAINFRAME           "Fdms2View"
     IDR_fdms2viewTYPE       "\nFDMS2View\nFdms2View\nFdms2View Files (*.f2vproj)\n.f2vproj\nfdms2view.Document\nfdms2view.Document"
@@ -528,14 +539,14 @@ BEGIN
     ID_EXPORT_EIGHTWAV      "Export selected region\nRegion export"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_APP_TITLE       "fdms2view"
     AFX_IDS_IDLEMESSAGE     "For Help, press F1"
     AFX_IDS_HELPMODEMESSAGE "Select an object on which to get Help"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_INDICATOR_EXT        "EXT"
     ID_INDICATOR_CAPS       "CAP"
@@ -545,7 +556,7 @@ BEGIN
     ID_INDICATOR_REC        "REC"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_FILE_NEW             "Create a new document\nNew"
     ID_FILE_OPEN            "Open an existing document\nOpen"
@@ -554,7 +565,7 @@ BEGIN
     ID_FILE_SAVE_AS         "Save the active document with a new name\nSave As"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
     ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
@@ -565,7 +576,7 @@ BEGIN
     ID_HELP                 "Display help for current task or command\nHelp"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_FILE_MRU_FILE1       "Open this document"
     ID_FILE_MRU_FILE2       "Open this document"
@@ -585,13 +596,13 @@ BEGIN
     ID_FILE_MRU_FILE16      "Open this document"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
     ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_WINDOW_NEW           "Open another window for the active document\nNew Window"
     ID_WINDOW_ARRANGE       "Arrange icons at the bottom of the window\nArrange Icons"
@@ -601,7 +612,7 @@ BEGIN
     ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_EDIT_CLEAR           "Erase the selection\nErase"
     ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
@@ -616,13 +627,13 @@ BEGIN
     ID_EDIT_REDO            "Redo the previously undone action\nRedo"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
     ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_SCSIZE          "Change the window size"
     AFX_IDS_SCMOVE          "Change the window position"
@@ -633,14 +644,14 @@ BEGIN
     AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     AFX_IDS_SCRESTORE       "Restore the window to normal size"
     AFX_IDS_SCTASKLIST      "Activate Task List"
     AFX_IDS_MDICHILD        "Activate this window"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_MIX             "Mix plane\nMixer window"
     ID_EDIT_PLAY            "Play audio\nPlay"
@@ -648,18 +659,18 @@ BEGIN
     ID_DEVICE_SOUNDCARD     "Sound Card settings\nSound card"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_MODE            "Change View Mode\nMode"
 END
 
-STRINGTABLE 
+STRINGTABLE
 BEGIN
     ID_VIEW_DB              "Switch Display Mode to deci Bell scale\ndeci Bell scale"
     ID_EXPORT_MULTITRACK    "Multitrack export. Export selected region to multiple files.\nMultitrack export"
 END
 
-#endif    // English (U.S.) resources
+#endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -667,10 +678,8 @@ END
 // German (Austria) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEA)
-#ifdef _WIN32
 LANGUAGE LANG_GERMAN, SUBLANG_GERMAN_AUSTRIAN
 #pragma code_page(1252)
-#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////

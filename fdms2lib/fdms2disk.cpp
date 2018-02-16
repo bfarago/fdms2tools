@@ -1,6 +1,8 @@
 #include "fdms2.h"
 #include "fdms2disk.h"
 
+#define ASSERT(cond) //if (!(conf)) {}
+
 fdms2disk::fdms2disk(void): m_dtMode(DTUninitialized), m_pszFileName(NULL),m_pszInfo(NULL),m_iDiskId(0),
 m_iEof(0), m_iBadSector(0),m_rwType(RWReadOnly), m_hFile(NULL), m_hMap(NULL),m_bVerbose(false)
 {
@@ -34,7 +36,7 @@ void fdms2disk::setFileName(const char* s){
         m_dtMode= DTUninitialized;
     }
     if (s){
-        m_pszFileName= strdup(s);
+        m_pszFileName= _strdup(s);
         m_dtMode= DTImage;
     }
 }
@@ -112,8 +114,8 @@ EErrorCode fdms2disk::readDiskInfo(){
 	    s = GetFileSize(hFile,  &high);
 	    s+= (((UINT64)high)<<32);
         char tmp[128];
-        sprintf_s(tmp, 128, TEXT("Image (%iMb)"), s/1024/1024);
-        m_pszInfo=strdup(tmp);
+        sprintf_s(tmp, 128, TEXT("Image (%iMb)"), (int)(s/1024/1024));
+        m_pszInfo=_strdup(tmp);
     }else{
         DISK_GEOMETRY dg;
         DWORD junk;
@@ -126,8 +128,8 @@ EErrorCode fdms2disk::readDiskInfo(){
         s=dg.Cylinders.QuadPart * (ULONG)dg.TracksPerCylinder *
         (ULONG)dg.SectorsPerTrack * (ULONG)dg.BytesPerSector;
         char tmp[128];
-        sprintf_s(tmp, 128, TEXT("Disk%i (%iMb)"), m_iDiskId, s/1024/1024);
-        m_pszInfo=strdup(tmp);
+        sprintf_s(tmp, 128, TEXT("Disk%i (%iMb)"), m_iDiskId, (int)(s/1024/1024) );
+        m_pszInfo=_strdup(tmp);
     }
 
 	CloseHandle(hFile);
@@ -204,7 +206,9 @@ EErrorCode fdms2disk::readViewFromFile(void*& rpMap, t_offset oMap, t_offset lMa
     if(!m_hFile) return ErrMapping;
     if (rpMap) free(rpMap);
     lMap=((lMap/512)+1)*512;
-    rpMap=malloc(lMap);
+	size_t size = (size_t) lMap;
+	ASSERT(size == lMap);
+    rpMap=malloc(size);
     if (!rpMap) return ErrMemoryFull;
     DWORD dwRead=0;
     LARGE_INTEGER li;
@@ -221,7 +225,7 @@ EErrorCode fdms2disk::readViewFromFile(void*& rpMap, t_offset oMap, t_offset lMa
             return ErrSeek;
         }
     }
-    if (!ReadFile(m_hFile, rpMap, lMap, &dwRead, NULL)){
+    if (!ReadFile(m_hFile, rpMap, size, &dwRead, NULL)){
         checkLastError();
     }
     if (lMap != dwRead) return ErrInvalidParameter; //TODO: vagy read error?

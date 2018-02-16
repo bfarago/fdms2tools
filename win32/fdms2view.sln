@@ -1,17 +1,13 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fdms2lib", "..\fdms2lib\fdms2lib.vcproj", "{54BBE558-8915-47A1-B18E-00F9DC06ED3B}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2027
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fdms2lib", "..\fdms2lib\fdms2lib.vcxproj", "{54BBE558-8915-47A1-B18E-00F9DC06ED3B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "..\test\test\test.vcproj", "{A3A99C6E-8FB5-49E0-BF69-D85BEFC31C7B}"
-	ProjectSection(ProjectDependencies) = postProject
-		{54BBE558-8915-47A1-B18E-00F9DC06ED3B} = {54BBE558-8915-47A1-B18E-00F9DC06ED3B}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "..\test\test\test.vcxproj", "{A3A99C6E-8FB5-49E0-BF69-D85BEFC31C7B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fdms2view", "..\fdms2view\fdms2view.vcproj", "{8D206803-A84C-4463-8E00-F8476AC5A2CB}"
-	ProjectSection(ProjectDependencies) = postProject
-		{54BBE558-8915-47A1-B18E-00F9DC06ED3B} = {54BBE558-8915-47A1-B18E-00F9DC06ED3B}
-	EndProjectSection
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fdms2view", "..\fdms2view\fdms2view.vcxproj", "{8D206803-A84C-4463-8E00-F8476AC5A2CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,5 +30,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FDDDDF0A-E5F8-493E-949D-BCF9499B4626}
 	EndGlobalSection
 EndGlobal

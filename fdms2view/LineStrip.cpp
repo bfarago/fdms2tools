@@ -12,13 +12,13 @@ CLineStrip::~CLineStrip(void)
 long CLineStrip::getAmp(long v){
     long ret=v;
     double s=pow(1.04,double(16-m_iFader )) ;
-    ret=v*s;
+    ret=(long)(v*s);
     return ret;
 }
 void CLineStrip::getAmpStereo(long& l, long& r){
     double s=pow(1.04,double(16-m_iFader )) ;
-    l=l*s;
-    r=r*s;
+    l= (long)l*s;
+    r= (long)r*s;
 }
 void CLineStrip::Serialize(CArchive &ar){
     if (ar.IsStoring())

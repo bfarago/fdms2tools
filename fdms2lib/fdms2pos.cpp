@@ -2,6 +2,7 @@
 */
 #include "fdms2pos.h"
 #include <string.h>
+#define strdup _strdup
 fdms2pos::fdms2pos(){
     setPos(0);
 }
@@ -57,30 +58,32 @@ t1_toffset fdms2pos::addPos(fdms2pos pos){
 void fdms2pos::dump(){
     printf("%02ih %02im %02is %02if", m_Hour, m_Min, m_Sec, m_Frame);
 }
+#define TXTSIZE (255)
 void fdms2pos::dumpTimeStr(char*& rpcStr){
-	char* s=(char*)malloc(255);
-    sprintf(s,"%02ih %02im %02is %02if", m_Hour, m_Min, m_Sec, m_Frame);
+	char* s=(char*)malloc(TXTSIZE);
+    snprintf(s, TXTSIZE, "%02ih %02im %02is %02if", m_Hour, m_Min, m_Sec, m_Frame);
 	if (rpcStr) free(rpcStr);
     rpcStr=strdup(s);
     free(s);
 }
+#define HMSSIZE (20)
 void fdms2pos::dumpTimeStrHMS(char*& rpcStr){
-	char* s=(char*)malloc(20);  //TODO: atirni stackesre.
-	sprintf(s,"%02i:%02i:%02i", m_Hour, m_Min, m_Sec);
+	char* s=(char*)malloc(HMSSIZE);  //TODO: atirni stackesre.
+	snprintf(s, HMSSIZE, "%02i:%02i:%02i", m_Hour, m_Min, m_Sec);
 	if (rpcStr) free(rpcStr);
     rpcStr=strdup(s);
     free(s);
 }
 void fdms2pos::dumpTimeStrHMSF(char*& rpcStr){
-	char* s=(char*)malloc(20);
-	sprintf(s,"%02i:%02i:%02i.%02i", m_Hour, m_Min, m_Sec, m_Frame);
+	char* s=(char*)malloc(HMSSIZE);
+	snprintf(s, HMSSIZE, "%02i:%02i:%02i.%02i", m_Hour, m_Min, m_Sec, m_Frame);
 	if (rpcStr) free(rpcStr);
     rpcStr=strdup(s);
     free(s);
 }
 void fdms2pos::dumpByte(){
     if (m_Pos<1024){
-        printf("%i", m_Pos);
+        printf("%lli", m_Pos);
     }else{
         if (m_Pos<1024*1024){
             printf("%.3fk", (float)m_Pos/(1024));
@@ -94,17 +97,17 @@ void fdms2pos::dumpByte(){
     }
 }
 void fdms2pos::dumpByteStr(char*& rpcStr){
-    char* s=(char*)malloc(255);
+    char* s=(char*)malloc(TXTSIZE);
     if (m_Pos<1024){
-        sprintf(s,"%i", m_Pos);
+        snprintf(s, TXTSIZE, "%lli", m_Pos);
     }else{
         if (m_Pos<1024*1024){
-            sprintf(s,"%.3fk", (float)m_Pos/(1024));
+            snprintf(s, TXTSIZE, "%.3fk", (float)m_Pos/(1024));
         }else{
             if(m_Pos<1024*1024*1024){
-                sprintf(s,"%.3fM", (float)m_Pos/(1024*1024));
+                snprintf(s, TXTSIZE, "%.3fM", (float)m_Pos/(1024*1024));
             }else{
-                sprintf(s,"%.3fG", (float)m_Pos/(1024*1024*1024));
+                snprintf(s, TXTSIZE, "%.3fG", (float)m_Pos/(1024*1024*1024));
             }
         }
     }

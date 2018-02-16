@@ -51,7 +51,7 @@ void fdms2::setFileName(const char* s){
         m_filename=0;
         
     }
-    if (s) m_filename= strdup(s);
+    if (s) m_filename= _strdup(s);
  }
 fdms2streamerIF* fdms2::duplicate(){
     fdms2* p=new fdms2;
@@ -466,11 +466,11 @@ int fdms2::start(){
  }
  g_pagesize = getpagesize();
  m_endpos=m_startpos+m_length;
- printf("log: tester1.start: %s\n %016LXh - %016LXh (%016LXh)\n", m_filename, m_startpos, m_endpos , m_length);
+ printf("log: tester1.start: %s\n %016llXh - %016llXh (%016llXh)\n", m_filename, m_startpos, m_endpos , m_length);
  
  m_length= pagealign(m_length);
  m_endpos=m_startpos+ m_length;
- printf("log: after align : %s\n %016LXh - %016LXh (%016LXh)\n", m_filename, m_startpos, m_endpos , m_length);
+ printf("log: after align : %s\n %016llXh - %016llXh (%016llXh)\n", m_filename, m_startpos, m_endpos , m_length);
  m_badsector=false;
  m_eof=false;
 #ifndef WIN32
@@ -519,14 +519,14 @@ void fdms2::dump(){
  t1_toffset pos=m_startpos; 
  for (t1_toffset p= 0; p< d; p++){
     pos=m_startpos+ p*m_length/d;
-    printf("%016LXh ",pos+FIRSTDATABLOCK);
+    printf("%016llXh ",pos+FIRSTDATABLOCK);
     dumpfostex(pos);
     printf(" ");
     fdms2pos xpos(pos);
     xpos.dump();
     printf(" \t");
     xpos.dumpByte();
-    printf(" %Li", xpos.m_Sample);
+    printf(" %lli", xpos.m_Sample);
 #ifdef VERBOSE_MAPPING    
     if (m_bMap) printf(" MAP(%016LXh)", m_oMap);
 #endif

@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="Unittest++">
+      <UniqueIdentifier>{276b7e9c-82e3-420e-8f46-6cadf017fe76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="fdms2pos">
+      <UniqueIdentifier>{8700fc83-c967-47af-a02d-fd1c50dcb660}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="fdms2part">
+      <UniqueIdentifier>{bdadff7b-8671-4f79-9d97-4e68f32b392c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="fdms2reader">
+      <UniqueIdentifier>{a06468fc-0645-4d17-862b-669ff87c861f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="fdms2disk">
+      <UniqueIdentifier>{dd146190-1921-40b8-8516-0ea2b9dcfb4d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\fdms2view\fdms2reader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestReporterDebugOutput.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnitTest++\src\AssertException.cpp">
+      <Filter>Unittest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnitTest++\src\Checks.cpp">
+      <Filter>Unittest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnitTest++\src\DeferredTestReporter.cpp">
+      <Filter>Unittest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnitTest++\src\DeferredTestResult.cpp">
+      <Filter>Unittest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnitTest++\src\MemoryOutStream.cpp">
+      <Filter>Unittest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnitTest++\src\ReportAssert.cpp">
+      <Filter>Unittest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnitTest++\src\Test.cpp">
+      <Filter>Unittest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnitTest++\src\TestDetails.cpp">
+      <Filter>Unittest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnitTest++\src\TestList.cpp">
+      <Filter>Unittest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnitTest++\src\TestReporter.cpp">
+      <Filter>Unittest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnitTest++\src\TestReporterStdout.cpp">
+      <Filter>Unittest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnitTest++\src\TestResults.cpp">
+      <Filter>Unittest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnitTest++\src\TestRunner.cpp">
+      <Filter>Unittest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnitTest++\src\TimeConstraint.cpp">
+      <Filter>Unittest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnitTest++\src\Win32\TimeHelpers.cpp">
+      <Filter>Unittest++</Filter>
+    </ClCompile>
+    <ClCompile Include="..\UnitTest++\src\XmlTestReporter.cpp">
+      <Filter>Unittest++</Filter>
+    </ClCompile>
+    <ClCompile Include="testFdms2pos.cpp">
+      <Filter>fdms2pos</Filter>
+    </ClCompile>
+    <ClCompile Include="testFdms2part.cpp">
+      <Filter>fdms2part</Filter>
+    </ClCompile>
+    <ClCompile Include="testFdms2reader.cpp">
+      <Filter>fdms2reader</Filter>
+    </ClCompile>
+    <ClCompile Include="testFdms2disk.cpp">
+      <Filter>fdms2disk</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="emuFdms2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestReporterDebugOutput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\UnitTest++\src\Win32\TimeHelpers.h">
+      <Filter>Unittest++</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+</Project>

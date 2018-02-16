@@ -1,6 +1,6 @@
 // testermfc_fdms2libView.cpp : implementation of the CFdms2View_View class
 //
-#define _WIN32_WINNT 0x0500
+// #define _WIN32_WINNT _WIN
 #include "stdafx.h"
 #include "fdms2view_app.h"
 #include "fdms2view_doc.h"
@@ -183,7 +183,7 @@ void CFdms2View_View::OnDrawOrdinata(CDC* pDC)
 	fdms2pos ps;
     //time
 	for (int i=dx; i>0; i--){
-		ps.setSample(i* pDoc->m_DisplayXMul /16);
+		ps.setSample(__int64(i* pDoc->m_DisplayXMul /16));
         ps.addPos(m_PosDisplayStart.m_Pos);
 		if (ps.m_Frame<1)
 		if (ps.m_Sec!=olds){
@@ -201,7 +201,7 @@ void CFdms2View_View::OnDrawOrdinata(CDC* pDC)
 	olds=-1;
     //frame
 	for (int i=dx; i>0; i--){
-		ps.setSample(i* pDoc->m_DisplayXMul /16);
+		ps.setSample(__int64(i* pDoc->m_DisplayXMul /16));
         ps.addPos(m_PosDisplayStart.m_Pos);
 		if (ps.m_Frame<1)
 		if (ps.m_Sec!=olds){

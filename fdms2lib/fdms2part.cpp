@@ -21,8 +21,9 @@ void fdms2part::getStartLength(t1_toffset &PhisicalPos, fdms2pos &len){
     PhisicalPos= m_PhisicalPos;
     len=m_Length;
 }
+#define TXTBUFSIZE (255)
 void fdms2part::dumpStr(char*& rpcStr){
-	char* s=(char*)malloc(255);
+	char* s=(char*)malloc(TXTBUFSIZE);
 	char* sLP=NULL;
 	char* sSP=NULL;
 	char* sLN=NULL;
@@ -30,8 +31,8 @@ void fdms2part::dumpStr(char*& rpcStr){
 	m_LogicalPos.dumpTimeStr(sLP);
 	m_Length.dumpTimeStr(sLN);
 	m_Length.dumpByteStr(sLS);
-	sprintf(s,"%s +%s (%sbyte)", sLP, sLN, sLS);
+	snprintf(s, TXTBUFSIZE, "%s +%s (%sbyte)", sLP, sLN, sLS);
 	if (rpcStr) free(rpcStr);
-    rpcStr=strdup(s);
+    rpcStr=_strdup(s);
     free(s);
 }
