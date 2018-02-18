@@ -28,6 +28,9 @@
     <Filter Include="fdms2disk">
       <UniqueIdentifier>{dd146190-1921-40b8-8516-0ea2b9dcfb4d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ImageGenerator">
+      <UniqueIdentifier>{a50cb656-888e-4f05-837c-3d511620b15b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\fdms2view\fdms2reader.cpp">
@@ -102,6 +105,9 @@
     <ClCompile Include="testFdms2disk.cpp">
       <Filter>fdms2disk</Filter>
     </ClCompile>
+    <ClCompile Include="Fdms2ImGen.cpp">
+      <Filter>ImageGenerator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="emuFdms2.h">
@@ -115,6 +121,9 @@
     </ClInclude>
     <ClInclude Include="..\UnitTest++\src\Win32\TimeHelpers.h">
       <Filter>Unittest++</Filter>
+    </ClInclude>
+    <ClInclude Include="Fdms2ImGen.h">
+      <Filter>ImageGenerator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

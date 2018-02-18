@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "PeekCache.h"
+#include <stdio.h>  
 
 PeekCache::PeekCache(void):m_bInit(false), m_div(1),m_pFdms2(NULL),m_iPrg(-1),m_cPos(-1)
 ,m_thHandle(NULL),m_thId(0),m_bRun(false),m_pUser(NULL)
@@ -135,16 +136,17 @@ DWORD PeekCache::worker(){
 }
 */
 void PeekCache::getPeekFileName(char* s){
-    sprintf(s,"%sp%i",m_pFdms2->getFileName(),m_iPrg);
+    snprintf(s, FILENAME_MAX, "%sp%i",m_pFdms2->getFileName(),m_iPrg);
     int len=strlen(s);
     for(int i=0; i<len; i++){
         if (s[i]==' ') s[i]='_';
     }
 }
 void PeekCache::store(){
-    char s[512];
+    char s[FILENAME_MAX];
     getPeekFileName(s);
-    FILE* f=fopen(s, "wb");
+	FILE* f = NULL;
+	errno_t err=fopen_s(&f, s, "wb");
     if (f){
         fwrite(&m_iPrg,sizeof(m_iPrg), 1, f);
         fwrite(&m_div,sizeof(m_div), 1, f);
@@ -158,10 +160,11 @@ void PeekCache::store(){
     }
 }
 bool PeekCache::load(){
-    char s[512];
+    char s[FILENAME_MAX];
     getPeekFileName(s);
-    FILE* f=fopen(s, "rb");
-    if (f){
+	FILE* f = NULL;
+	errno_t err = fopen_s(&f, s, "rb");
+	if (f){
         bool bError=false;
         int cpos=0;
         fread(&m_iPrg,sizeof(m_iPrg), 1, f);
@@ -216,8 +219,8 @@ bool PeekCache::getPeek(INT64 iOffs, short iCh, short &iMax, short &iMin){
     if (offs>m_cPos) return false;
     sPeekData1* pData= &m_cache[offs][iCh];
     sPeekData1* pData2= &m_cache[offs+1][iCh];
-    double modulo= (iOffs%m_div);
-    iMax= pData->max+ (pData2->max-pData->max)*(modulo)/m_div;
-    iMin= pData->min+ (pData2->min-pData->min)*(modulo)/m_div;
+    double modulo=(double) (iOffs%m_div);
+    iMax= short(pData->max+ (double(pData2->max-pData->max)*modulo)/m_div);
+    iMin= short(pData->min+ ((pData2->min-pData->min)*modulo)/m_div);
     return true;
 }

@@ -16,6 +16,7 @@ CATALOGES
 =======================================
  000 -  1FF
  200 -  2FF	X
+ 300 -  3FF ?
  400 -  7FF	A	1k  2block
  800 -  FFF	B	2k  4block
 1000 - 1FFF	X	4K  8block

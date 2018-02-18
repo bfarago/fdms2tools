@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+/fdms2lib/Debug/fdms2lib.tlog
+/fdms2lib/Debug
+/fdms2view/Debug
+/test/test/Debug
+/win32/Debug
+/win32/.vs/fdms2view/v15
+*.aps
+*.user

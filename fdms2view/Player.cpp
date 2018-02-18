@@ -221,7 +221,7 @@ DWORD CPlayer::mixWaveData(short* buf, DWORD size){
         if (m_PosEditCursor.m_Sample> m_fdms2->getProgramSampleCount(m_SelectedProgram)) return 0;
         peek[8]=0;
         peek[9]=0;
-        for (int i=0; i<m_waveSampleMax/MMM; i++){
+        for (unsigned int i=0; i<m_waveSampleMax/MMM; i++){
             if (!m_bPlayNow) return 0;
        	    m_PosEditCursor.addSample( 1 );
             setCursor(m_PosEditCursor); //TODO: de itt nem kell reset
@@ -232,7 +232,9 @@ DWORD CPlayer::mixWaveData(short* buf, DWORD size){
                 if (!m_bPlayNow) return 0;
                 short *pt=(short *)m_waveMultiChannel[ch];
                 short mono=pt[i];
-                if (m_mixer) mono=m_mixer->getAmpChannel(mono,ch);
+				if (m_mixer) {
+					mono = (short) m_mixer->getAmpChannel(mono, ch);
+				}
                 l+=mono;
                 r+=mono;
                 if (!i) peek[ch]=0;
@@ -242,12 +244,12 @@ DWORD CPlayer::mixWaveData(short* buf, DWORD size){
                 if (!m_bPlayNow) return 0;
             }
             if (m_mixer) m_mixer->getAmpMaster(l,r);
-            l=l/FOSTEXMAXCHANNELS;
-            r=r/FOSTEXMAXCHANNELS;
-            buf[oPtr++] = l;
-            buf[oPtr++] = r;
-            if (peek[8] < l) peek[8]=l; //max
-            if (peek[9] < r) peek[9]=r; //max
+            l= l/FOSTEXMAXCHANNELS;
+            r= r/FOSTEXMAXCHANNELS;
+            buf[oPtr++] = (short)l;
+            buf[oPtr++] = (short)r;
+            if (peek[8] < l) peek[8]= (short)l; //max
+            if (peek[9] < r) peek[9]= (short)r; //max
         }
     }
     //TODO: vumeters need to be implemented somehow.
@@ -285,7 +287,7 @@ bad:
 		}
 		//m_waveDataPlayed -= m_waveSize;
 
-good:
+//good:
         waveHeader->dwFlags &= ~WHDR_DONE;
         //waveHeader->dwFlags |= WHDR_DONE;
 		long result = waveOutWrite(m_waveOutHandle, waveHeader, sizeof(WAVEHDR));

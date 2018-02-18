@@ -82,8 +82,10 @@ void fdms2reader::stop(){
             }
         }
     }
-    CloseHandle(m_thHandle);
-    m_thHandle =NULL;
+	if (m_thHandle) {
+		CloseHandle(m_thHandle);
+		m_thHandle = NULL;
+	}
 }
 DWORD fdms2reader::ThreadEntry(void* ptr){
     fdms2reader * p=((fdms2reader*)ptr);

@@ -113,6 +113,7 @@
     <ClCompile Include="..\UnitTest++\src\TimeConstraint.cpp" />
     <ClCompile Include="..\UnitTest++\src\Win32\TimeHelpers.cpp" />
     <ClCompile Include="..\UnitTest++\src\XmlTestReporter.cpp" />
+    <ClCompile Include="Fdms2ImGen.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -127,6 +128,7 @@
   <ItemGroup>
     <ClInclude Include="..\UnitTest++\src\Win32\TimeHelpers.h" />
     <ClInclude Include="emuFdms2.h" />
+    <ClInclude Include="Fdms2ImGen.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TestReporterDebugOutput.h" />
   </ItemGroup>

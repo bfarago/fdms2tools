@@ -4,6 +4,8 @@
 #include "fdms2.h"
 #include "..\..\fdms2view\fdms2reader.h"
 #include "emuFdms2.h"
+#include "Fdms2ImGen.h"
+
 using namespace UnitTest;
 
 SUITE(TestFdms2Reader)
@@ -51,6 +53,20 @@ SUITE(TestFdms2Reader)
         CHECK_EQUAL((2), iRead);
     }
 
+	TEST_FIXTURE(TestFdms2Reader, ImageRead)
+	{
+		Fdms2ImGen img;
+		img.create("test1.img");
+		fdms2 f1;
+		f1.setFileName(img.getFilename());
+		long long s = f1.getDiskSize();
+		CHECK_EQUAL(s , img.getSize());
+
+		printf_s("size:%lli\n", s);
+		f1.dump();
+		//f1.start();
+		img.remove();
+	}
 
 }
  

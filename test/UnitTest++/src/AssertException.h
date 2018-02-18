@@ -5,6 +5,8 @@
 
 
 namespace UnitTest {
+#define MAXFILENAMELEN (256)
+#define MAXDESCRIPTIONLEN (512)
 
 class AssertException : public std::exception
 {
@@ -18,8 +20,8 @@ public:
     int LineNumber() const;
 
 private:
-    char m_description[512];
-    char m_filename[256];
+    char m_description[MAXDESCRIPTIONLEN];
+    char m_filename[MAXFILENAMELEN];
     int m_lineNumber;
 };
 

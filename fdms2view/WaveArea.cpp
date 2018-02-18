@@ -12,6 +12,14 @@
 #define new DEBUG_NEW
 #endif
 
+class CPeekExc {
+public:
+	CPeekExc() {
+	}
+	CPeekExc(const CPeekExc &) {
+
+	}
+};
 
 CWaveArea::CWaveArea(void)
 {
@@ -142,6 +150,7 @@ void CWaveArea::DrawOneData(IViewTimeLine *pTl){
         fdms2pos pLen;
         fdms2pos pos;
 	    fdms2pos start;
+		unsigned int uiDiff = (unsigned int)m_pDoc->m_DisplayXMul;
         try{
             start=m_displayPos;
             pos.setPos(start.m_Pos);
@@ -149,13 +158,17 @@ void CWaveArea::DrawOneData(IViewTimeLine *pTl){
                 short iMax, iMin;
                 px=x+m_Rect.left;
                 iMax=0; iMin=0;
-                if (!pTl->getPeek(pos.m_Sample, m_pDoc->m_DisplayXMul, m_iCh, iMax, iMin)) throw 1;
+                if (!pTl->getPeek(pos.m_Sample, uiDiff, m_iCh, iMax, iMin)) throw CPeekExc();
 			    DrawPeek(px, y, iMax, iMin);
                 x++;
 //                if (pos.m_Sample > m_displayMax.m_Sample) break;
-                pos.addSample(m_pDoc->m_DisplayXMul); // 16
+                pos.addSample(uiDiff); // 16
 		    }
-		}catch(...){
+		}
+		catch (const CPeekExc&) {
+			DrawError(px + 1, y);
+		}
+		catch(...){
             DrawError(px+1, y);
 		}
 }

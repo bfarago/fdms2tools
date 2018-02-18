@@ -45,12 +45,17 @@ SUITE(TestFdms2Disk)
         CHECK_EQUAL(ErrMapping, ec);
         p1.stopPtr(ptr);
         p1.stop();
+		const char* fname = "testfdms2disk.cpp";
+        p1.setFileName(fname);
+		FILE* fp = _fsopen(fname, "r", _SH_DENYWR);
+		fseek(fp, 0, SEEK_END);
+		long scheck = ftell(fp);
+		fclose(fp);
 
-        p1.setFileName("testfdms2disk.cpp");
         ec=p1.start();
         t_length len= p1.getDiskSize();
         CHECK_EQUAL( ErrNone, ec );
-        CHECK_EQUAL( 2472, len);
+        CHECK_EQUAL(scheck, len);
         printf("%s\n", p1.getInfo() );
         ec=p1.startPtr(ptr, 0, 100);
         CHECK_EQUAL( ErrNone, ec );
@@ -67,7 +72,7 @@ SUITE(TestFdms2Disk)
             t_length l=p1.getDiskSize();
             CHECK_EQUAL( ErrNone, ec);
             CHECK( l>0 );
-            printf("%s\n", p1.getInfo() );
+            printf("%i %s %c\n", i, p1.getInfo(), l>0?' ':'!' );
 
             p1.stop();
         };
