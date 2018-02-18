@@ -22,7 +22,8 @@
 */
 fdms2::fdms2()
 :m_partitionMode(NormalPartitionMode),m_badBlock(NULL),m_pMap(NULL),m_filename(NULL),m_startpos(0),
-m_length(0), m_badsector(true),m_eof(false),m_pDirMap(NULL),m_oDirMap(0)
+m_length(0), m_badsector(true),m_eof(false),m_pDirMap(NULL),m_oDirMap(0), m_step(0),
+m_oMap(0), m_lMap(0)
 {
 #ifdef WIN32
  m_fdInput=0;

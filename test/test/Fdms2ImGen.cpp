@@ -93,8 +93,11 @@ int Fdms2ImGen::addGapFF()
 }
 int Fdms2ImGen::addAudio()
 {
+#ifndef MAPPAGELENGTH
+#define MAPPAGELENGTH 0x07FFFFFFUL
+#endif
 	int r = 0;
-	size_t size;
-	size = addSameByte(0x100, 0x00); //audio
+	size_t size = MAPPAGELENGTH - m_size;
+	size = addSameByte(size, 0x00); //audio
 	return r;
 }
