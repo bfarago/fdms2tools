@@ -82,10 +82,8 @@ void fdms2reader::stop(){
             }
         }
     }
-	if (m_thHandle) {
-		CloseHandle(m_thHandle);
-		m_thHandle = NULL;
-	}
+    CloseHandle(m_thHandle);
+    m_thHandle =NULL;
 }
 DWORD fdms2reader::ThreadEntry(void* ptr){
     fdms2reader * p=((fdms2reader*)ptr);
@@ -136,6 +134,8 @@ DWORD fdms2reader::DoWork(){
                 m_Stream.iSamples=iRead;
                 if (iRead){
                     bOk&=m_pFdms2Streaming->read(&m_Stream);      //callback
+                }else{
+                    bOk=false;
                 }
                 if (!bOk) break;
                 m_Stream.posLogical.addSample( m_Stream.iSamples );

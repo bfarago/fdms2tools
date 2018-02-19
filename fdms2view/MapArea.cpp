@@ -12,23 +12,23 @@ CMapArea::~CMapArea(void)
 void CMapArea::Draw(IViewTimeLine *pTl){
     t1_toffset maxSample=m_pFdms2->getLongestProgramSampleCount();
     t1_toffset s=pTl->getDisplayStart().m_Sample; //*16?
-	unsigned int uiXmul = (unsigned int)m_pDoc->m_DisplayXMul;
-    if (maxSample < s) maxSample=s+m_RectWidth*uiXmul;
+    if (maxSample < s) maxSample=s+m_RectWidth*m_pDoc->m_DisplayXMul;
 
-    int ddx= int(maxSample / m_RectWidth);
+    int ddx= maxSample / m_RectWidth;
     if (!ddx) return;
     int iPrg= m_pDoc->getSelectedProgram();
     int y= m_Rect.top + iPrg*5;
     CBrush brushLine(RGB(255, 0, 0));
 	CBrush* pOldBrush = m_pDC->SelectObject(&brushLine);
-    
-    y= m_Rect.top;
-
+    int	psPenLine=PS_SOLID;//PS_SOLID;
+    COLORREF crPenLine=RGB(0, 0, 0);
+	CPen penLine1(psPenLine, 1, crPenLine);
+	CPen* pOldPen = m_pDC->SelectObject(&penLine1);
     for (int i=0; i<5; i++){
         int iIdx=0;
          if (iPrg == i){
             m_pDC->FillSolidRect(m_Rect.left + s /ddx-1, y,
-                m_RectWidth*uiXmul /ddx +1 ,3, RGB(80, 80, 255));
+                m_RectWidth*m_pDoc->m_DisplayXMul /ddx +1 ,3, RGB(80, 80, 255));
             m_pDC->FillSolidRect(m_Rect.left, y+3,
                 pTl->getPeekMaxLength().m_Sample / ddx,3, RGB(0, 255, 0));
             
@@ -48,8 +48,9 @@ void CMapArea::Draw(IViewTimeLine *pTl){
 	    }
         y+=5;
     }
+    
     CPen penLine(PS_DOT, 2, RGB(255, 0, 0));
-	CPen* pOldPen = m_pDC->SelectObject(&penLine);
+	m_pDC->SelectObject(&penLine);
 
     int xEC=m_Rect.left+m_pDoc->m_PosEditCursor.m_Sample /ddx;
     y=m_Rect.top+ iPrg*5;
@@ -57,5 +58,12 @@ void CMapArea::Draw(IViewTimeLine *pTl){
     m_pDC->LineTo(xEC, y+5);
     m_pDC->SelectObject(pOldPen);
     m_pDC->SelectObject(pOldBrush );
- 
+    pOldPen->DeleteObject();
+    pOldBrush->DeleteObject();
+}
+void CMapArea::OnLButtonUp(UINT nFlags, CPoint pointUp, CPoint pointDown){
+
+}
+void CMapArea::OnRButtonUp(UINT nFlags, CPoint pointUp, CPoint pointDown){
+
 }

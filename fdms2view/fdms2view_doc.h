@@ -8,11 +8,12 @@
 #include "peekcache.h"
 #include "Mixer.h"
 #include "DMix1.h"
+#include "DGrab.h"
 class CFdms2View_View;
 #define MAXXMUL (16*1024*1024)
 
 
-class CFdms2View_Doc : public CDocument, public ICacheUser
+class CFdms2View_Doc : public CDocument, public ICacheUser, public fdms2notifyIF
 {
 protected: // create from serialization only
 	CFdms2View_Doc();
@@ -43,13 +44,19 @@ public:
 	fdms2pos m_PosEditCursor;
 	fdms2pos m_PosRegionStart;
 	fdms2pos m_PosRegionStop;
+//    fdms2pos m_markers[10];
     void DoOrderRegion();
+    void ValidatePos(fdms2pos& p);
     virtual void CacheUpdated(){m_bRedraw=true;};
     void setSelectedProgram(int iPrg);
     int getSelectedProgram(){return m_SelectedProgram;}
     bool getPlayNow(){
         if (m_player) return m_player->getPlayNow();
         return false;
+    }
+    void getLineStrip(unsigned int index, CLineStrip*& strip){
+        if (index>=FOSTEXMAXCHANNELS)return;
+        m_mixer.getLineStrip(index, strip);
     }
 // Operations
 public:
@@ -63,8 +70,10 @@ public:
 	void OnPlay();
 	void OnPlayStart();
 	void OnPlayStop();
+    void OnGrab();
 // Overrides
 public:
+    virtual void messageBox(LPCTSTR cat, LPCTSTR msg);
 	virtual BOOL OnNewDocument();
 	virtual void Serialize(CArchive& ar);
     void initPlayer();
@@ -127,4 +136,7 @@ public:
 	afx_msg void OnUpdateDeviceSoundcard(CCmdUI *pCmdUI);
 	afx_msg void OnUpdateViewMode(CCmdUI *pCmdUI);
     afx_msg void OnEditPlayToggle();
+    afx_msg void OnViewRecreatepeekfile();
+    afx_msg void OnUpdateDeviceQuickformat(CCmdUI *pCmdUI);
+    afx_msg void OnDeviceQuickformat();
 };

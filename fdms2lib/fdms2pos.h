@@ -4,7 +4,8 @@
 #define _FDMS2POS_H
 
 #include "fdms2common.h"
-
+#define MAXTIMEDUMP (255)
+#define MAXTIMESTR (20)
 class fdms2pos{
 public:
  fdms2pos();
@@ -24,12 +25,14 @@ public:
  void dumpTimeStr(char*& rpcStr);
  void dumpTimeStrHMS(char*& rpcStr);
  void dumpTimeStrHMSF(char*& rpcStr);
+ void dumpTimeStrSF(char*& rpcStr);
  t1_toffset addPos(t1_toffset pos);
  t1_toffset addPos(fdms2pos pos);
  void addSample(t1_toffset sample);
  void operator +=(const fdms2pos& pos);
  bool operator <(const fdms2pos& pos)const;
  bool operator ==(const fdms2pos& pos)const;
+ fdms2pos operator -(const fdms2pos &pos2) const;
 };
 
 #endif

@@ -16,8 +16,10 @@
 // Neutral (Default) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEUD)
+#ifdef _WIN32
 LANGUAGE LANG_NEUTRAL, SUBLANG_DEFAULT
 #pragma code_page(1250)
+#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -25,16 +27,14 @@ LANGUAGE LANG_NEUTRAL, SUBLANG_DEFAULT
 //
 
 IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
-
 IDR_TOOLBAR_TRANSPORT   BITMAP                  "res\\toolbar1.bmp"
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Toolbar
 //
 
-IDR_MAINFRAME TOOLBAR 16, 15
+IDR_MAINFRAME TOOLBAR  16, 15
 BEGIN
     BUTTON      ID_FILE_NEW
     BUTTON      ID_FILE_OPEN
@@ -47,11 +47,20 @@ BEGIN
     BUTTON      ID_FILE_PRINT
     BUTTON      ID_APP_ABOUT
     BUTTON      ID_CONTEXT_HELP
-    BUTTON      ID_BUTTON_FDMSPROP
-    BUTTON      ID_BUTTON_MAP
+    SEPARATOR
+    BUTTON      ID_VIEW_FDMS2PROPERTIES
+    BUTTON      ID_DEVICE_SOUNDCARD
+    BUTTON      ID_VIEW_MIX
+    SEPARATOR
+    BUTTON      ID_VIEW_DB
+    BUTTON      ID_ZOOM_FULL
+    BUTTON      ID_ZOOM_2
+    SEPARATOR
+    BUTTON      ID_DEVICE_GRAB
+    BUTTON      ID_EXPORT_MULTITRACK
 END
 
-IDR_TOOLBAR_TRANSPORT TOOLBAR 16, 15
+IDR_TOOLBAR_TRANSPORT TOOLBAR  16, 15
 BEGIN
     BUTTON      ID_BUTTON_TP_REC
     BUTTON      ID_BUTTON_TP_STOP
@@ -68,7 +77,7 @@ END
 // String Table
 //
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_BUTTON_FDMSPROP      "Properties"
     ID_BUTTON_TP_REC        "Record\nRecord"
@@ -79,16 +88,35 @@ BEGIN
     ID_BUTTON_MAP           "Map"
 END
 
+STRINGTABLE 
+BEGIN
+    ID_VIEW_MIX             "Mixer"
+END
+
+STRINGTABLE 
+BEGIN
+    ID_VIEW_DB              "Switch dB scale."
+END
+
 #endif    // Neutral (Default) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (United States) resources
+// English (U.S.) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP1             BITMAP                  "res\\Fostex-d_80.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -98,16 +126,14 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 // Icon with lowest ID value placed first to ensure application icon
 // remains consistent on all systems.
 IDR_MAINFRAME           ICON                    "res\\fdms2view.ico"
-
 IDR_fdms2viewTYPE       ICON                    "res\\fdms2view_doc.ico"
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Menu
 //
 
-IDR_MAINFRAME MENU
+IDR_MAINFRAME MENU 
 BEGIN
     POPUP "&File"
     BEGIN
@@ -132,7 +158,7 @@ BEGIN
     END
 END
 
-IDR_fdms2viewTYPE MENU
+IDR_fdms2viewTYPE MENU 
 BEGIN
     POPUP "&File"
     BEGIN
@@ -171,6 +197,7 @@ BEGIN
         MENUITEM "Program 5",                   ID_VIEW_PROGRAM5
         MENUITEM SEPARATOR
         MENUITEM "FDMS2 &Properties\tF2",       ID_VIEW_FDMS2PROPERTIES
+        MENUITEM "Recreate peek file",          ID_VIEW_RECREATEPEEKFILE
         MENUITEM "Tempo &Map",                  ID_VIEW_TEMPOMAP
         MENUITEM "&Fragment map",               ID_VIEW_FRAGMENTMAP
         MENUITEM "Mi&x",                        ID_VIEW_MIX
@@ -196,6 +223,10 @@ BEGIN
     POPUP "&Device"
     BEGIN
         MENUITEM "&Audio",                      ID_DEVICE_SOUNDCARD
+        MENUITEM SEPARATOR
+        MENUITEM "&Grab",                       ID_DEVICE_GRAB
+        MENUITEM SEPARATOR
+        MENUITEM "QuickFormat",                 ID_DEVICE_QUICKFORMAT
     END
     POPUP "&Window"
     BEGIN
@@ -218,7 +249,7 @@ END
 // Accelerator
 //
 
-IDR_MAINFRAME ACCELERATORS
+IDR_MAINFRAME ACCELERATORS 
 BEGIN
     VK_F1,          ID_CONTEXT_HELP,        VIRTKEY, SHIFT, NOINVERT
     "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
@@ -246,33 +277,37 @@ END
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 235, 55
+IDD_ABOUTBOX DIALOGEX 0, 0, 256, 49
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About Fdms2View"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
-    LTEXT           "Fdms2View Version 1.0.1",IDC_STATIC,40,10,119,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2006-2018 Barna Faragó",IDC_STATIC,37,26,191,22
-    DEFPUSHBUTTON   "OK",IDOK,178,7,50,16,WS_GROUP
+    CONTROL         161,IDC_STATIC,"Static",SS_BITMAP,11,7,67,34
+    LTEXT           "Fdms2View Version 1.0.0.7",IDC_STATIC,81,5,113,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2006-2008 Barna Faragó",IDC_STATIC,80,33,169,8
+    DEFPUSHBUTTON   "OK",IDOK,199,7,50,16,WS_GROUP
+    LTEXT           "This program is aim to view and export Fostex D80 disk images.",IDC_STATIC,80,14,117,20
 END
 
-IDD_DIALOG_FDMSPROP DIALOGEX 0, 0, 290, 106
+IDD_DIALOG_FDMSPROP DIALOGEX 0, 0, 290, 148
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "FDMS2 Properties"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,233,7,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,233,24,50,14
-    LTEXT           "Filename:",IDC_STATIC,7,7,42,9
-    EDITTEXT        IDC_EDIT_FileName,53,7,133,14,ES_AUTOHSCROLL
+    LTEXT           "Filename:",IDC_STATIC,3,7,32,9
+    EDITTEXT        IDC_EDIT_FileName,37,7,149,14,ES_AUTOHSCROLL
     PUSHBUTTON      "...",IDC_BUTTON_FN_Browse,190,7,28,14
-    GROUPBOX        "Partition mode",IDC_STATIC,7,36,209,52
-    CONTROL         "Normal partitions",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | WS_GROUP,11,47,70,10
+    GROUPBOX        "Partition mode",IDC_STATIC,1,99,209,45
+    CONTROL         "Normal partitions",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | WS_GROUP,5,108,70,10
     CONTROL         "Normal partitions and the rest of the disk",IDC_RADIO2,
-                    "Button",BS_AUTORADIOBUTTON,11,65,147,10
+                    "Button",BS_AUTORADIOBUTTON,5,122,147,10
     CONTROL         "Whole disk without original partitions",IDC_RADIO3,
-                    "Button",BS_AUTORADIOBUTTON,11,77,133,10
+                    "Button",BS_AUTORADIOBUTTON,5,132,133,10
+    CONTROL         "",IDC_LIST_DISK,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,3,30,207,69
+    LTEXT           "Disk:",IDC_STATIC,4,21,16,8
+    PUSHBUTTON      "&Refresh",IDC_BUTTON_REFRESH,236,84,50,14
 END
 
 IDD_DIALOGMetr DIALOGEX 0, 0, 331, 235
@@ -352,6 +387,7 @@ BEGIN
     LTEXT           "Pos. Remain:",IDC_STATIC,135,132,43,8
     LTEXT           "Time Remain:",IDC_STATIC,135,114,44,8
     LTEXT           "Static",IDC_OUT_TIME_REMAIN,184,114,73,8
+    CONTROL         "Shutdown after finishing:",IDC_CHECK_SHUTDOWN,"Button",BS_AUTOCHECKBOX | BS_LEFTTEXT | BS_RIGHT | WS_TABSTOP,99,41,97,10
 END
 
 IDD_DIALOG_MIX1 DIALOGEX 0, 0, 146, 169
@@ -367,32 +403,73 @@ BEGIN
     CONTROL         "",IDC_SLIDER6,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,68,83,13,79
     CONTROL         "",IDC_SLIDER7,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,80,83,13,79
     CONTROL         "",IDC_SLIDER8,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,91,83,13,79
-    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",PBS_VERTICAL | WS_BORDER,8,7,9,73
-    CONTROL         "",IDC_PROGRESS2,"msctls_progress32",PBS_VERTICAL | WS_BORDER,20,7,9,73
-    CONTROL         "",IDC_PROGRESS3,"msctls_progress32",PBS_VERTICAL | WS_BORDER,32,7,9,73
-    CONTROL         "",IDC_PROGRESS4,"msctls_progress32",PBS_VERTICAL | WS_BORDER,43,7,9,73
-    CONTROL         "",IDC_PROGRESS5,"msctls_progress32",PBS_VERTICAL | WS_BORDER,55,7,9,73
-    CONTROL         "",IDC_PROGRESS6,"msctls_progress32",PBS_VERTICAL | WS_BORDER,67,7,9,73
-    CONTROL         "",IDC_PROGRESS7,"msctls_progress32",PBS_VERTICAL | WS_BORDER,80,7,9,73
-    CONTROL         "",IDC_PROGRESS8,"msctls_progress32",PBS_VERTICAL | WS_BORDER,92,7,9,73
-    CONTROL         "",IDC_PROGRESS9,"msctls_progress32",PBS_VERTICAL | WS_BORDER,119,7,9,73
-    CONTROL         "",IDC_PROGRESS10,"msctls_progress32",PBS_VERTICAL | WS_BORDER,130,7,9,73
+    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",WS_BORDER | 0x4,8,7,9,73
+    CONTROL         "",IDC_PROGRESS2,"msctls_progress32",WS_BORDER | 0x4,20,7,9,73
+    CONTROL         "",IDC_PROGRESS3,"msctls_progress32",WS_BORDER | 0x4,32,7,9,73
+    CONTROL         "",IDC_PROGRESS4,"msctls_progress32",WS_BORDER | 0x4,43,7,9,73
+    CONTROL         "",IDC_PROGRESS5,"msctls_progress32",WS_BORDER | 0x4,55,7,9,73
+    CONTROL         "",IDC_PROGRESS6,"msctls_progress32",WS_BORDER | 0x4,67,7,9,73
+    CONTROL         "",IDC_PROGRESS7,"msctls_progress32",WS_BORDER | 0x4,80,7,9,73
+    CONTROL         "",IDC_PROGRESS8,"msctls_progress32",WS_BORDER | 0x4,92,7,9,73
+    CONTROL         "",IDC_PROGRESS9,"msctls_progress32",WS_BORDER | 0x4,119,7,9,73
+    CONTROL         "",IDC_PROGRESS10,"msctls_progress32",WS_BORDER | 0x4,130,7,9,73
     CONTROL         "",IDC_SLIDER9,"msctls_trackbar32",TBS_VERT | TBS_BOTH | TBS_NOTICKS | WS_TABSTOP,123,83,13,79
 END
 
-IDD_DIALOG_AUDIODEVICE DIALOGEX 0, 0, 249, 71
+IDD_DIALOG_AUDIODEVICE DIALOGEX 0, 0, 249, 89
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "Audio Device Setup"
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,192,7,50,14
     PUSHBUTTON      "Cancel",IDCANCEL,192,24,50,14
-    COMBOBOX        IDC_SOUND_DEVICE_COMBO,39,15,144,73,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    COMBOBOX        IDC_CAPTURE_DEVICE_COMBO,38,44,143,55,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
-    GROUPBOX        "Capture",IDC_STATIC,7,34,180,31
-    GROUPBOX        "Output",IDC_STATIC,7,7,180,25
+    COMBOBOX        IDC_SOUND_DEVICE_COMBO,39,15,144,73,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_CAPTURE_DEVICE_COMBO,38,62,143,55,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Capture",IDC_STATIC,7,51,180,31
+    GROUPBOX        "Output",IDC_STATIC,7,7,180,44
     LTEXT           "Device:",IDC_STATIC,13,17,25,8
-    LTEXT           "Device:",IDC_STATIC,12,47,25,8
+    LTEXT           "Device:",IDC_STATIC,12,65,25,8
+    COMBOBOX        IDC_COMBO_BUFFEROUTSIZE,58,31,125,30,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Buffer size:",IDC_STATIC,15,33,38,8
+END
+
+IDD_DIALOG_GRAB DIALOGEX 0, 0, 359, 96
+STYLE DS_SETFONT | DS_3DLOOK | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Grab Disk"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "&OK",IDOK,302,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,302,24,50,14
+    PUSHBUTTON      "&List",IDC_BUTTON_LIST,11,17,50,14
+    COMBOBOX        IDC_COMBO_LIST,65,18,180,83,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Grab",IDC_BUTTON_GRAB,247,16,40,14
+    CONTROL         "",IDC_PROGRESS1,"msctls_progress32",WS_BORDER,7,83,345,6
+    GROUPBOX        "Output Image file",IDC_STATIC,7,37,286,29
+    LTEXT           "File:",IDC_STATIC,11,49,14,8
+    EDITTEXT        IDC_EDIT_OUT_FILE,30,47,228,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "...",IDC_BUTTON_OUT_BROWSE,264,46,23,14
+    GROUPBOX        "Input Disk",IDC_STATIC,7,7,286,29
+    LTEXT           "Idle",IDC_STATIC_PROGRESS,7,71,134,8
+    PUSHBUTTON      "Stop",IDC_BUTTON_STOP,302,49,50,14
+END
+
+IDD_DIALOG_NEW DIALOGEX 0, 0, 287, 113
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOPMOST | WS_EX_TOOLWINDOW
+CAPTION "New Fdms2View project"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,230,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,230,24,50,14
+    LTEXT           "Welcome in Fostex D80 disk image viewer application!\nPlease, choose one of the following option to start using the application:",IDC_STATIC,76,7,143,46
+    CONTROL         "Start grabbing a new disk.",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON | WS_GROUP,7,46,100,10
+    CONTROL         "Start with project settings dialog. (to open an .img grab file into a new project).",IDC_RADIO2,
+                    "Button",BS_AUTORADIOBUTTON,7,58,273,10
+    CONTROL         "Start an empty project.",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON,7,71,91,10
+    CONTROL         "Open a previously saved project.",IDC_RADIO4,"Button",BS_AUTORADIOBUTTON,7,84,123,10
+    CONTROL         "Open last project (if it was one before).",IDC_RADIO5,
+                    "Button",BS_AUTORADIOBUTTON | WS_TABSTOP,7,96,143,10
+    CONTROL         161,IDC_StaticIcon,"Static",SS_BITMAP,7,7,67,34
 END
 
 
@@ -402,8 +479,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,1,1
- PRODUCTVERSION 1,0,1,1
+ FILEVERSION 1,0,0,6
+ PRODUCTVERSION 1,0,0,6
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -420,12 +497,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Barna Faragó"
             VALUE "FileDescription", "FDMS2 Viewer"
-            VALUE "FileVersion", "1.0.1.1"
+            VALUE "FileVersion", "1.0.0.7"
             VALUE "InternalName", "fdms2view.exe"
             VALUE "LegalCopyright", "(c) Barna Faragó.  All rights reserved."
             VALUE "OriginalFilename", "fdms2view.exe"
             VALUE "ProductName", "fdms2view"
-            VALUE "ProductVersion", "1.0.1.1"
+            VALUE "ProductVersion", "1.0.0.7"
         END
     END
     BLOCK "VarFileInfo"
@@ -441,14 +518,14 @@ END
 //
 
 #ifdef APSTUDIO_INVOKED
-GUIDELINES DESIGNINFO
+GUIDELINES DESIGNINFO 
 BEGIN
     IDD_ABOUTBOX, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 228
+        RIGHTMARGIN, 249
         TOPMARGIN, 7
-        BOTTOMMARGIN, 48
+        BOTTOMMARGIN, 41
     END
 
     IDD_DIALOG_FDMSPROP, DIALOG
@@ -456,7 +533,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 283
         TOPMARGIN, 7
-        BOTTOMMARGIN, 99
+        BOTTOMMARGIN, 141
     END
 
     IDD_DIALOGMetr, DIALOG
@@ -496,7 +573,23 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 242
         TOPMARGIN, 7
-        BOTTOMMARGIN, 64
+        BOTTOMMARGIN, 82
+    END
+
+    IDD_DIALOG_GRAB, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 352
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 89
+    END
+
+    IDD_DIALOG_NEW, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 280
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 106
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -504,27 +597,16 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// AFX_DIALOG_LAYOUT
-//
-
-IDD_ABOUTBOX AFX_DIALOG_LAYOUT
-BEGIN
-    0
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // String Table
 //
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDP_OLE_INIT_FAILED     "OLE initialization failed.  Make sure that the OLE libraries are the correct version."
     IDP_SOCKETS_INIT_FAILED "Windows sockets initialization failed."
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     IDR_MAINFRAME           "Fdms2View"
     IDR_fdms2viewTYPE       "\nFDMS2View\nFdms2View\nFdms2View Files (*.f2vproj)\n.f2vproj\nfdms2view.Document\nfdms2view.Document"
@@ -539,14 +621,14 @@ BEGIN
     ID_EXPORT_EIGHTWAV      "Export selected region\nRegion export"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     AFX_IDS_APP_TITLE       "fdms2view"
     AFX_IDS_IDLEMESSAGE     "For Help, press F1"
     AFX_IDS_HELPMODEMESSAGE "Select an object on which to get Help"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_INDICATOR_EXT        "EXT"
     ID_INDICATOR_CAPS       "CAP"
@@ -556,7 +638,7 @@ BEGIN
     ID_INDICATOR_REC        "REC"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_FILE_NEW             "Create a new document\nNew"
     ID_FILE_OPEN            "Open an existing document\nOpen"
@@ -565,7 +647,7 @@ BEGIN
     ID_FILE_SAVE_AS         "Save the active document with a new name\nSave As"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
     ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
@@ -576,7 +658,7 @@ BEGIN
     ID_HELP                 "Display help for current task or command\nHelp"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_FILE_MRU_FILE1       "Open this document"
     ID_FILE_MRU_FILE2       "Open this document"
@@ -596,13 +678,13 @@ BEGIN
     ID_FILE_MRU_FILE16      "Open this document"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
     ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_WINDOW_NEW           "Open another window for the active document\nNew Window"
     ID_WINDOW_ARRANGE       "Arrange icons at the bottom of the window\nArrange Icons"
@@ -612,7 +694,7 @@ BEGIN
     ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_EDIT_CLEAR           "Erase the selection\nErase"
     ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
@@ -627,13 +709,13 @@ BEGIN
     ID_EDIT_REDO            "Redo the previously undone action\nRedo"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
     ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     AFX_IDS_SCSIZE          "Change the window size"
     AFX_IDS_SCMOVE          "Change the window position"
@@ -644,33 +726,46 @@ BEGIN
     AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     AFX_IDS_SCRESTORE       "Restore the window to normal size"
     AFX_IDS_SCTASKLIST      "Activate Task List"
     AFX_IDS_MDICHILD        "Activate this window"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
+    ID_ZOOM_1               "Zoom 1:1\n1:1"
+    ID_ZOOM_2               "Zoom 44100\n44k1"
+    ID_ZOOM_FULL            "Zoom full\nFull"
+    ID_ZOOMY_MAX            "Amp Max\nAmp max"
+    ID_ZOOMY_12DB           "Amp -12dB\n12db"
+    ID_ZOOMY_24DB           "Amp -24dB\n24dB"
     ID_VIEW_MIX             "Mix plane\nMixer window"
     ID_EDIT_PLAY            "Play audio\nPlay"
     ID_EDIT_STOP            "Stop playing\nStop"
     ID_DEVICE_SOUNDCARD     "Sound Card settings\nSound card"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_VIEW_MODE            "Change View Mode\nMode"
 END
 
-STRINGTABLE
+STRINGTABLE 
 BEGIN
     ID_VIEW_DB              "Switch Display Mode to deci Bell scale\ndeci Bell scale"
     ID_EXPORT_MULTITRACK    "Multitrack export. Export selected region to multiple files.\nMultitrack export"
+    ID_DEVICE_GRAB          "Grab disk by external DD command\nExternal DD dump."
+    ID_VIEW_RECREATEPEEKFILE "Recreate peek file\nRecreate peeks"
 END
 
-#endif    // English (United States) resources
+STRINGTABLE 
+BEGIN
+    ID_DEVICE_QUICKFORMAT   "Format disk!\nFormat"
+END
+
+#endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -678,8 +773,10 @@ END
 // German (Austria) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEA)
+#ifdef _WIN32
 LANGUAGE LANG_GERMAN, SUBLANG_GERMAN_AUSTRIAN
 #pragma code_page(1252)
+#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////

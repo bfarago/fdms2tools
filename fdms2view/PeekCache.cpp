@@ -1,6 +1,5 @@
 #include "StdAfx.h"
 #include "PeekCache.h"
-#include <stdio.h>  
 
 PeekCache::PeekCache(void):m_bInit(false), m_div(1),m_pFdms2(NULL),m_iPrg(-1),m_cPos(-1)
 ,m_thHandle(NULL),m_thId(0),m_bRun(false),m_pUser(NULL)
@@ -135,18 +134,24 @@ DWORD PeekCache::worker(){
     return m_cPos;
 }
 */
-void PeekCache::getPeekFileName(char* s){
-    snprintf(s, FILENAME_MAX, "%sp%i",m_pFdms2->getFileName(),m_iPrg);
+int PeekCache::getPeekFileName(char* s, int max){
+    if (!m_pFdms2) return 0;
+    if (m_pFdms2->getDiskType() == DTDisk){
+        sprintf_s(s, max, "phdisk_p%i",m_iPrg);
+    }else{
+        sprintf_s(s, max,"%s_p%i",m_pFdms2->getFileName(),m_iPrg);
+    }
     int len=strlen(s);
     for(int i=0; i<len; i++){
         if (s[i]==' ') s[i]='_';
     }
+    return len;
 }
 void PeekCache::store(){
-    char s[FILENAME_MAX];
-    getPeekFileName(s);
-	FILE* f = NULL;
-	errno_t err=fopen_s(&f, s, "wb");
+    char s[512];
+    if (!getPeekFileName(s, 512))return;
+    FILE* f=fopen(s, "wb");
+    //TODO: disk eseten hibas
     if (f){
         fwrite(&m_iPrg,sizeof(m_iPrg), 1, f);
         fwrite(&m_div,sizeof(m_div), 1, f);
@@ -159,12 +164,23 @@ void PeekCache::store(){
         fclose(f);
     }
 }
+void PeekCache::erase(){
+    stop();
+    m_bInit=false;
+    char s[512];
+    if (!getPeekFileName(s,512)) return;
+    remove(s);
+}
+void PeekCache::regenerate(ICacheUser* pUser){
+    m_pUser=pUser;
+    erase();
+    init();
+}
 bool PeekCache::load(){
-    char s[FILENAME_MAX];
-    getPeekFileName(s);
-	FILE* f = NULL;
-	errno_t err = fopen_s(&f, s, "rb");
-	if (f){
+    char s[512];
+    if (!getPeekFileName(s, 512))return false;
+    FILE* f=fopen(s, "rb");
+    if (f){
         bool bError=false;
         int cpos=0;
         fread(&m_iPrg,sizeof(m_iPrg), 1, f);
@@ -219,8 +235,8 @@ bool PeekCache::getPeek(INT64 iOffs, short iCh, short &iMax, short &iMin){
     if (offs>m_cPos) return false;
     sPeekData1* pData= &m_cache[offs][iCh];
     sPeekData1* pData2= &m_cache[offs+1][iCh];
-    double modulo=(double) (iOffs%m_div);
-    iMax= short(pData->max+ (double(pData2->max-pData->max)*modulo)/m_div);
-    iMin= short(pData->min+ ((pData2->min-pData->min)*modulo)/m_div);
+    double modulo= (iOffs%m_div);
+    iMax= pData->max+ (pData2->max-pData->max)*(modulo)/m_div;
+    iMin= pData->min+ (pData2->min-pData->min)*(modulo)/m_div;
     return true;
 }

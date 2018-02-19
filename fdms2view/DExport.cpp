@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "fdms2view_app.h"
 #include "DExport.h"
+#include "Logoff.h"
 
 #define MAXGFORMATS 4
 
@@ -26,6 +27,8 @@ IMPLEMENT_DYNAMIC(DExport, CDialog)
 DExport::DExport(CWnd* pParent /*=NULL*/)
 	: CDialog(DExport::IDD, pParent)
 	, m_sPrefix(_T(""))
+    , m_bShutdown(FALSE),
+    m_timeFirst(0), m_timeLast(0)
 {
 }
 
@@ -41,17 +44,18 @@ void DExport::registerDoc(CFdms2View_Doc* pDoc){
 }
 void DExport::DoDataExchange(CDataExchange* pDX)
 {
-	CDialog::DoDataExchange(pDX);
+    CDialog::DoDataExchange(pDX);
     for (int i=0; i<FOSTEXMAXCHANNELS; i++)
-	    DDX_Control(pDX, IDC_CHECK1+i, m_bnCh[i]);
-	DDX_Control(pDX, IDC_CHECKALL, m_bnChAll);
-	DDX_Control(pDX, IDC_PROGRESS1, m_progress1);
-	DDX_Text(pDX, IDC_EDIT_PREFIX, m_sPrefix);
+        DDX_Control(pDX, IDC_CHECK1+i, m_bnCh[i]);
+    DDX_Control(pDX, IDC_CHECKALL, m_bnChAll);
+    DDX_Control(pDX, IDC_PROGRESS1, m_progress1);
+    DDX_Text(pDX, IDC_EDIT_PREFIX, m_sPrefix);
     DDX_Text(pDX, IDC_OUT_LPOS, m_sOutLPos);
     DDX_Text(pDX, IDC_OUT_LPOS_REMAIN, m_sOutLPosRemain);
-	DDX_Text(pDX, IDC_OUT_TIME_REMAIN, m_sOutTimeRemain);
-	DDX_Control(pDX, IDC_COMBO1, m_cbFormat);
+    DDX_Text(pDX, IDC_OUT_TIME_REMAIN, m_sOutTimeRemain);
+    DDX_Control(pDX, IDC_COMBO1, m_cbFormat);
     DDX_CBIndex(pDX, IDC_COMBO1, m_iFormat);
+    DDX_Check(pDX, IDC_CHECK_SHUTDOWN, m_bShutdown);
 }
 
 
@@ -77,7 +81,8 @@ bool DExport::UpdateProgressBar(fdms2pos start, fdms2pos pos, fdms2pos len){
     fdms2pos progress;
     progress.setPos(pos.m_Pos);
     progress.addPos(-start.m_Pos);
-    int pr=(int)((UINT64)(1000*progress.m_Sample) / len.m_Sample);
+	int pr = 0;
+	if (len.m_Sample) pr=(int)((UINT64)(1000 * progress.m_Sample) / len.m_Sample);
     m_progress1.SetPos( pr );
     PeekMessage(&msg, m_hWnd,  0, 0, PM_REMOVE);
     switch(msg.message) 
@@ -95,7 +100,15 @@ bool DExport::UpdateProgressBar(fdms2pos start, fdms2pos pos, fdms2pos len){
     p.dumpTimeStrHMSF(psz);
     m_sOutLPosRemain=psz;
     m_timeLast=GetTickCount();
-    p.setSample((m_timeLast-m_timeFirst)*1000/44100);
+    DWORD dift= m_timeLast-m_timeFirst;
+    if (dift>0){
+        DWORD v= progress.m_Pos / dift;
+        if (v>0){
+            DWORD rt= 16*p.m_Pos /v;
+            p.setPos(rt);
+        }
+    }
+    //p.setSample(dift*1000/44100);
     p.dumpTimeStrHMSF(psz);
     m_sOutTimeRemain=psz;
     free(psz);
@@ -143,6 +156,10 @@ void DExport::OnBnClickedOk()
     m_fdms2reader.stop();
 	CloseFiles();
 	OnOK();
+    if (m_bShutdown){
+        CLogoff lo;
+        lo.Shutdown();
+    }
 }
 void DExport::OpenFiles(){
 	CString path;
@@ -181,6 +198,8 @@ void DExport::InitDialog(){
 	    };
     m_cbFormat.SetCurSel(1);
     m_iFormat=1;
+    m_pDoc->DoOrderRegion();
+    UpdateProgressBar(m_pDoc->m_PosRegionStart, m_pDoc->m_PosRegionStart, m_pDoc->m_PosRegionStop);
 }
 int DExport::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {

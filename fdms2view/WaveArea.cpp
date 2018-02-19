@@ -12,14 +12,6 @@
 #define new DEBUG_NEW
 #endif
 
-class CPeekExc {
-public:
-	CPeekExc() {
-	}
-	CPeekExc(const CPeekExc &) {
-
-	}
-};
 
 CWaveArea::CWaveArea(void)
 {
@@ -119,6 +111,7 @@ void CWaveArea::DrawError(int px, int py){
 	m_pDC->LineTo(px, py+m_my);
 
 	m_pDC->SelectObject(pOldPen);
+    pOldPen->DeleteObject();
 }
 void CWaveArea::DrawSeparator(int px, int py){
     CPen penLine(PS_DASH, 1, RGB(255, 0, 0));
@@ -126,6 +119,7 @@ void CWaveArea::DrawSeparator(int px, int py){
 	m_pDC->MoveTo(px, py+m_my);
 	m_pDC->LineTo(px, py-m_my);
 	m_pDC->SelectObject(pOldPen);
+    pOldPen->DeleteObject();
 }
 void CWaveArea::DrawOneDataRaw(IViewTimeLine *pTl){
 		int x=0;
@@ -150,7 +144,6 @@ void CWaveArea::DrawOneData(IViewTimeLine *pTl){
         fdms2pos pLen;
         fdms2pos pos;
 	    fdms2pos start;
-		unsigned int uiDiff = (unsigned int)m_pDoc->m_DisplayXMul;
         try{
             start=m_displayPos;
             pos.setPos(start.m_Pos);
@@ -158,17 +151,16 @@ void CWaveArea::DrawOneData(IViewTimeLine *pTl){
                 short iMax, iMin;
                 px=x+m_Rect.left;
                 iMax=0; iMin=0;
-                if (!pTl->getPeek(pos.m_Sample, uiDiff, m_iCh, iMax, iMin)) throw CPeekExc();
+                if (!pTl->getPeek(pos.m_Sample, m_pDoc->m_DisplayXMul, m_iCh, iMax, iMin)){
+                    DrawError(px+1, y);
+                    return;
+                }
 			    DrawPeek(px, y, iMax, iMin);
                 x++;
 //                if (pos.m_Sample > m_displayMax.m_Sample) break;
-                pos.addSample(uiDiff); // 16
+                pos.addSample(m_pDoc->m_DisplayXMul); // 16
 		    }
-		}
-		catch (const CPeekExc&) {
-			DrawError(px + 1, y);
-		}
-		catch(...){
+		}catch(...){
             DrawError(px+1, y);
 		}
 }
@@ -222,4 +214,6 @@ void CWaveArea::DrawOneScale_dB(){
 	}
 	m_pDC->SelectObject(pOldPen );
 	m_pDC->SelectObject(pOldBrush );
+    pOldPen->DeleteObject();
+    pOldBrush->DeleteObject();
 }

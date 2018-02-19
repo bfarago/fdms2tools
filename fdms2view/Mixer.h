@@ -14,6 +14,10 @@ public:
     void setFaderMaster(int f);
     int getFaderMaster();
     void Serialize(CArchive &ar);
+    void getLineStrip(unsigned int index, CLineStrip*& strip){
+        if (index>=FOSTEXMAXCHANNELS)return;
+        strip=&m_Lines[index];
+    }
 private:
     CLineStrip m_Lines[FOSTEXMAXCHANNELS];
     CLineStrip m_Master;

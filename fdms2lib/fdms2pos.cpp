@@ -11,6 +11,7 @@ fdms2pos::fdms2pos(t1_toffset pos){
     setPos(pos);
 }
 void fdms2pos::setPos(t1_toffset pos){
+    if (pos<0) pos=0;
     m_Pos=pos;
     m_Sample= pos /2 /FOSTEXMAXCHANNELS;
     m_Hour=(int)(m_Sample/3600/FOSTEXSAMPLERATE);
@@ -19,6 +20,7 @@ void fdms2pos::setPos(t1_toffset pos){
     m_Frame=(int)((m_Sample/1764) % FOSTEXFRAMERATE);
 }
 void fdms2pos::setSample(t1_toffset sample){
+    if (sample<0) sample=0;
     m_Pos=sample*2*FOSTEXMAXCHANNELS;
     m_Sample= sample;
     m_Hour=(int)(m_Sample/3600/FOSTEXSAMPLERATE);
@@ -38,6 +40,9 @@ void fdms2pos::setTime(int h, int m, int s, int f, int sf){
 t1_toffset fdms2pos::addPos(t1_toffset pos){
 	setPos(m_Pos+pos);
 	return m_Pos;
+}
+fdms2pos fdms2pos::operator -(const fdms2pos &pos2) const{
+    return m_Pos - pos2.m_Pos;
 }
 void fdms2pos::addSample(t1_toffset sample){
     addPos(sample *2*FOSTEXMAXCHANNELS);
@@ -79,6 +84,13 @@ void fdms2pos::dumpTimeStrHMSF(char*& rpcStr){
 	snprintf(s, HMSSIZE, "%02i:%02i:%02i.%02i", m_Hour, m_Min, m_Sec, m_Frame);
 	if (rpcStr) free(rpcStr);
     rpcStr=strdup(s);
+    free(s);
+}
+void fdms2pos::dumpTimeStrSF(char*& rpcStr){
+	char* s=(char*)malloc(MAXTIMESTR);
+	sprintf_s(s,MAXTIMESTR,"%02i.%02i", m_Sec, m_Frame);
+	if (rpcStr) free(rpcStr);
+    rpcStr=fdms2_strdup(s);
     free(s);
 }
 void fdms2pos::dumpByte(){

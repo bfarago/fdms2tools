@@ -135,8 +135,10 @@
     <ClCompile Include="DExport.cpp" />
     <ClCompile Include="DFdmsProp.cpp" />
     <ClCompile Include="DFrag.cpp" />
+    <ClCompile Include="DGrab.cpp" />
     <ClCompile Include="DMetr.cpp" />
     <ClCompile Include="DMix1.cpp" />
+    <ClCompile Include="DNewProjectWizard.cpp" />
     <ClCompile Include="fdms2reader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
       </PrecompiledHeader>
@@ -147,17 +149,21 @@
     <ClCompile Include="fdms2view_doc.cpp" />
     <ClCompile Include="fdms2view_view.cpp" />
     <ClCompile Include="FileListCubaseXML.cpp" />
+    <ClCompile Include="IpcCom.cpp" />
     <ClCompile Include="LineStrip.cpp" />
+    <ClCompile Include="Logoff.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MapArea.cpp" />
     <ClCompile Include="Mixer.cpp" />
     <ClCompile Include="PeekCache.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="SoundDeviceEnumeration.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="WaveArea.cpp" />
+    <ClCompile Include="WaveLabelArea.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Area.h" />
@@ -166,21 +172,28 @@
     <ClInclude Include="DExport.h" />
     <ClInclude Include="DFdmsProp.h" />
     <ClInclude Include="DFrag.h" />
+    <ClInclude Include="DGrab.h" />
     <ClInclude Include="DMetr.h" />
     <ClInclude Include="DMix1.h" />
+    <ClInclude Include="DNewProjectWizard.h" />
     <ClInclude Include="fdms2reader.h" />
     <ClInclude Include="fdms2view_app.h" />
     <ClInclude Include="fdms2view_doc.h" />
     <ClInclude Include="fdms2view_view.h" />
     <ClInclude Include="FileListCubaseXML.h" />
     <ClInclude Include="hlp\HTMLDefines.h" />
+    <ClInclude Include="IIpcCom.h" />
+    <ClInclude Include="IpcCom.h" />
     <ClInclude Include="IViewTimeline.h" />
     <ClInclude Include="LineStrip.h" />
+    <ClInclude Include="Logoff.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MapArea.h" />
     <ClInclude Include="Mixer.h" />
     <ClInclude Include="PeekCache.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="SoundDeviceEnumeration.h" />
+    <ClInclude Include="WaveLabelArea.h" />
     <CustomBuild Include="Resource.h">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Generating map file for help compiler...</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">echo // Generated Help Map file.  Used by fdms2view.HHP. &gt; "hlp\HTMLDefines.h"

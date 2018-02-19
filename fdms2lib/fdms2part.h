@@ -44,4 +44,16 @@ private:
  fdms2pos   m_Length;
 };
 
+class fdms2parttable{
+public:
+ fdms2parttable();
+ void kill();
+ void init(int n);
+ fdms2part& operator[](int i){return m_parts[i];}
+
+ int m_length;
+ fdms2part* m_parts;
+
+};
+
 #endif

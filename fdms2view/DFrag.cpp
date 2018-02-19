@@ -39,9 +39,9 @@ BOOL DFrag::OnInitDialog()
 	DWORD dwMax=0;
 	int iIdx=0;
 	if (m_Fdms2){
-		for (iIdx=0; iIdx<m_Fdms2->m_PartTableLength[m_SelectedProgram]; iIdx++){
+        for (iIdx=0; iIdx<m_Fdms2->m_partTable[m_SelectedProgram].m_length; iIdx++){
 			char* pszInfo=NULL;
-			m_Fdms2->m_PartTable[m_SelectedProgram][iIdx]->dumpStr(pszInfo);
+			m_Fdms2->m_partTable[m_SelectedProgram][iIdx].dumpStr(pszInfo);
 			CString s;
 			s.Format(L"%S", pszInfo);
 			if (pszInfo){

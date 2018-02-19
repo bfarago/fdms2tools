@@ -31,6 +31,8 @@ public:
     void setFdms2(fdms2* pFdms2, int iPrg, ICacheUser* pUser);
     void init();
     void stop();
+    void erase();
+    void regenerate(ICacheUser* pUser);
     bool isRunning(){
         return (m_cPos>1) && !m_bInit;
     }
@@ -45,5 +47,5 @@ private:
     static DWORD __stdcall ThreadEntry(void* ptr);
     void store();
     bool load();
-    void getPeekFileName(char* s);
+    int getPeekFileName(char* s, int max);
 };

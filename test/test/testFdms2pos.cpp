@@ -34,6 +34,8 @@ SUITE(TestFdms2Pos)
     {
         fdms2pos p1;
         CHECK_EQUAL(0, p1.m_Pos);
+        p1.setPos(-1);
+        CHECK_EQUAL(0, p1.m_Pos);
         for (int v=0; v<10; v++){
             p1.setPos(sizeof(short)*FOSTEXMAXCHANNELS*v);
             CHECK_EQUAL(v, p1.m_Sample);

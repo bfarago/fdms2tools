@@ -63,6 +63,7 @@ SUITE(TestFdms2Reader)
 		CHECK_EQUAL(s , img.getSize());
 
 		printf_s("size:%lli\n", s);
+		f1.start();
 		f1.m_step = 2; // dump partitions
 		f1.dump();
 

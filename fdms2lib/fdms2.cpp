@@ -1,7 +1,11 @@
 /*Writed by Barna Farago <brown@weblapja.com>
 */
 #include "fdms2.h"
-#define MYPAGESIZE (2*8*2048)
+#include "fdms2disk.h"
+//#define MYPAGESIZE (2*8*2048)
+#define MYPAGESIZE  (MAPPAGELENGTH>>5)
+//TODO: Page poolt kéne csinálni mert igy nem optimalis.
+
 #define MAXPAGESIZE (2*1024*1024)
 #define FIRSTDIRBLOCK (0x6000)
 #define FIRSTDATABLOCK (0x50000)
@@ -18,42 +22,49 @@
 #else
 #include <string.h>
 #endif
+
+
+
+#define ROUND_UP_SIZE(Value,Pow2) \
+   ((SIZE_T) ((((ULONG)(Value)) + (Pow2) - 1) \
+   & (~(((LONG)(Pow2)) - 1))))
+
+#define ROUND_UP_PTR(Ptr,Pow2) \
+   ((void *) ((((ULONG_PTR)(Ptr)) + (Pow2) - 1) \
+   & (~(((LONG_PTR)(Pow2)) - 1))))
+
+
 /**Default constructor.
 */
 fdms2::fdms2()
 :m_partitionMode(NormalPartitionMode),m_badBlock(NULL),m_pMap(NULL),m_filename(NULL),m_startpos(0),
-m_length(0), m_badsector(true),m_eof(false),m_pDirMap(NULL),m_oDirMap(0), m_step(0),
-m_oMap(0), m_lMap(0)
+m_length(0), m_badsector(true),m_eof(false),m_pDirMap(NULL),m_oDirMap(0),m_bWriteable(false),
+m_oMap(0), m_lMap(0), m_lDirMap(0), m_required(0), 
+g_pagesize(DEFAULT_PAGESIZE), m_endpos(0),m_bMap(false), m_step(0)
+// m_pDirectMap(NULL),
 {
+ m_ptr=NULL;
+ m_ptrDir=NULL;
 #ifdef WIN32
- m_fdInput=0;
- m_hMap=0;
- m_fdInput=0;
- m_hDirMap=0;
- m_fdDirectory=0;
 #else
  m_flagsInput=0;
  m_fdInput=0;
  m_fdDirectory=0;
 #endif
  for(int i=0; i<FOSTEXMAXPROGRAMM; i++){
-	 m_PartTable[i]=0;
-	 m_PartTableLength[i]=0;
-     m_ProgramSampleCount[i]=0;
+     m_partTable[i].kill();
+	 m_ProgramSampleCount[i]=0;
  }
 }
 fdms2::~fdms2(){
-    stop();
-    if (m_filename) free(m_filename);
+    m_fdms2disk.stop();
 }
 void fdms2::setFileName(const char* s){
-    if (m_filename) {
-        free(m_filename);
-        m_filename=0;
-        
-    }
-    if (s) m_filename= _strdup(s);
+    m_fdms2disk.setFileName(s);
  }
+const char* fdms2::getFileName()const{
+    return m_fdms2disk.getFileName();
+}
 fdms2streamerIF* fdms2::duplicate(){
     fdms2* p=new fdms2;
     p->copy(this);
@@ -65,15 +76,18 @@ void fdms2::copy(fdms2streamerIF* pIF){
     stop(); //dispose previous state
     fdms2* p=(fdms2*)pIF;
     if (!p) return;
-    if (p->m_filename) setFileName(p->m_filename);
+    m_bWriteable=p->m_bWriteable;
+    setFileName(p->getFileName());
     m_eof=false;
     m_badsector=false;
     m_partitionMode=p->m_partitionMode;
+    setNotify(p->getNotify());
 }
 /**Error logger.
 */
 void fdms2::logError(char* err){
- printf("err: fdms2lib : %s \n", err); 
+    messageBox("Err", err);
+    //printf("err: fdms2lib : %s \n", err); 
 }
 t1_toffset fdms2::pagealign(t1_toffset v){
  t1_toffset t=g_pagesize * (t1_toffset)(( v / g_pagesize));
@@ -97,11 +111,16 @@ short fdms2::getValue(t1_toffset pos, int channel, int samplenum){
   rowPos=32*( (t1_toffset)(pos/32) ); 
 //  printf("getValue row:%i\n", rowPos);
   unsigned char* pch=0;
-  pch=(unsigned char*)mapPtr(rowPos, MYPAGESIZE);
+  pch=(unsigned char*)mapPtr(rowPos, m_required);
   if( (pch != NULL) && ((int)pch != -1)){
-//    printf("mapPtr %0x\n", pch);
-    pch+= 4*(8*(samplenum/2) + channel);
-    v= (unsigned short)((unsigned char)(pch[1+2*(samplenum % 2)]) <<8) | (unsigned char)(pch[ 2*(samplenum %2)]);
+    unsigned int indxH=4*(8*(samplenum/2) + channel);
+    if (indxH >= m_lMap){
+       // DLOG("overread");
+        return 0;
+    }
+    pch+= indxH;
+    unsigned int indx=2*(samplenum % 2);
+    v= (unsigned short)((unsigned char)(pch[1+indx]) <<8) | (unsigned char)(pch[ indx]);
   }else{
     v=0;
     m_eof=true;
@@ -112,6 +131,7 @@ short fdms2::getValue(t1_toffset pos, int channel, int samplenum){
 int fdms2::getValues(t1_toffset pos, int channelmap, int samplenum, short* ptrArray, int lenArray){
   int iCount=0;
   //GET data
+   m_required= (samplenum+1)*2*8; //byte
   for (int i=0; i< samplenum; i++){
     int chBit=1;
     for(int ch=0; ch < FOSTEXMAXCHANNELS; ch++){
@@ -128,16 +148,20 @@ int fdms2::getValues(t1_toffset pos, int channelmap, int samplenum, short* ptrAr
   return iCount;
 }
 int fdms2::getValueArrays(t1_toffset pos, int samplenum, short** ptrArray){
+  if (!ptrArray) return 0;
   int iCount=0;
   //GET data
+  reset();
+  m_required= (samplenum+1)*2*8; //byte
   for (int i=0; i< samplenum; i++){
-      reset();
+        if (!m_badsector) reset();
         for(int ch=0; ch < FOSTEXMAXCHANNELS; ch++){
            short s=0;
 	       short *pt=ptrArray[ch];
            if (!m_badsector) s=getValue(pos, ch, i);
            pt[i] = s;
         }
+        if (m_eof) return i;
   }
   return samplenum;
 }
@@ -214,19 +238,12 @@ void fdms2::dumpfostex(t1_toffset pos){
 }
 
 int fdms2::unmap(){
-  if (m_pMap) {
-#ifndef WIN32
-   munmap(m_pMap, m_lMap);
-   printf("after unmap(%x, %Li)\n", m_pMap, m_lMap);
-#else
-   UnmapViewOfFile(m_pMap);
-#endif
-   m_pMap=0;
-  }
-  return 0;
+   if (m_ptr) m_ptr->stopPtr(m_pMap);
+   return 0;
 }
 
 int fdms2::map(t1_toffset offset){
+  int iRet=0;
   m_bMap=true;
   printf("map(%lli)\n",offset);
   unmap();
@@ -234,29 +251,30 @@ int fdms2::map(t1_toffset offset){
   m_badsector=false;
   m_eof=false;
   m_oMap=pagealign(offset);
-  printf("m_oMap: %lli\n",m_oMap);
-  //printf("map\n");
-  //Map
-  int iRet=0;
   t1_toffset offs=m_oMap+FIRSTDATABLOCK;
-  printf("offs: %lli  m_length: %lli m_lMap: %lli\n",offs, m_length, m_lMap);
+//  printf("offs: %lli  m_length: %lli m_lMap: %lli\n",offs, m_length, m_lMap);
 
-  if ((m_lMap+offs) > m_length) m_lMap= m_length-offs;
+  if ((m_lMap+offs) >= (m_length))
+      m_lMap= m_length-offs;
   if (m_lMap<=1){
     m_lMap=MAPPAGELENGTH;	//hack
   }
   if (m_lMap>MAXPAGESIZE){
     m_lMap=MAXPAGESIZE;	//hack
   }
+  if (m_lMap>MAPPAGELENGTH){
+    m_lMap=MAPPAGELENGTH;	//hack
+  }
   m_lMap=pagealign(m_lMap);
   printf("m_lMap: %lli\n", m_lMap);
 
-  if (m_lMap<=1) return -1;
+  if (m_lMap<=1) m_lMap=g_pagesize;
 #ifndef WIN32
   printf("call mapFile(%0x, false, %0x, %lli, %lli)\n", m_fdInput, m_pMap, offs, m_lMap);
   iRet=mapFile(m_fdInput, false, m_pMap, offs, m_lMap);
 #else
-  iRet=mapFile(m_hMap, false, m_pMap, offs, m_lMap);
+  iRet=(int)m_ptr->startPtr(m_pMap, offs, m_lMap, m_lMap, RWReadWrite);
+  //iRet=mapFile(m_hMap, false, m_pMap, offs, m_lMap);
 #endif
   return iRet;
 }
@@ -274,22 +292,35 @@ void* fdms2::mapPtr(t1_toffset pos, t1_toffset max){
    if ((pos+max) >= (m_oMap+m_lMap)) {
     iRet|=map(pos);
    }
-   if (iRet){
-    printf("map() returned by: %i\n", iRet);
+   if ((pos+max)>=m_length){
+       DLOG("eof");
+       return 0;
    }
-   if (m_eof) return m_badBlock;
+   if (iRet){
+       return NULL;
+       //DLOG("map() returned by: %i\n", iRet);
+   }
+   if (m_eof) 
+       return m_badBlock;
    if (pos-m_oMap<0) {
-     logError("negative offset ?");
+     DLOG("negative offset ?");
    }
    if (iRet) return NULL;
    if (m_pMap && !m_badsector){
+       if ((pos-m_oMap+max) >= m_lMap){
+           m_eof=true;
+           return 0;
+       }
     p=(char*)m_pMap + (pos-m_oMap);
+    static t1_toffset posprev=0;
+   // if (posprev!=pos) DLOG("mapPtr(%lli, %lli, %lli, %lli)\n", pos,m_oMap, max, m_lMap);
+    posprev=pos;
    }else{
     p=m_badBlock;
-    printf("mapPtr(%lli, %lli)\n", pos,max);
+    DLOG("mapPtr(%lli, %lli)\n", pos,max);
    }
   }catch(...){
-    logError("catch\n");
+    DLOG("catch\n");
     m_badsector=true;
     p= m_badBlock;
   }
@@ -344,149 +375,33 @@ int fdms2::mapFile(int &rhMap, bool bWrite, void* &rpMap,t1_toffset oMap,t1_toff
   return 0;
 }
 #else
-int fdms2::openFile(const char* filename, bool bWrite, HANDLE &rHFile, HANDLE &rHMap, const char* mapname){
-  int mode=0;
-  int modemap=0;
-  if (bWrite){
-    mode= GENERIC_READ | GENERIC_WRITE;
-    modemap=PAGE_READONLY;
-  }else{
-    mode= GENERIC_READ;
-    modemap=PAGE_READONLY;
-  }
-  if (!filename) return -1;
-  rHFile= CreateFile(filename, 
-                     mode ,
-                     FILE_SHARE_READ, 
-                     NULL,
-                     OPEN_EXISTING, 
-                     FILE_ATTRIBUTE_NORMAL, 
-                     NULL);
 
-  if (rHFile == INVALID_HANDLE_VALUE){
-    logError("File not found.\n");
-    return -1;
-  }
-
-  rHMap= CreateFileMapping(
-		   rHFile,	// use file ?
-		   NULL,	// no security attributes
-		   modemap,	// read/write access
-		   0,		// size: high 32-bits
-		   0,		// size: low 32-bits
-		   mapname);	// name of map object //mapname
-  if (rHMap ==0){
-      CloseHandle(rHFile);
-      rHMap= OpenFileMapping(FILE_MAP_READ, FALSE, filename);
-  }
-  if (rHMap == 0){
-    DWORD dwError=  GetLastError();
-	LPVOID lpMsgBuf;
-	FormatMessage( 
-	FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-    FORMAT_MESSAGE_FROM_SYSTEM | 
-    FORMAT_MESSAGE_IGNORE_INSERTS,
-    NULL,
-    dwError,
-    MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-    (LPTSTR) &lpMsgBuf,
-    0,
-    NULL 
-	);
-	// Process any inserts in lpMsgBuf.
-	// ...
-	// Display the string.
-	MessageBox( NULL, (LPCTSTR)lpMsgBuf, "Error", MB_OK | MB_ICONINFORMATION );
-	// Free the buffer.
-	LocalFree( lpMsgBuf );
-	return -1;
-  }
-  return 0;
-}
-int fdms2::mapFile(HANDLE &rhMap, bool bWrite, void* &rpMap,t1_toffset oMap,t1_toffset lMap){
-  int mode=0;
-  if (bWrite){
-    mode= FILE_MAP_ALL_ACCESS;
-  }else{
-    mode= FILE_MAP_READ;
-  }
-  try{
-	if (rhMap != NULL) {
-	// Get a pointer to the file-mapped shared memory.
-		rpMap = MapViewOfFile( 
-			rhMap,				// object to map view of
-			mode,				// read/write access
-			(DWORD)((unsigned long)(oMap>>32) & (unsigned long)0xFFFFFFFF),	// high offset:  map from
-			(DWORD)(unsigned long)oMap & (unsigned long)0xFFFFFFFF,			// low offset:   beginning
-			(unsigned long)lMap & (unsigned long)0xFFFFFFFF);				// default: map entire file
-		if (rpMap == NULL) {
-			LPVOID lpMsgBuf;
-			FormatMessage( 
-			FORMAT_MESSAGE_ALLOCATE_BUFFER | 
-			FORMAT_MESSAGE_FROM_SYSTEM | 
-			FORMAT_MESSAGE_IGNORE_INSERTS,
-			NULL,
-			GetLastError(),
-			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-			(LPTSTR) &lpMsgBuf,
-			0,
-			NULL 
-			);
-			// Process any inserts in lpMsgBuf.
-			// ...
-			// Display the string.
-//			MessageBox( NULL, (LPCTSTR)lpMsgBuf, "Error", MB_OK | MB_ICONINFORMATION );
-			// Free the buffer.
-			LocalFree( lpMsgBuf );
-			//CloseHandle(rhMap);
-		}
-	}
-    if (rpMap == MAP_FAILED){
-     int tmperrno= errno;
-     logError("We can not mmap the specified file!");
-     return -1;
-    }
-  }catch(...){
-    logError("catch map()");
-    return -1;
-  }
-  return 0;
-}
-int fdms2::directMapFile(void* &rpMap,t1_toffset oMap,t1_toffset lMap){
-    return 0;
-}
 #endif
 
 int fdms2::start(){
- m_pMap=0; m_lMap=0;
- m_badBlock=malloc(MYPAGESIZE);
- 
- t1_toffset mdisksize = getDiskSize();
- if (mdisksize){
-   m_length=mdisksize;
- }
- g_pagesize = getpagesize();
- m_endpos=m_startpos+m_length;
- printf("log: tester1.start: %s\n %016llXh - %016llXh (%016llXh)\n", m_filename, m_startpos, m_endpos , m_length);
- 
- m_length= pagealign(m_length);
- m_endpos=m_startpos+ m_length;
- printf("log: after align : %s\n %016llXh - %016llXh (%016llXh)\n", m_filename, m_startpos, m_endpos , m_length);
- m_badsector=false;
- m_eof=false;
-#ifndef WIN32
- if (openFile(m_filename, false, m_fdInput)) return -1;
-#else
- if (openFile(m_filename, false, m_fdInput, m_hMap, NULL)) return -1; //"mapfilefdms2"
-#endif
+    m_pMap=0; m_lMap=0;
+    m_badBlock=malloc(MYPAGESIZE);
+    if (m_fdms2disk.start() != ErrNone) return -1;
+    m_ptr = m_fdms2disk.getNewPtr();
+    m_ptrDir=m_fdms2disk.getNewPtr();
+    t1_toffset mdisksize = getDiskSize();
+    if (mdisksize){
+        m_length=mdisksize;
+    }
+    g_pagesize = getpagesize();
+    m_endpos=m_startpos+m_length;
+    //printf("log: tester1.start: %s\n %016LXh - %016LXh (%016LXh)\n", m_filename, m_startpos, m_endpos , m_length);
 
-//map
-  map(0);
-  startDirectory();
-  dump();
-  map(0);
+    m_length= pagealign(m_length);
+    m_endpos=m_startpos+ m_length;
+    //printf("log: after align : %s\n %016LXh - %016LXh (%016LXh)\n", m_filename, m_startpos, m_endpos , m_length);
+    m_badsector=false;
+    m_eof=false;
     
-  return 0;
+    map(0);
+    startDirectory();
+    map(0);
+    return 0;
 }
 
 int fdms2::stop(){
@@ -495,17 +410,9 @@ int fdms2::stop(){
     free(m_badBlock);
     m_badBlock=0;
  }
-#ifndef WIN32
- unmap();
-// munmap(m_pMap, m_length);
- close(m_fdInput);
- m_fdInput=0;
-#else
- UnmapViewOfFile(m_pMap);
+ if (m_pMap) if (m_ptr) m_ptr->stopPtr(m_pMap);
+ m_fdms2disk.stop();
  m_pMap=0;
- CloseHandle(m_hMap);
- m_hMap=0;
-#endif
  return 0;
 }
 
@@ -542,42 +449,12 @@ t1_toffset fdms2::getDiskAudioSize(){
 @return 64bit wide size.
 */
 t1_toffset fdms2::getDiskSize(){
-	if (!m_filename) return 0;
-	t1_toffset s=0; 
-#ifndef WIN32
-    struct stat64 st64;
-    stat64(m_filename, &st64);
-    
-    if (S_ISREG(st64.st_mode)){
-        s= st64.st_size;
-		printf("size64 : %lld\n", s);
-    }
-    if (S_ISBLK(st64.st_mode)){
-		s= st64.st_size;
-		printf("blocks : %lld\n", st64.st_blocks);
-		printf("blocksize : %lld\n", st64.st_blksize);
-		printf("size : %lld\n", s);
-    }
-#else
- 
-	HANDLE hFile= CreateFile(m_filename, 
-                     0 ,
-                     FILE_SHARE_READ, 
-                     NULL,
-                     OPEN_EXISTING, 
-                     FILE_ATTRIBUTE_NORMAL, 
-                     NULL);
-	DWORD high=0;
-	s = GetFileSize(hFile,  &high);
-	s+= (((UINT64)high)<<32);
-
-	CloseHandle(hFile);
-
-
-#endif 
+    t1_toffset s= m_fdms2disk.getDiskSize();
     return s;
 }
-
+EDiskType fdms2::getDiskType(){
+    return m_fdms2disk.getDiskType();
+}
 int fdms2::dumpABlock(unsigned char* pC){
  unsigned int vDW=0;
  unsigned int vDW2=0;
@@ -619,14 +496,7 @@ int fdms2::dumpBBlock(unsigned char* pC){
  return iIndx;
 }
 void fdms2::killPrgPartTable(int iPrg){
- if (m_PartTable[iPrg]) {
-     for (int i=0; i<m_PartTableLength[iPrg]; i++){
-         delete( m_PartTable[iPrg][i]);
-     }
-     m_PartTableLength[iPrg]=0;
-     free(m_PartTable[iPrg]);
-     m_PartTable[iPrg]=NULL;
- }
+    m_partTable[iPrg].kill();
 }
 int fdms2::initPrgPartTable(int iPrg, unsigned char* pC){
  unsigned int vDW=0;
@@ -643,16 +513,16 @@ int fdms2::initPrgPartTable(int iPrg, unsigned char* pC){
  while(!getPartFromDisk(iPrg, iIdx, Start, Len)){
 	iIdx++;
  }
- m_PartTable[iPrg]=(fdms2part**)malloc(sizeof(fdms2part*)*(iIdx+1)); // +1 a könyveletlen particio miatt.
- m_PartTableLength[iPrg]=0; //meg nulla
+
+ m_partTable[iPrg].init(iIdx);
  
  iIdx=0;
  if ((m_partitionMode==NormalPartitionMode) || (m_partitionMode == AddUntilTheEnd)){
      while(!getPartFromDisk(iPrg, iIdx, Start, Len)){
-	     m_PartTable[iPrg][iIdx]=new fdms2part(Start,Len, Logical);
+	     m_partTable[iPrg][iIdx].setData(Start,Len, Logical);
 	     iIdx++;
          sampleCount+=Len.m_Sample;
-         m_PartTableLength[iPrg]=iIdx;
+         m_partTable[iPrg].m_length=iIdx;
      }
      if (m_partitionMode == AddUntilTheEnd){
          fdms2pos diskSize;
@@ -661,10 +531,10 @@ int fdms2::initPrgPartTable(int iPrg, unsigned char* pC){
          if (sampleCount < diskSize.m_Sample){
              Start+=Len.m_Pos;
              Len.setSample(diskSize.m_Sample-sampleCount);
-             m_PartTable[iPrg][iIdx]=new fdms2part(Start,Len, Logical);
+             m_partTable[iPrg][iIdx].setData(Start,Len, Logical);
 	         iIdx++;
              sampleCount+=Len.m_Sample;
-             m_PartTableLength[iPrg]++;
+             m_partTable[iPrg].m_length++;
          }
      }
  }else{ //RawFormat
@@ -672,16 +542,18 @@ int fdms2::initPrgPartTable(int iPrg, unsigned char* pC){
     sampleCount=getDiskAudioSize()/16;
     Len.setSample(sampleCount);
     Logical.setPos(0);
-    m_PartTable[iPrg][0]=new fdms2part(Start, Len, Logical);
-    m_PartTableLength[iPrg]=1;
+    m_partTable[iPrg][0].setData(Start, Len, Logical);
+    m_partTable[iPrg].m_length=1;
  }
  m_ProgramSampleCount[iPrg]=sampleCount;
  return iIdx;
 }
 void fdms2::setPartitionMode(enPartitionMode pm){
     m_partitionMode=pm;
-    stopDirectory();
-    startDirectory();
+    if (m_filename){
+        stopDirectory();
+        startDirectory();
+    }
 }
 int fdms2::get2BCD2i(unsigned char* p){
     return (p[0]&0x0F) +
@@ -703,13 +575,18 @@ void fdms2::set4BCD(unsigned char* p, int v){
     p[1]= ((v/100)%10) | ((v/1000)%10 <<4);
 }
 unsigned int fdms2::getDW(unsigned char* p){
- return p[3] | p[2]<<8 | p[1]<<16 | p[0]<<24;
+  return p[2] | p[3]<<8 | p[1]<<24 | p[0]<<16;
+ //return p[3] | p[2]<<8 | p[1]<<16 | p[0]<<24;
 }
 void fdms2::setDW(unsigned char* p, unsigned int v){
-  p[3]= v & 0xff;
+  p[2]= v & 0xff;
+  p[3]= (v >>8) & 0xff;
+  p[0]= (v >>16) & 0xff;
+  p[1]= (v >>24) & 0xff;
+  /*p[3]= v & 0xff;
   p[2]= (v >>8) & 0xff;
   p[1]= (v >>16) & 0xff;
-  p[0]= (v >>24) & 0xff;
+  p[0]= (v >>24) & 0xff;*/
 }
 
 int fdms2::getPart(int iPrg, int iIdx, t1_toffset& riStart, t1_toffset& riLen){
@@ -721,8 +598,8 @@ int fdms2::getPart(int iPrg, int iIdx, t1_toffset& riStart, t1_toffset& riLen){
 int fdms2::getPart(int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rpLen){
     if (!m_pDirMap) return -1;
     if (iPrg>=5) return -3;
-    if (iIdx>=m_PartTableLength[iPrg]) return -2;
-    fdms2part*p=m_PartTable[iPrg][iIdx];
+    if (iIdx >= m_partTable[iPrg].m_length) return -2;
+    fdms2part* p=&m_partTable[iPrg][iIdx];
     if (!p) return -4;
     p->getStartLength(riStart, rpLen);
     return 0;
@@ -730,13 +607,13 @@ int fdms2::getPart(int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rpLen){
 int fdms2::getPartFromDisk(int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rpLen){
 	if (!m_pDirMap) return -1;
     unsigned char* pC=(unsigned char*)m_pDirMap + FIRSTDIRBLOCK+BOFFSDIRBLOCK +
-    iPrg*LENGTHDIRBLOCK + iIdx*8;
+    iPrg*LENGTHDIRBLOCK + iIdx*8 + 8;
     unsigned long vDW=getDW(pC);
 	unsigned long vDW2=getDW(pC+4);
     if (!vDW) return -1;
     if (vDW==0xFFFFFFFF) return -2;
-    riStart= vDW;
-	rpLen.setPos(vDW2);
+    riStart= vDW*512; //sample vs word
+	rpLen.setPos(vDW2*512);
     return 0;
 }
 int fdms2::getMetrum(int iPrg, int iIdx, int& riBar, int& riNumer, int& riDenom){
@@ -776,7 +653,7 @@ int fdms2::getTempo(int iPrg, int iIdx, int& riBar, int& riBeat, int& riTempo){
 void fdms2::setTempo(int iPrg, int iIdx, int& riBar, int& riBeat, int& riTempo){
 	if (!m_pDirMap) return;
     unsigned char* pC=(unsigned char*)m_pDirMap + FIRSTDIRBLOCK+EOFFSDIRBLOCK +
-    iPrg*LENGTHDIRBLOCK + iIdx*4;
+    iPrg*LENGTHDIRBLOCK + iIdx*8;
     set4BCD(pC, riBar);
     pC[3]= riBeat;
     set4BCD(&pC[4], riTempo);
@@ -817,17 +694,61 @@ void fdms2::setClick(int iPrg, bool& rbClick){
     if (rbClick) pC[0]|= 0x08;
     else pC[0]&=0xFB;
 }
+int fdms2::setPartOnDisk(int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rpLen){
+	if (!m_pDirMap) return -1;
+    unsigned char* pC=(unsigned char*)m_pDirMap + FIRSTDIRBLOCK+BOFFSDIRBLOCK +
+    iPrg*LENGTHDIRBLOCK + iIdx*8 + 8;
+
+    unsigned long vDW= riStart/512;
+    unsigned long vDW2=rpLen.m_Pos/512;
+    setDW(pC, vDW);
+    setDW(pC+4,vDW2);
+    return 0;
+}
+void fdms2::quickFormat(){
+    stop();
+    start();
+    for (int iProg=0; iProg<5; iProg++){
+        int iH, iM, iS, iF, iSF;
+        iH=0; iM=59; iS=57; iSF=0;
+        setMtcOffset(iProg, iH, iM, iS, iF, iSF);
+        bool bClick=false;
+        setClick(iProg, bClick);
+
+       // pC=(unsigned char*)m_pDirMap + FIRSTDIRBLOCK+BOFFSDIRBLOCK + iProg*LENGTHDIRBLOCK;
+        t1_toffset iStart=0;
+        fdms2pos len=0;
+        setPartOnDisk(iProg, 0,iStart, len);
+        
+
+        //vDW=0;
+        //iIndx=0;
+        int iRet=0;
+        int iBar, iN, iD;
+        iBar=1; iN=1; iD=4;
+        setMetrum(iProg, 0, iBar, iN, iD);
+        iBar=0; iN=0; iD=0;
+        setMetrum(iProg, 1, iBar, iN, iD);
+
+        //TEMPO
+        int iBeat, iTempo;
+        iBeat=1;
+        iTempo=120;
+        iBar=1;
+        getTempo(iProg, 0, iBar, iBeat, iTempo);
+        iBar=0; iBeat=0; iTempo=0;
+        getTempo(iProg, 1, iBar, iBeat, iTempo);
+              
+    }//for iProg
+    m_ptrDir->writeBack();
+    stop();
+    start();
+}
 int fdms2::startDirectory(){
  int iRet=0;
  m_lDirMap=0x020000;
  m_oDirMap=0;
-#ifndef WIN32
- if (openFile(m_filename, false, m_fdDirectory)) return -1;
- iRet=mapFile(m_fdInput, false, m_pDirMap, m_oDirMap, m_lDirMap);
-#else
- if (openFile(m_filename, false, m_fdDirectory, m_hDirMap, NULL)) return -1; //"mapdirfdms2"
- iRet=mapFile(m_hDirMap, false, m_pDirMap, m_oDirMap, m_lDirMap);
-#endif
+ iRet= (int) m_ptrDir->startPtr(m_pDirMap, m_oDirMap, m_lDirMap, m_lDirMap, RWReadWrite);
  if (iRet) return iRet;
  if (!m_pDirMap) return -1;
  unsigned char * pC=(unsigned char*)m_pDirMap +A1OFFSDIRBLOCK;
@@ -846,13 +767,13 @@ int fdms2::startDirectory(){
  */
 
  for (int iProg=0; iProg<5; iProg++){
-   printf("Program%i:\n", iProg);
+//   printf("Program%i:\n", iProg);
    int iH, iM, iS, iF, iSF;
    getMtcOffset(iProg, iH, iM, iS, iF, iSF);
-   printf(" MTC offset: %02i:%02i:%02i(h:m:s)  %02if %02isf\n", iH, iM, iS, iF, iSF);
+//   printf(" MTC offset: %02i:%02i:%02i(h:m:s)  %02if %02isf\n", iH, iM, iS, iF, iSF);
    bool bClick;
    getClick(iProg, bClick);
-   printf(" Click: %i\n", bClick);
+//   printf(" Click: %i\n", bClick);
   //INDEX?
    pC=(unsigned char*)m_pDirMap + FIRSTDIRBLOCK+BOFFSDIRBLOCK + iProg*LENGTHDIRBLOCK;
 //   dumpBBlock(pC);
@@ -865,7 +786,8 @@ int fdms2::startDirectory(){
    int iBar, iN, iD;
    do{
     iRet=getMetrum(iProg, iIndx, iBar, iN, iD);
-    if (!iRet) printf(" %i: %ibar Metrum: %d/%d\n", iIndx++, iBar, iN, iD);
+  //  if (!iRet) printf(" %i: %ibar Metrum: %d/%d\n", iIndx++, iBar, iN, iD);
+    iIndx++;
    }while (!iRet);
 
  //TEMPO
@@ -873,7 +795,8 @@ int fdms2::startDirectory(){
    iIndx=0;
    do{
     iRet=getTempo(iProg, iIndx, iBar, iBeat, iTempo);
-    if (!iRet) printf(" %i: %ibar %ibeat tempo: %d\n", iIndx++, iBar, iBeat, iTempo);
+    //if (!iRet) printf(" %i: %ibar %ibeat tempo: %d\n", iIndx++, iBar, iBeat, iTempo);
+    iIndx++;
    }while (!iRet);
               
  }//for iProg
@@ -886,10 +809,7 @@ void fdms2::stopDirectory(){
      for (int iPrg=0; iPrg< FOSTEXMAXPROGRAMM; iPrg++){
          killPrgPartTable(iPrg);
      }
-#ifndef WIN32
-  munmap(m_pDirMap, m_lDirMap);
-#else
-  UnmapViewOfFile(m_pDirMap);
-#endif
+     m_ptrDir->stopPtr(m_pDirMap);
  }
 }
+

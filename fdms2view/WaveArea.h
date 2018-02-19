@@ -12,6 +12,8 @@ public:
     void DrawOneDataRaw(IViewTimeLine *pTl);
 	void DrawOneScale_dB();
     virtual void Draw(IViewTimeLine *pTl);
+    void OnLButtonUp(UINT nFlags, CPoint pointUp, CPoint pointDown){}
+    void OnRButtonUp(UINT nFlags, CPoint pointUp, CPoint pointDown){}
     void setData(fdms2pos &displayPos, fdms2pos &displayMax){
         m_displayPos= displayPos;
         m_displayMax= displayMax;

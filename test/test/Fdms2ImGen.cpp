@@ -54,6 +54,19 @@ size_t Fdms2ImGen::addSameByte(int len, unsigned char bdata)
 	free(buf);
 	return size;
 }
+size_t Fdms2ImGen::addDwBigendian(int len, unsigned long long dw)
+{
+	unsigned char buf[8];
+	unsigned long long b=dw;
+	unsigned char* p = (unsigned char*)&b;
+	if (len > 8)len = 8;
+	for (int i = 0; i < len; i++) {
+		buf[i] = p[len-1-i];
+	}
+	size_t size = fwrite(buf, 1, len, m_f);
+	m_size += size;
+	return size;
+}
 int Fdms2ImGen::addCatalog()
 {
 	int r = 0;
@@ -76,12 +89,46 @@ int Fdms2ImGen::addCatalog()
 int Fdms2ImGen::addProgram()
 {
 	int r = 0;
-	size_t size;
-	size = addSameByte(0x200, 'C'); //C
+	size_t size=0;
+	size += addSameByte(4, 'T'); 
+	size += addSameByte(1, 0x34); //MM
+	size += addSameByte(1, 0x12); //HH
+	size += addSameByte(1, ':');
+	size += addSameByte(1, 0x56); //SS
+	size += addSameByte(1, 0x11); //FF
+	size += addSameByte(1, 0x24); //SF
+	size += addSameByte(6, '?'); 
+	size += addSameByte(1, 0x08); //click
+	size += addSameByte(0x200-size, 'C'); //C
+
 	size = addSameByte(0x600, 'X'); //X
-	size = addSameByte(0x800, 'B'); //B
-	size = addSameByte(0x800, 'D'); //D
-	size = addSameByte(0x800, 'E'); //E
+
+	size = 0; //B block: index
+	size += addDwBigendian(4, 0x00050060); //todo: startpos
+	size += addDwBigendian(4, 0x00000100); //todo: len
+	size += addDwBigendian(4, 0x00000000); //stop
+	size += addDwBigendian(4, 0x00000000); //
+	size += addSameByte(0x800-size, 'B'); //B
+
+	size = 0;
+	size += addSameByte(1, 0x01); // 0001 bar
+	size += addSameByte(1, 0x00); 
+	size += addSameByte(1, 0x04); // 2/4
+	size += addSameByte(1, 0x03);
+	size += addDwBigendian(4, 0x00000000); //stop
+	size = addSameByte(0x800-size, 'D'); //D
+
+	size = 0;
+	size += addSameByte(1, 0x01); // 0001 bar
+	size += addSameByte(1, 0x00);
+	size += addSameByte(1, 0x00);
+	size += addSameByte(1, 0x01);
+	size += addSameByte(1, 0x20);
+	size += addSameByte(1, 0x01);
+	size += addSameByte(1, 0x00);
+	size += addSameByte(1, 0x00);
+	size += addDwBigendian(4, 0x00000000); //stop
+	size = addSameByte(0x800-size, 'E'); //E
 	return r;
 }
 int Fdms2ImGen::addGapFF()

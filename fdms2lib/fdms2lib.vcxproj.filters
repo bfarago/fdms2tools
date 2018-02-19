@@ -29,6 +29,9 @@
     <ClCompile Include="fdms2pos.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="fdms2error.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fdms2.h">
@@ -50,6 +53,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="fdms2pos.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fdms2error.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

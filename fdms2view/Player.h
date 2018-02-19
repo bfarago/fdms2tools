@@ -14,6 +14,13 @@ class CPlayer //: public CDocument, public ICacheUser
 {
 //Interface
 public:
+    typedef union{ 
+        struct {
+            unsigned char mixerFault:1;
+        } flags;
+        DWORD dw;
+    }tErrorCode;
+    tErrorCode m_errorCode;
     CPlayer();
     static CPlayer* getInstance();
     // TODO: doc valtas miatt egy struktúrába tegyük? vagy hogy?
@@ -34,6 +41,7 @@ public:
 
     void initPlayer();
     void killPlayer();
+    
     bool getPlayNow(){ return m_bPlayNow; }
 
 // Operations
@@ -67,14 +75,24 @@ protected:
     DWORD   m_waveSize;
     DWORD   m_waveSampleMax;
     short** m_waveMultiChannel;
-    WAVEHDR m_waveHdr[2];
-    WAVEHDR* m_waveLastHdr;
 
+    #define MAX_WHSIZE (1<<3)
+    #define MASK_WHSIZE (MAX_WHSIZE-1)
+    WAVEHDR m_waveHdr[MAX_WHSIZE];
+    WAVEHDR* m_waveLastHdr;
+    HANDLE m_thHandle;
+    DWORD m_thId;
+    unsigned char m_iMixer;
+    unsigned char m_iStreamer;
+    bool m_bRun;
+    DWORD worker();
+    static DWORD __stdcall ThreadEntry(void* ptr);
     DWORD mixWaveData(short* buf, DWORD size);
     long QueueWaveData(WAVEHDR * waveHeader);
+    void stopWorker();
     void waveHandler(HWAVEOUT waveOut, UINT uMsg, DWORD dwParam1, DWORD dwParam2);
     static void CALLBACK waveCallback(HWAVEOUT waveOut, UINT uMsg, DWORD dwInstance, DWORD dwParam1, DWORD dwParam2);
-
+    void InitMixer();
 // Implementation
 public:
 	virtual ~CPlayer();

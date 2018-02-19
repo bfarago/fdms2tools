@@ -1,5 +1,6 @@
 #pragma once
 #include "fdms2.h"
+#include "afxcmn.h"
 
 // DFdmsProp dialog
 
@@ -24,6 +25,13 @@ public:
     int m_iRadioPM;
 	afx_msg void OnBnClickedButtonFnBrowse();
     virtual BOOL OnInitDialog();
+    void setFdms2Disk(fdms2disk* p){m_fdms2disk=p;}
 protected:
+    fdms2disk* m_fdms2disk;
     virtual void OnOK();
+    void Refresh();
+public:
+    CListCtrl m_listDisks;
+    afx_msg void OnLvnItemActivateListDisk(NMHDR *pNMHDR, LRESULT *pResult);
+    afx_msg void OnBnClickedButtonRefresh();
 };

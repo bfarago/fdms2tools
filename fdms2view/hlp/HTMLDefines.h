@@ -35,6 +35,9 @@
 #define HID_BUTTON_TP_BEGIN                     0x18014
 #define HID_EDIT_PLAY_TOGGLE                    0x18017
 #define HID_EXPORT_MULTITRACK                   0x18019
+#define HID_DEVICE_GRAB                         0x1801A
+#define HID_VIEW_RECREATEPEEKFILE               0x1801B
+#define HID_DEVICE_QUICKFORMAT                  0x18021
  
 // Prompts (IDP_*) 
 #define HIDP_OLE_INIT_FAILED                    0x30064
@@ -53,6 +56,8 @@
 #define HIDD_DIALOG_EXPORT                      0x2008E
 #define HIDD_DIALOG_MIX1                        0x20099
 #define HIDD_DIALOG_AUDIODEVICE                 0x2009E
+#define HIDD_DIALOG_GRAB                        0x2009F
+#define HIDD_DIALOG_NEW                         0x200A0
  
 // Frame Controls (IDW_*) 
 // This is a part of the Microsoft Foundation Classes C++ library.

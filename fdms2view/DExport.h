@@ -54,4 +54,6 @@ private:
     DWORD m_timeLast;
     SNDFILE* m_files[FOSTEXMAXCHANNELS];
 	SF_INFO m_sfinfos[FOSTEXMAXCHANNELS];
+public:
+    BOOL m_bShutdown;
 };

@@ -1,6 +1,6 @@
 // testermfc_fdms2libView.cpp : implementation of the CFdms2View_View class
 //
-// #define _WIN32_WINNT _WIN
+//#define _WIN32_WINNT 0x0500
 #include "stdafx.h"
 #include "fdms2view_app.h"
 #include "fdms2view_doc.h"
@@ -12,7 +12,7 @@
 #define new DEBUG_NEW
 #endif
 
-#define WAVELEFTPADX  20
+#define WAVELEFTPADX  64
 
 // CFdms2View_View
 
@@ -22,17 +22,19 @@ BEGIN_MESSAGE_MAP(CFdms2View_View, CView)
 	ON_WM_MOUSEWHEEL()
 	ON_WM_MOUSEMOVE()
 	ON_WM_LBUTTONUP()
+    ON_WM_RBUTTONUP()
 	ON_WM_TIMER()
     ON_WM_LBUTTONDOWN()
     ON_WM_ERASEBKGND()
     ON_WM_CREATE()
     ON_COMMAND(ID_VIEW_DB, &CFdms2View_View::OnViewDb)
     ON_COMMAND(ID_ZOOMY_MAX, OnZoomyMax)
+    ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 // CFdms2View_View construction/destruction
 
-CFdms2View_View::CFdms2View_View():m_ViewMode(0),m_ValMode(0), m_yRulerBottom(0)
+CFdms2View_View::CFdms2View_View():m_ViewMode(0),m_ValMode(0), m_yRulerBottom(53)
 {
 }
 
@@ -49,15 +51,20 @@ BOOL CFdms2View_View::PreCreateWindow(CREATESTRUCT& cs)
 void CFdms2View_View::InitWaveAreas(){
 	for (int i=0; i<8; i++){
         m_WaveArea[i].setColorBkg(RGB(0xe0, 0xe0+(15* (i&1)), 0xf0));
+        m_WaveLabelArea[i].setColorBkg(RGB(0xe0, 0xe0+(15* (i&1)), 0xf0));
         m_WaveArea[i].setChannel(i);
+        m_WaveLabelArea[i].setChannel(i);
 	}
 }
-void CFdms2View_View::updateDisplay(){
+void CFdms2View_View::updateDisplay(bool bInvalidate){
     CFdms2View_Doc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
     fdms2pos posCursor= pDoc->getPosEditCursor();
     if ((posCursor < m_PosDisplayStart)||(m_PosDisplayStop < posCursor)){
         m_PosDisplayStart=posCursor;
+        bInvalidate=true;
+    }
+    if (bInvalidate){
         Invalidate();
     }
 }
@@ -75,29 +82,57 @@ void CFdms2View_View::updateData(){
 void CFdms2View_View::StartWaveAreas(CDC* pDC){
 	CFdms2View_Doc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
+    updateData();
+    for (unsigned int i=0; i<8; i++){
+        CLineStrip *pStrip=NULL;
+        pDoc->getLineStrip(i, pStrip);
+        m_WaveArea[i].registerDoc(pDoc);  //TODO: check if its need or not?
+        m_WaveLabelArea[i].registerDoc(pDoc);
+        m_WaveLabelArea[i].registerLineStrip(pStrip);
+        m_WaveArea[i].setData(getDisplayStart(), getPeekMaxLength());
+		m_WaveArea[i].setDC(pDC);
+        m_WaveLabelArea[i].setDC(pDC);
+    }
+    m_MapArea.registerDoc(pDoc);
+    m_MapArea.setDC(pDC);
+    ResizeAreas();
+}
+void CFdms2View_View::ResizeAreas(){
+    int hs=0;
+    int hh=0;
+    for (unsigned int i=0; i<FOSTEXMAXCHANNELS; i++){
+        if (m_WaveLabelArea[i].getHide()) hh++;
+        else hs++;
+    }
+    CFdms2View_Doc* pDoc = GetDocument();
     CRect r;	
 	CRect RectCh;
-    
+	CRect RectLabel;
     this->GetClientRect(&r);
 	int dx=r.Width()-WAVELEFTPADX;
 	int dy=r.Height() - (m_yRulerBottom+20);
-    m_my=(dy-20)/18;
+    if (hs){
+        m_my=(dy-20-(10*hh))/hs;
+    }
     m_PosDisplayStop=getDisplayPos(dx);
-    updateData();
-    
-	for (int i=0; i<8; i++){
-        m_WaveArea[i].registerDoc(pDoc);  //TODO: check if its need or not?
-        m_WaveArea[i].setData(getDisplayStart(), getPeekMaxLength());
-		int y=m_yRulerBottom+10+i*m_my*2;
+    int y=m_yRulerBottom+10;
+	for (unsigned int i=0; i<FOSTEXMAXCHANNELS; i++){
+        //TODO: wavelabel es wave legyen egy osztalyban?
+        int ay=m_my;
+        if (m_WaveLabelArea[i].getHide()){
+            ay=10;
+        }
 		RectCh.top=y+3;
-		RectCh.bottom=y+m_my*2;
+		RectCh.bottom=y+ay;
 		RectCh.left=WAVELEFTPADX;
 		RectCh.right=dx+WAVELEFTPADX;
-		m_WaveArea[i].setDC(pDC);
+        RectLabel=RectCh;
+        RectLabel.left=5;//Cursor pixels
+        RectLabel.right=WAVELEFTPADX-2;
         m_WaveArea[i].setRect(&RectCh);
+        m_WaveLabelArea[i].setRect(&RectLabel);
+        y+=ay;
 	}
-    m_MapArea.registerDoc(pDoc);
-    m_MapArea.setDC(pDC);
     RectCh.top= RectCh.bottom+5;
     RectCh.bottom= RectCh.top + dy;
     m_MapArea.setRect(&RectCh);
@@ -126,16 +161,16 @@ void CFdms2View_View::OnDraw(CDC* pDC){
     CBrush bRed( RGB(0xff, 0x00, 0x00));
     m_DCTmp.FillRect(&r, &bWhite);
 	StartWaveAreas(&m_DCTmp);
-    m_yRulerBottom=1;
+    //m_yRulerBottom=1;
     switch (pDoc->m_DisplayMode){
         case 1:
+            OnDrawOrdinata(&m_DCTmp);
 	        OnDrawRawVUs(&m_DCTmp);
-	        OnDrawOrdinata(&m_DCTmp);
 	        OnDrawRegion(&m_DCTmp);
             break;
         case 0:
-	        OnDrawVUs(&m_DCTmp);
 	        OnDrawOrdinata(&m_DCTmp);
+	        OnDrawVUs(&m_DCTmp);
 	        OnDrawRegion(&m_DCTmp);
             break;
         case 2:
@@ -149,6 +184,7 @@ void CFdms2View_View::OnDraw(CDC* pDC){
     m_DCTmp.DeleteDC();
     m_BitmapTmp.DeleteObject();
     SetCursor(oldCursor);
+    DeleteObject(oldCursor);
 }
 #include <math.h>
 void CFdms2View_View::OnDrawOrdinata(CDC* pDC)
@@ -179,11 +215,20 @@ void CFdms2View_View::OnDrawOrdinata(CDC* pDC)
         free(str);
 	}
 	y+=16;
+    for (int i=0;i<7; i++){
+		int xx=i*dx/8+ (dx/16);
+        char * str=NULL;
+        getDisplayPos(xx).dumpTimeStrSF(str);
+        CString sstr;
+		sstr.Format(L"%S", str);
+        OnDrawOneTimeStamp(pDC, rect.left+xx , y, sstr);
+        free(str);
+	}
 	int olds=-1;
 	fdms2pos ps;
     //time
-	for (int i=dx; i>0; i--){
-		ps.setSample(__int64(i* pDoc->m_DisplayXMul /16));
+	/*for (int i=dx; i>0; i--){
+		ps.setSample(i* pDoc->m_DisplayXMul /16);
         ps.addPos(m_PosDisplayStart.m_Pos);
 		if (ps.m_Frame<1)
 		if (ps.m_Sec!=olds){
@@ -196,12 +241,12 @@ void CFdms2View_View::OnDrawOrdinata(CDC* pDC)
 			olds=ps.m_Sec;
 			i-=100;
 		}
-	}
+	}*/
 	y+=16;
 	olds=-1;
     //frame
 	for (int i=dx; i>0; i--){
-		ps.setSample(__int64(i* pDoc->m_DisplayXMul /16));
+		ps.setSample(i* pDoc->m_DisplayXMul /16);
         ps.addPos(m_PosDisplayStart.m_Pos);
 		if (ps.m_Frame<1)
 		if (ps.m_Sec!=olds){
@@ -263,6 +308,8 @@ void CFdms2View_View::RedrawCursors(){
     m_MapArea.setDC(pDC);
     m_MapArea.Draw(this);
 	StopWaveAreas();
+    ReleaseDC(pDC);
+//    pDC->DeleteDC();
 }
 void CFdms2View_View::OnDrawRegion(CDC* pDC){
 	COLORREF crBack=RGB(0xFF, 0xFF, 0xFF);
@@ -274,19 +321,20 @@ void CFdms2View_View::OnDrawRegion(CDC* pDC){
 	rect.left+=WAVELEFTPADX;
 	int y=m_yRulerBottom;//16*4+4;
 	int dx=rect.Width();
-    CPen penLine2(PS_SOLID, 2, RGB(0, 0x70,0));
-		
+    CPen* pOldPen =NULL;
+    COLORREF crPenLine=RGB(0, 0x70,0);
 	int x1=rect.left + (pDoc->m_PosRegionStart.m_Sample-m_PosDisplayStart.m_Sample)/pDoc->m_DisplayXMul;
 	int x2=rect.left + (pDoc->m_PosRegionStop.m_Sample-m_PosDisplayStart.m_Sample)/pDoc->m_DisplayXMul;
 	int xp=rect.left + (pDoc->m_PosEditCursor.m_Sample-m_PosDisplayStart.m_Sample)/pDoc->m_DisplayXMul;
 	if (x2<x1){
-		CPen penLine(PS_SOLID, 2, RGB(0xff, 0,0));
-		CBrush brushLine(RGB(255, 0, 0));
-		CPen* pOldPen = pDC->SelectObject(&penLine);
-		CBrush* pOldBrush =pDC->SelectObject(&brushLine);
-        int tmp=x1;
+		//crPenLine=RGB(0xff, 0,0);
+		//CBrush brushLine(RGB(255, 0, 0));
+	    int tmp=x1;
         x1=x2; x1=tmp;
 	}
+    CPen penLine(PS_SOLID, 1, crPenLine);
+    pOldPen = pDC->SelectObject(&penLine);
+	//CBrush* pOldBrush =pDC->SelectObject(&brushLine);
 	pDC->FillSolidRect(rect.left, y, dx,16,crBack);
 
     if (x1> WAVELEFTPADX){
@@ -311,6 +359,10 @@ void CFdms2View_View::OnDrawRegion(CDC* pDC){
         m_prevCursor=rC;
         if (rC.left) pDC->InvertRect(rC);
     }
+    pDC->SelectObject(pOldPen);
+    pOldPen->DeleteObject();
+    //m_pDC->SelectObject(pOldBrush );
+    //pOldBrush->DeleteObject();
 }
 		
 fdms2pos CFdms2View_View::getDisplayPos(int posx){
@@ -327,6 +379,7 @@ void CFdms2View_View::getDisplayStartPartOffs(int &iPart, INT64 &iOffs){
 void CFdms2View_View::OnDrawVUs(CDC* pDC)
 {
 	for (int ch=0; ch<8; ch++){
+        m_WaveLabelArea[ch].DrawOne();
 		m_WaveArea[ch].DrawOneScale_dB();
 		m_WaveArea[ch].DrawOneData(this);
 	}
@@ -334,6 +387,7 @@ void CFdms2View_View::OnDrawVUs(CDC* pDC)
 void CFdms2View_View::OnDrawRawVUs(CDC* pDC)
 {
 	for (int ch=0; ch<8; ch++){
+        m_WaveLabelArea[ch].DrawOne();
 		m_WaveArea[ch].DrawOneScale_dB();
 		m_WaveArea[ch].DrawOneDataRaw(this);
 	}
@@ -411,7 +465,6 @@ CFdms2View_Doc* CFdms2View_View::GetDocument() const // non-debug version is inl
 }
 #endif //_DEBUG
 
-
 // CFdms2View_View message handlers
 BOOL CFdms2View_View::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 {
@@ -428,9 +481,11 @@ BOOL CFdms2View_View::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 	}
     if ((nFlags & (MK_SHIFT | MK_CONTROL))==0){
          m_PosDisplayStart.addPos( zDelta* pDoc->m_DisplayXMul);
-         if (m_PosDisplayStart.m_Pos<0) m_PosDisplayStart.setPos(0);
     }
+    pDoc->ValidatePos(m_PosDisplayStart);
+    pDoc->ValidatePos(m_PosDisplayStop);
 	Invalidate();
+    //updateDisplay(true);
 	return CView::OnMouseWheel(nFlags, zDelta, pt);
 }
 
@@ -446,8 +501,22 @@ void CFdms2View_View::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	CFdms2View_Doc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
+    if (point.x<WAVELEFTPADX){
+        for (int i=0; i< FOSTEXMAXCHANNELS; i++){
+            CRect* r= m_WaveLabelArea[i].getRect();
+            if (r->PtInRect(point)){
+                m_WaveLabelArea[i].OnLButtonUp(nFlags, point, m_pointLMouseDown);
+                Invalidate();
+            }
+        }
+        CView::OnLButtonUp(nFlags, point);
+        return;
+    }
     INT64 s=((point.x-WAVELEFTPADX)* pDoc->m_DisplayXMul)+m_PosDisplayStart.m_Sample; //TODO: van rá függvény
-    
+    if (m_MapArea.getRect()->PtInRect(point)){
+        m_MapArea.OnLButtonUp(nFlags, point, m_pointLMouseDown);// TODO return value about handling.
+        return;
+    }   
 	if (nFlags & MK_CONTROL){
 		pDoc->m_PosRegionStart.setSample(s);
 	}
@@ -455,8 +524,9 @@ void CFdms2View_View::OnLButtonUp(UINT nFlags, CPoint point)
 		pDoc->m_PosRegionStop.setSample(s);
 	}
     if ((nFlags & (MK_CONTROL | MK_SHIFT))==0){
-        if (abs(point.x-m_pointMouseDown.x)>2){
-            m_PosDisplayStart.addSample( -(point.x-m_pointMouseDown.x)* pDoc->m_DisplayXMul);
+
+        if (abs(point.x-m_pointLMouseDown.x)>2){
+            m_PosDisplayStart.addSample( -(point.x-m_pointLMouseDown.x)* pDoc->m_DisplayXMul);
                 //(point.x-m_WaveArea[0].m_dx/2) * pDoc->m_DisplayXMul);
             if (m_PosDisplayStart.m_Pos<0) m_PosDisplayStart.setPos(0);
             Invalidate();
@@ -472,10 +542,27 @@ void CFdms2View_View::OnLButtonUp(UINT nFlags, CPoint point)
 }
 void CFdms2View_View::OnLButtonDown(UINT nFlags, CPoint point)
 {
-    m_pointMouseDown=point;
+    m_pointLMouseDown=point;
     __super::OnLButtonDown(nFlags, point);
 }
-
+void CFdms2View_View::OnRButtonUp(UINT nFlags, CPoint point)
+{
+    if (point.x<WAVELEFTPADX){
+        for (int i=0; i< FOSTEXMAXCHANNELS; i++){
+            CRect* r= m_WaveLabelArea[i].getRect();
+            if (r->PtInRect(point)){
+                m_WaveLabelArea[i].OnRButtonUp(nFlags, point, m_pointRMouseDown);
+                Invalidate();
+            }
+        }
+    }
+    __super::OnRButtonUp(nFlags, point);
+}
+void CFdms2View_View::OnRButtonDown(UINT nFlags, CPoint point)
+{
+    m_pointRMouseDown=point;
+    __super::OnRButtonDown(nFlags, point);
+}
 void CFdms2View_View::OnTimer(UINT nIDEvent)
 {
 	CFdms2View_Doc* pDoc = GetDocument();
@@ -548,4 +635,22 @@ void CFdms2View_View::OnZoomyMax()
 	ASSERT_VALID(pDoc); //TODO: a display level lehetne-e a view-ban? mert arra vonatkozik.
 	pDoc->m_DisplayLevelValue = 0x7FFF;
 	//UpdateAllViews(NULL, 0);
+}
+
+void CFdms2View_View::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+    CFdms2View_Doc* pDoc = GetDocument();
+	ASSERT_VALID(pDoc); //TODO: a display level lehetne-e a view-ban? mert arra vonatkozik.
+    pDoc->DoOrderRegion();
+
+    switch (nChar){
+        case VK_HOME: m_PosDisplayStart.setPos( pDoc->m_PosRegionStart.m_Pos); break;
+        case VK_END: m_PosDisplayStart.setPos( pDoc->m_PosRegionStop.m_Pos); break;
+        case VK_LEFT: m_PosDisplayStart.addSample(-44100); break;
+        case VK_RIGHT: m_PosDisplayStart.addSample(44100); break;
+        case VK_UP: pDoc->addDisplayXZoom(this, 40); break;
+        case VK_DOWN: pDoc->addDisplayXZoom(this, 70); break;
+    }
+    Invalidate();
+    __super::OnKeyDown(nChar, nRepCnt, nFlags);
 }

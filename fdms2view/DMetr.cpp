@@ -47,9 +47,9 @@ void DMetr::DoDataExchange(CDataExchange* pDX)
 	DDV_MinMaxInt(pDX, m_iM1, 1, 15);
 	DDX_Text(pDX, IDC_EDIT2, m_iM2);
 	DDV_MinMaxInt(pDX, m_iM2, 1, 16);
-	DDX_Text(pDX, IDC_EDIT_BAR, m_iTBar);
+	DDX_Text(pDX, IDC_EDIT_BAR, m_iMBar);
 	DDV_MinMaxInt(pDX, m_iTBar, 1, 9999);
-	DDX_Text(pDX, IDC_EDIT_MBAR, m_iMBar);
+	DDX_Text(pDX, IDC_EDIT_MBAR, m_iTBar);
 	DDV_MinMaxInt(pDX, m_iMBar, 1, 9999);
 	DDX_Text(pDX, IDC_EDIT_Q, m_iMQ);
 	DDV_MinMaxInt(pDX, m_iMQ, 1, 15);
@@ -69,6 +69,10 @@ void DMetr::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(DMetr, CDialog)
+    ON_BN_CLICKED(IDC_BUTTON_TADD, &DMetr::OnBnClickedButtonTadd)
+    ON_BN_CLICKED(IDOK, &DMetr::OnBnClickedOk)
+    ON_LBN_SELCHANGE(IDC_LIST_TEMPO, &DMetr::OnLbnSelchangeListTempo)
+    ON_LBN_SELCANCEL(IDC_LIST_METR, &DMetr::OnLbnSelcancelListMetr)
 END_MESSAGE_MAP()
 
 
@@ -102,3 +106,35 @@ BOOL DMetr::OnInitDialog()
     UpdateData(FALSE);
 	return TRUE;  // return TRUE unless you set the focus to a control
 }
+
+void DMetr::OnBnClickedButtonTadd()
+{
+    UpdateData(TRUE);
+	int iRet=0, iIdx= m_lbTempo.GetCount();
+    m_fdms2->setTempo(m_SelectedProgram, iIdx, m_iTBar, m_iTQ, m_iTempo);
+    if (!iRet){
+        CString s;
+		s.Format(L"%04dbar %ibeat tempo: %i", m_iTBar, m_iTQ, m_iTempo);
+		int id=m_lbTempo.AddString(s);	
+        //m_lbTempo.SetItemData(id, dw);
+		iIdx++;
+	}
+    UpdateData(FALSE);
+}
+void DMetr::OnLbnSelchangeListTempo()
+{
+    // TODO: Add your control notification handler code here
+}
+
+void DMetr::OnLbnSelcancelListMetr()
+{
+    // TODO: Add your control notification handler code here
+}
+
+void DMetr::OnBnClickedOk()
+{
+    UpdateData(TRUE);
+    m_fdms2->setMtcOffset(m_SelectedProgram, m_iMTCO_H, m_iMTCO_M, m_iMTCO_S, m_iMTCO_F, m_iMTCO_SF);
+    OnOK();
+}
+

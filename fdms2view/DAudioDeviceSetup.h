@@ -1,13 +1,6 @@
 #pragma once
 #include "afxwin.h"
-//#include "fdms2view_doc.h"
 #include "afxcmn.h"
-
-#ifdef USE_DSOUND
-#pragma comment(linker,"\dx\samples\VC70\common\$(OutDir)\DXUT.lib") 
-#pragma comment(linker,"dsound.lib") 
-#pragma comment(linker,"dxerr.lib") 
-#endif
 
 // DAudioDeviceSetup dialog
 class CFdms2View_Doc;
@@ -30,4 +23,9 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 	CComboBox m_cbSoundDevice;
+    CComboBox m_cbCaptureDevice;
+    CComboBox m_cbBufferOutSize;
+    afx_msg void OnCbnSelchangeSoundDeviceCombo();
+    
+    afx_msg void OnCbnSelchangeCaptureDeviceCombo();
 };

@@ -5,6 +5,7 @@
 #pragma once
 #include "maparea.h"
 #include "wavearea.h"
+#include "wavelabelarea.h"
 #include "iviewtimeline.h"
 
 
@@ -21,11 +22,12 @@ public:
 // Operations
 public:
     virtual fdms2pos& getDisplayStart(){ return m_PosDisplayStart; }
+    virtual fdms2pos& getDisplayStop(){ return m_PosDisplayStop; }
     virtual void     getDisplayStartPartOffs(int &iPart, INT64 &iOffs);
     virtual fdms2pos getDisplayPos(int posx);
     virtual bool getPeek(INT64 iOffs, unsigned int uiDiff, short iCh, short &iMax, short &iMin);
     virtual fdms2pos getPeekMaxLength();
-    void updateDisplay();
+    void updateDisplay(bool bInvalidate=false);
     signed short val2db(signed short val);
 	void RedrawCursors();
 	
@@ -50,10 +52,12 @@ protected:
     int m_ViewMode;
     int m_ValMode;
 	CWaveArea m_WaveArea[8];
+    CWaveLabelArea m_WaveLabelArea[8];
     CMapArea m_MapArea;
 	CPoint m_pointMouse;
 	CPoint m_pointMouseOld;
-    CPoint m_pointMouseDown;
+    CPoint m_pointLMouseDown;
+    CPoint m_pointRMouseDown;
     CRect m_prevCursor;
     int m_yRulerBottom;
     CDC m_DCTmp;
@@ -61,6 +65,7 @@ protected:
     void updateData();
 	void InitWaveAreas();
 	void StartWaveAreas(CDC* pDC);
+    void ResizeAreas();
 	void StopWaveAreas();
 // Implementation
 public:
@@ -77,16 +82,22 @@ public:
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-	afx_msg void OnTimer(UINT nIDEvent);
     afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
+    afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnTimer(UINT nIDEvent);
     afx_msg BOOL OnEraseBkgnd(CDC* pDC);
     afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
     afx_msg void OnViewDb();
     afx_msg void OnZoomyMax();
+    afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 };
 
 #ifndef _DEBUG  // debug version in testermfc_fdms2libView.cpp
 inline CFdms2View_Doc* CFdms2View_View::GetDocument() const
-   { return reinterpret_cast<CFdms2View_Doc*>(m_pDocument); }
+    { 
+       ASSERT_VALID(m_pDocument);
+       return reinterpret_cast<CFdms2View_Doc*>(m_pDocument);
+    }
 #endif
 

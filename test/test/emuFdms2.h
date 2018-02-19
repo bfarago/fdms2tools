@@ -29,9 +29,12 @@ public:
         if (iIdx>0) return 1; //only one partition.
         return 0;
     }
+    virtual void setWriteable(bool bWrite){
+    }
     void emuReset(){
         iReset=iStart=iStop=iDuplicate=iGetValueArrays=iConvertLogical2Abs=iGetPart=0;
     }
+    
 private:
     int iReset, iStart, iStop, iDuplicate, iGetValueArrays, iConvertLogical2Abs,iGetPart;
 };

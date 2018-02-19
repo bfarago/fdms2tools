@@ -95,6 +95,24 @@
     <ClCompile Include="Player.cpp">
       <Filter>Player</Filter>
     </ClCompile>
+    <ClCompile Include="IpcCom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Logoff.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DGrab.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="DNewProjectWizard.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="WaveLabelArea.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="SoundDeviceEnumeration.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fdms2reader.h">
@@ -168,6 +186,27 @@
     </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>Player</Filter>
+    </ClInclude>
+    <ClInclude Include="IIpcCom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IpcCom.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Logoff.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DGrab.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="DNewProjectWizard.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="WaveLabelArea.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundDeviceEnumeration.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

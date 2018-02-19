@@ -6,14 +6,18 @@
 #include "fdms2common.h"
 #include "fdms2pos.h"
 #include "fdms2part.h"
+#include "fdms2error.h"
+#include "fdms2disk.h"
+
 enum enPartitionMode{
     NormalPartitionMode=0,
     AddUntilTheEnd,
     RawFormat
 };
-class fdms2streamerIF{
+class fdms2streamerIF: public fdms2errorIF{
 public:
     virtual void reset()=0;
+    virtual void setWriteable(bool bWrite)=0;
     virtual int start()=0;
     virtual int stop()=0;
     virtual fdms2streamerIF* duplicate()=0;
@@ -28,8 +32,9 @@ public:
  fdms2();
  ~fdms2();
  void setFileName(const char* s);
- char* getFileName(){
-     return m_filename;
+ const char* getFileName()const;
+ virtual void setWriteable(bool bWrite){
+     m_bWriteable=bWrite;
  }
  t1_toffset  m_startpos;
  t1_toffset  m_length;
@@ -42,7 +47,7 @@ public:
  t1_toffset getDiskSize();
  t1_toffset getProgramSampleCount(int iPrg);
  t1_toffset getLongestProgramSampleCount();
- 
+ EDiskType getDiskType();
  void SigBusOccured(int sig);
  long g_pagesize;
  bool m_badsector;
@@ -50,15 +55,16 @@ public:
 private:
  int getValuesPrg(int iPrg, t1_toffset pos, int channelmap, int samplenum, short* ptrArray, int lenArray, int& riLastPart);
  void* m_badBlock;
-
+ bool m_bWriteable;
  char* m_filename;
  t1_toffset m_endpos;
  t1_toffset m_oMap;
  t1_toffset m_lMap;
+ t1_toffset m_required;
  void* m_pMap;
  bool m_bMap;
 
- void* m_pDirectMap;
+ //void* m_pDirectMap;
  
  t1_toffset m_oDirMap;
  t1_toffset m_lDirMap;
@@ -66,21 +72,14 @@ private:
 public:
  void setPartitionMode(enPartitionMode pm);
  enPartitionMode getPartitionMode(){ return m_partitionMode; }
- int m_PartTableLength[FOSTEXMAXPROGRAMM];
- fdms2part** m_PartTable[FOSTEXMAXPROGRAMM];
+ fdms2parttable m_partTable[FOSTEXMAXPROGRAMM];
+
  t1_toffset m_ProgramSampleCount[FOSTEXMAXPROGRAMM];
 private:
  enPartitionMode m_partitionMode;
 #ifdef WIN32
- HANDLE m_hMap;
- HANDLE m_hDirMap;
- HANDLE m_fdInput;
- HANDLE m_fdDirectory;
  SYSTEM_INFO m_SysInfo;
  unsigned int getpagesize();
- int openFile(const char* filename, bool bWrite, HANDLE &rHFile, HANDLE &rHMap, const char* mapname);
- int mapFile(HANDLE &rhMap, bool bWrite, void* &rpMap,t1_toffset oMap,t1_toffset lMap);
- int directMapFile(void* &rpMap,t1_toffset oMap,t1_toffset lMap);
 #else
  int m_flagsInput;
  int m_fdInput;
@@ -116,6 +115,7 @@ public:
  virtual void reset();
  virtual int start();
  virtual int stop();
+ void quickFormat();
  virtual fdms2streamerIF* duplicate();
  virtual void copy(fdms2streamerIF* p);
  virtual int getValueArrays(t1_toffset pos, int samplenum, short** ptrArray);
@@ -135,7 +135,11 @@ public:
  void getClick(int iPrg, bool& rbClick);
  void setClick(int iPrg, bool& rbClick);
 
+fdms2disk* getDisk(){return &m_fdms2disk;}
 private:
+ fdms2disk m_fdms2disk;
+ fdms2diskPtrIF* m_ptr;
+ fdms2diskPtrIF* m_ptrDir;
  int  get2BCD2i(unsigned char* p);
  void set2BCD(unsigned char* p, int v);
 
@@ -144,6 +148,7 @@ private:
  unsigned int getDW(unsigned char* p);
  void setDW(unsigned char* p, unsigned int v);
  int getPartFromDisk(int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rpLen);
+ int setPartOnDisk(int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rpLen);
 };
 
 #endif

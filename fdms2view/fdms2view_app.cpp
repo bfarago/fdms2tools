@@ -6,7 +6,7 @@
 #include "ChildFrm.h"
 #include "fdms2view_doc.h"
 #include "fdms2view_view.h"
-
+#include "DNewProjectWizard.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -18,7 +18,7 @@
 BEGIN_MESSAGE_MAP(CFdms2View_App, CWinApp)
 	ON_COMMAND(ID_APP_ABOUT, OnAppAbout)
 	// Standard file based document commands
-	ON_COMMAND(ID_FILE_NEW, CWinApp::OnFileNew)
+	ON_COMMAND(ID_FILE_NEW, OnFileNew)
 	ON_COMMAND(ID_FILE_OPEN, CWinApp::OnFileOpen)
 END_MESSAGE_MAP()
 
@@ -141,7 +141,36 @@ void CFdms2View_App::OnAppAbout()
 	CAboutDlg aboutDlg;
 	aboutDlg.DoModal();
 }
-
+void CFdms2View_App::OnFileNew(){
+    DNewProjectWizard dlg;
+    INT_PTR r=dlg.DoModal();
+    if (r==IDOK){
+        int iSel=dlg.getSelection();
+        
+        switch(iSel){
+            case 0:
+                CWinApp::OnFileNew();
+                SendMessage(m_pMainWnd->m_hWnd, WM_COMMAND, ID_DEVICE_GRAB,0);
+                break;
+            case 1:
+                CWinApp::OnFileNew();
+                SendMessage(m_pMainWnd->m_hWnd, WM_COMMAND, ID_VIEW_FDMS2PROPERTIES,0);
+                break;
+            case 2:
+                CWinApp::OnFileNew();
+                break;
+            case 3:
+                CWinApp::OnFileOpen();
+                break;
+            case 4:
+                SendMessage(m_pMainWnd->m_hWnd, WM_COMMAND, ID_FILE_MRU_FILE1,0);
+                break;
+                
+        };
+    
+    }
+    
+}
 
 // CFdms2View_App message handlers
 bool DisplayError(){

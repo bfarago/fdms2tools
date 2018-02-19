@@ -43,4 +43,8 @@ public:
 	CButton m_bnTAdd;
 	CListBox m_lbTempo;
 	virtual BOOL OnInitDialog();
+    afx_msg void OnBnClickedButtonTadd();
+    afx_msg void OnBnClickedOk();
+    afx_msg void OnLbnSelchangeListTempo();
+    afx_msg void OnLbnSelcancelListMetr();
 };

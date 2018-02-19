@@ -105,6 +105,7 @@
     <ClCompile Include="fdms2.cpp" />
     <ClCompile Include="fdms2disk.cpp" />
     <ClCompile Include="fdms2dispdata.cpp" />
+    <ClCompile Include="fdms2error.cpp" />
     <ClCompile Include="fdms2lib.cpp" />
     <ClCompile Include="fdms2part.cpp" />
     <ClCompile Include="fdms2pos.cpp" />
@@ -114,6 +115,7 @@
     <ClInclude Include="fdms2common.h" />
     <ClInclude Include="fdms2disk.h" />
     <ClInclude Include="fdms2dispdata.h" />
+    <ClInclude Include="fdms2error.h" />
     <ClInclude Include="fdms2lib.h" />
     <ClInclude Include="fdms2part.h" />
     <ClInclude Include="fdms2pos.h" />

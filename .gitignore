@@ -38,3 +38,6 @@
 /win32/.vs/fdms2view/v15
 *.aps
 *.user
+*.img
+*.bak
+*.log

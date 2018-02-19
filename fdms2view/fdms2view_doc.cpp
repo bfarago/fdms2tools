@@ -34,7 +34,20 @@ BEGIN_MESSAGE_MAP(CFdms2View_Doc, CDocument)
 	ON_COMMAND(ID_VIEW_PROGRAM4, OnViewProgram4)
 	ON_COMMAND(ID_VIEW_PROGRAM5, OnViewProgram5)
 	ON_COMMAND(ID_VIEW_FRAGMENTMAP, OnViewFragmentmap)
-	ON_COMMAND(ID_EXPORT_MULTITRACK, OnExportMultiTrack)
+	ON_COMMAND(ID_VIEW_MIX, OnViewMix)
+	ON_COMMAND(ID_VIEW_MODE, OnViewMode)
+	ON_COMMAND(ID_VIEW_RECREATEPEEKFILE, &CFdms2View_Doc::OnViewRecreatepeekfile)
+    ON_COMMAND(ID_EDIT_PLAY, OnEditPlay)
+	ON_COMMAND(ID_EDIT_STOP, OnEditStop)
+    ON_COMMAND(ID_EDIT_PLAY_TOGGLE, OnEditPlayToggle)
+    ON_COMMAND(ID_EXPORT_MULTITRACK, OnExportMultiTrack)
+    ON_COMMAND(ID_ZOOM_1, OnZoom1)
+	ON_COMMAND(ID_ZOOM_2, OnZoom2)
+	ON_COMMAND(ID_ZOOM_FULL, OnZoomFull)
+	ON_COMMAND(ID_ZOOMY_12DB, OnZoomy12db)
+	ON_COMMAND(ID_ZOOMY_24DB, OnZoomy24db)
+	ON_COMMAND(ID_DEVICE_SOUNDCARD, OnDeviceSoundcard)
+    ON_COMMAND(ID_DEVICE_GRAB, OnGrab)
     ON_COMMAND(ID_BUTTON_TP_REC,	OnTPRecord)
 	ON_COMMAND(ID_BUTTON_TP_STOP,	OnTPStop)
 	ON_COMMAND(ID_BUTTON_TP_PLAY,	OnTPPlay)
@@ -42,18 +55,7 @@ BEGIN_MESSAGE_MAP(CFdms2View_Doc, CDocument)
 	ON_COMMAND(ID_BUTTON_TP_FF,		OnTPFF)
 	ON_COMMAND(ID_BUTTON_TP_BEGIN,	OnTPBegin)
 	ON_COMMAND(ID_BUTTON_TP_END,	OnTPEnd)
-	ON_COMMAND(ID_ZOOM_1, OnZoom1)
-	ON_COMMAND(ID_ZOOM_2, OnZoom2)
-	ON_COMMAND(ID_ZOOM_FULL, OnZoomFull)
-	ON_COMMAND(ID_ZOOMY_12DB, OnZoomy12db)
-	ON_COMMAND(ID_ZOOMY_24DB, OnZoomy24db)
-	ON_COMMAND(ID_VIEW_MIX, OnViewMix)
-	ON_COMMAND(ID_DEVICE_SOUNDCARD, OnDeviceSoundcard)
-    ON_COMMAND(ID_VIEW_MODE, OnViewMode)
-	ON_COMMAND(ID_EDIT_PLAY, OnEditPlay)
-	ON_COMMAND(ID_EDIT_STOP, OnEditStop)
-    ON_COMMAND(ID_EDIT_PLAY_TOGGLE, OnEditPlayToggle)
-    ON_UPDATE_COMMAND_UI(ID_VIEW_PROGRAM1, OnUpdateViewProgram1)
+	ON_UPDATE_COMMAND_UI(ID_VIEW_PROGRAM1, OnUpdateViewProgram1)
 	ON_UPDATE_COMMAND_UI(ID_EXPORT_EIGHTWAV, OnUpdateExportEightwav)
 	ON_UPDATE_COMMAND_UI(ID_BUTTON_TP_REC, OnUpdateTPRecord)
 	ON_UPDATE_COMMAND_UI(ID_BUTTON_TP_STOP, OnUpdateTPStop)
@@ -67,6 +69,8 @@ BEGIN_MESSAGE_MAP(CFdms2View_Doc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_EDIT_STOP, OnUpdateEditStop)
 	ON_UPDATE_COMMAND_UI(ID_DEVICE_SOUNDCARD, OnUpdateDeviceSoundcard)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_MODE, &CFdms2View_Doc::OnUpdateViewMode)
+    ON_UPDATE_COMMAND_UI(ID_DEVICE_QUICKFORMAT, &CFdms2View_Doc::OnUpdateDeviceQuickformat)
+    ON_COMMAND(ID_DEVICE_QUICKFORMAT, &CFdms2View_Doc::OnDeviceQuickformat)
 END_MESSAGE_MAP()
 
 // CFdms2View_Doc construction/destruction
@@ -108,7 +112,7 @@ BOOL CFdms2View_Doc::OnNewDocument()
 
 void CFdms2View_Doc::Serialize(CArchive& ar)
 {
-	CString csVersion=L"1.0.0.1";
+	CString csVersion=L"1.0.0.7";
 	if (ar.IsStoring())
 	{
         
@@ -164,11 +168,19 @@ void CFdms2View_Doc::Serialize(CArchive& ar)
 
 void CFdms2View_Doc::setSelectedProgram(int iPrg){ 
         m_SelectedProgram=iPrg;
+        m_player->setSelectedProgram(m_SelectedProgram);
+        //setPosEditCursor(0);
         SetModifiedFlag(TRUE);
+}
+void CFdms2View_Doc::ValidatePos(fdms2pos& p){
+    t1_toffset m= m_fdms2.getProgramSampleCount(m_SelectedProgram);
+    if (p.m_Sample > m) p.setSample(m);
 }
 void CFdms2View_Doc::setPosEditCursor(fdms2pos p){
     m_PosEditCursor=p;
-    m_player->setCursor(p);
+    ValidatePos(m_PosEditCursor);
+    m_player->setSelectedProgram(m_SelectedProgram);
+    m_player->setCursor(m_PosEditCursor);
 }
 fdms2pos CFdms2View_Doc::getPosEditCursor(){
     if (getPlayNow()){
@@ -193,10 +205,21 @@ void CFdms2View_Doc::Dump(CDumpContext& dc) const
 void CFdms2View_Doc::SetFileName(const char* lpszFileName){
 	//abstract
 }
+void CFdms2View_Doc::messageBox(LPCTSTR cat, LPCTSTR msg){
+    wchar_t wCat[1024];
+    wchar_t wMsg[1024];
+    MultiByteToWideChar(CP_ACP, 0, (LPCSTR)cat, -1, wCat, 1024);
+    MultiByteToWideChar(CP_ACP, 0, (LPCSTR)msg, -1, wMsg, 1024);
+    CString s;
+    s.Format(TEXT("%s: %s"), wCat, wMsg);
+    ::MessageBox(NULL, s, TEXT("Error"), MB_OK | MB_ICONINFORMATION);
+}
 void CFdms2View_Doc::SetFileName(const CString & sFileName){
 	m_bPlayable=false;
+    m_fdms2.setNotify(this);
+    m_fdms2.setWriteable(true);
 	if (m_csFileName.Compare(sFileName)==0){
-		return;	//
+		//return;	//
 	}
 	m_csFileName=sFileName;
     char *sTmp=NULL;
@@ -210,11 +233,13 @@ void CFdms2View_Doc::SetFileName(const CString & sFileName){
 	m_fdms2.m_startpos=0;
 	m_fdms2.m_length=1000;
 	m_fdms2.m_step=10;
-	m_fdms2.start();
-	m_bPlayable= m_fdms2.getDiskAudioSize()>10000;
-	m_bRecordable=false;
-    m_cache.setFdms2(&m_fdms2, m_SelectedProgram, this);
-	UpdateAllViews(NULL);
+	int iRet=m_fdms2.start();
+    if (!iRet){
+	    m_bPlayable= m_fdms2.getDiskAudioSize()>10000;
+	    m_bRecordable=false;
+        m_cache.setFdms2(&m_fdms2, m_SelectedProgram, this);
+	    UpdateAllViews(NULL);
+    }
 }
 
 // CFdms2View_Doc commands
@@ -225,6 +250,7 @@ void CFdms2View_Doc::OnViewFdms2properties()
 	DFdmsProp *dlg = new DFdmsProp(0);
     dlg->m_pm=m_fdms2.getPartitionMode();
 	dlg->m_csFileName= m_csFileName;
+    dlg->setFdms2Disk(m_fdms2.getDisk());
 
 	INT_PTR nRet = -1;
 	nRet =dlg->DoModal();
@@ -237,6 +263,7 @@ void CFdms2View_Doc::OnViewFdms2properties()
 		// Do something
 		break;
 	case IDOK:
+        m_fdms2.setFileName(NULL);
         m_fdms2.setPartitionMode(dlg->m_pm);
 		SetFileName( dlg->m_csFileName );
         SetModifiedFlag(TRUE);
@@ -363,6 +390,16 @@ void CFdms2View_Doc::OnUpdateExportEightwav(CCmdUI *pCmdUI){
 	BOOL bEn=	m_bPlayable && (isRegionSelected());
 	pCmdUI->Enable(bEn);
 }
+void CFdms2View_Doc::OnGrab(){
+	DGrab *dlg=new DGrab(NULL);
+    if( dlg->DoModal() == IDOK ){
+        CString s;
+        dlg->getFileName(s);
+        SetFileName(s);
+      //m_csFileName = dlg->GetPathName();
+    }
+	delete dlg;
+}
 
 //---------------------------------------------------------------
 //Transport
@@ -418,7 +455,7 @@ void CFdms2View_Doc::OnUpdateTPPlay(CCmdUI *pCmdUI){
 	m_player->OnUpdateCmdIfPlayableButNotPlayNow(pCmdUI);
 }
 void CFdms2View_Doc::OnUpdateTPRew(CCmdUI *pCmdUI){
-    m_player->OnUpdateCmdIfPlayNow(pCmdUI);
+    m_player->OnUpdateCmdIfPlayable(pCmdUI);
 }
 void CFdms2View_Doc::OnUpdateTPFF(CCmdUI *pCmdUI){
     m_player->OnUpdateCmdIfPlayable(pCmdUI);
@@ -477,6 +514,7 @@ void CFdms2View_Doc::OnPlay(){
 void CFdms2View_Doc::initPlayer(){
     m_player->setFdms2(&m_fdms2);
     m_player->setMixer(&m_mixer);
+    m_player->setSelectedProgram(m_SelectedProgram);
     m_player->initPlayer();
 }
 void CFdms2View_Doc::killPlayer(){
@@ -512,10 +550,11 @@ void CFdms2View_Doc::OnZoom2()
 }
 void CFdms2View_Doc::addDisplayXZoom(CFdms2View_View* pView, short zDelta){
     double prevX= m_DisplayXMul;
+    fdms2pos difDisp=pView->getDisplayStop()- pView->getDisplayStart();
     if (zDelta>=0){
 			m_DisplayXMul=m_DisplayXMul*zDelta/50;
             if (m_DisplayXMul>MAXXMUL) m_DisplayXMul=MAXXMUL;
-        }else{
+    }else{
 			m_DisplayXMul= m_DisplayXMul /((-zDelta)/50);
 		    if (m_DisplayXMul<1) m_DisplayXMul=1;
     }
@@ -576,8 +615,7 @@ void CFdms2View_Doc::OnUpdateViewMix(CCmdUI *pCmdUI)
 
 void CFdms2View_Doc::OnUpdateDeviceSoundcard(CCmdUI *pCmdUI)
 {
-	BOOL bEn=	m_bPlayable;
-	pCmdUI->Enable(bEn);
+    m_player->OnUpdateCmdIfPlayableButNotPlayNow(pCmdUI);
 }
 
 void CFdms2View_Doc::OnDeviceSoundcard()
@@ -607,4 +645,22 @@ void CFdms2View_Doc::DoOrderRegion(){
     fdms2pos tmp= m_PosRegionStart;
     m_PosRegionStart= m_PosRegionStop;
     m_PosRegionStop=tmp;
+}
+
+void CFdms2View_Doc::OnViewRecreatepeekfile()
+{
+    m_cache.regenerate(this);
+    m_bRedraw=true;
+    UpdateAllViews(NULL);
+    
+}
+
+void CFdms2View_Doc::OnUpdateDeviceQuickformat(CCmdUI *pCmdUI)
+{
+    pCmdUI->Enable(m_fdms2.getDiskType()==DTDisk);
+}
+
+void CFdms2View_Doc::OnDeviceQuickformat()
+{
+   m_fdms2.quickFormat();
 }

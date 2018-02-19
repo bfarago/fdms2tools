@@ -202,7 +202,7 @@
 	<Files>
 		<Filter
 			Name="Source Files"
-			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm"
+			Filter="cpp;c;cxx;def;odl;idl;hpj;bat;asm;h;hpp"
 			>
 			<File
 				RelativePath=".\fdms2reader.cpp"
@@ -225,52 +225,11 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\fdms2view_app.cpp"
-				>
-			</File>
-			<File
-				RelativePath="fdms2view_doc.cpp"
-				>
-			</File>
-			<File
-				RelativePath="fdms2view_view.cpp"
-				>
-			</File>
-			<File
-				RelativePath="FileListCubaseXML.cpp"
-				>
-			</File>
-			<File
-				RelativePath="PeekCache.cpp"
-				>
-			</File>
-			<File
-				RelativePath="stdafx.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="1"
-					/>
-				</FileConfiguration>
-			</File>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl;inc"
-			>
-			<File
 				RelativePath=".\fdms2reader.h"
+				>
+			</File>
+			<File
+				RelativePath=".\fdms2view_app.cpp"
 				>
 			</File>
 			<File
@@ -278,11 +237,23 @@
 				>
 			</File>
 			<File
+				RelativePath="fdms2view_doc.cpp"
+				>
+			</File>
+			<File
 				RelativePath="fdms2view_doc.h"
 				>
 			</File>
 			<File
+				RelativePath="fdms2view_view.cpp"
+				>
+			</File>
+			<File
 				RelativePath="fdms2view_view.h"
+				>
+			</File>
+			<File
+				RelativePath="FileListCubaseXML.cpp"
 				>
 			</File>
 			<File
@@ -295,6 +266,10 @@
 			</File>
 			<File
 				RelativePath="IViewTimeline.h"
+				>
+			</File>
+			<File
+				RelativePath="PeekCache.cpp"
 				>
 			</File>
 			<File
@@ -322,6 +297,26 @@
 						Description="Generating map file for help compiler..."
 						CommandLine="echo // Generated Help Map file.  Used by fdms2view.HHP. &gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Commands (ID_* and IDM_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h ID_,HID_,0x10000 IDM_,HIDM_,0x10000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Prompts (IDP_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h IDP_,HIDP_,0x30000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Resources (IDR_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h IDR_,HIDR_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Dialogs (IDD_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h IDD_,HIDD_,0x20000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo. &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;echo // Frame Controls (IDW_*) &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;makehm /h /a afxhh.h IDW_,HIDW_,0x50000 &quot;$(InputFileName)&quot; &gt;&gt; &quot;hlp\HTMLDefines.h&quot;&#x0D;&#x0A;"
 						Outputs="hlp\HTMLDefines.h"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="stdafx.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="1"
 					/>
 				</FileConfiguration>
 			</File>
@@ -356,6 +351,10 @@
 			</File>
 			<File
 				RelativePath="res\fdms2viewDoc.ico"
+				>
+			</File>
+			<File
+				RelativePath=".\res\Fostex-d_80.bmp"
 				>
 			</File>
 			<File
@@ -416,337 +415,282 @@
 			>
 			<File
 				RelativePath="hlp\afx_hidd_color.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\afx_hidd_fileopen.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\afx_hidd_filesave.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\afx_hidd_find.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\afx_hidd_font.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\afx_hidd_newtypedlg.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\afx_hidd_replace.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\afx_hidp_default.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\afx_hidw_dockbar_top.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\afx_hidw_status_bar.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\afx_hidw_toolbar.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_app_about.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_app_exit.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_context_help.htm"
-				DeploymentContent="true"
+				>
+			</File>
+			<File
+				RelativePath=".\hlp\hid_device_multitrack.htm"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_edit_clear.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_edit_clear_all.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_edit_copy.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_edit_cut.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_edit_find.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_edit_paste.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath=".\hlp\hid_edit_play.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_edit_redo.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_edit_repeat.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_edit_replace.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath=".\hlp\hid_edit_stop.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_edit_undo.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_file_close.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_file_mru_file1.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_file_new.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_file_open.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_file_save.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_file_save_as.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_file_send_mail.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_help_index.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_help_using.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_ht_caption.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_ht_nowhere.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_next_pane.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_prev_pane.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_sc_close.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_sc_maximize.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_sc_minimize.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_sc_move.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_sc_nextwindow.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_sc_prevwindow.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_sc_restore.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_sc_size.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_sc_tasklist.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_view_ruler.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_view_status_bar.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_view_toolbar.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_window_all.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_window_arrange.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_window_cascade.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_window_new.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_window_split.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_window_tile.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_window_tile_horz.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hid_window_tile_vert.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\hidr_doc1type.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\main_index.htm"
-				DeploymentContent="true"
+				>
+			</File>
+			<File
+				RelativePath=".\hlp\menu_device.htm"
 				>
 			</File>
 			<File
 				RelativePath="hlp\menu_edit.htm"
-				DeploymentContent="true"
+				>
+			</File>
+			<File
+				RelativePath=".\hlp\menu_export.htm"
 				>
 			</File>
 			<File
 				RelativePath="hlp\menu_file.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\menu_help.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\menu_view.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\menu_window.htm"
-				DeploymentContent="true"
 				>
 			</File>
 			<File
 				RelativePath="hlp\scrollbars.htm"
-				DeploymentContent="true"
 				>
 			</File>
 		</Filter>
@@ -802,6 +746,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DGrab.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DGrab.h"
+				>
+			</File>
+			<File
 				RelativePath="DMetr.cpp"
 				>
 			</File>
@@ -815,6 +767,14 @@
 			</File>
 			<File
 				RelativePath="DMix1.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DNewProjectWizard.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DNewProjectWizard.h"
 				>
 			</File>
 			<File
@@ -839,6 +799,14 @@
 			</File>
 			<File
 				RelativePath="WaveArea.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WaveLabelArea.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\WaveLabelArea.h"
 				>
 			</File>
 		</Filter>
@@ -875,6 +843,38 @@
 			</File>
 			<File
 				RelativePath=".\Player.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SoundDeviceEnumeration.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\SoundDeviceEnumeration.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Win32"
+			>
+			<File
+				RelativePath=".\IIpcCom.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IpcCom.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\IpcCom.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Logoff.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Logoff.h"
 				>
 			</File>
 		</Filter>
