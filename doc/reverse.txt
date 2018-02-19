@@ -57,11 +57,30 @@ F800 - FFFF	E	2k  4block
 =======================================
 B block
 Index?
+000  S4 S3 S2 S1 start (bigendian) 0:end
+004  L4 L3 L2 L1 len bytes         ffffffff: err ?
+
+=======================================
+C block
+000 ?? ?? ?? ??
+004 MM minutes in BCD byte
+005 HH hours in BCD byte
+006 ??
+007 SS secounds in BCD byte
+008 FF frames in BCD byte
+009 SF subframe in BCD ?
+00a ?? ?? ?? ?? ?? ??
+010 08=click
+ 
 =======================================
 D block
 Tactus 
  01 00 04 04  : 
  start bar: 0001, 4/4
+000 21 43 > 4321 BCD litleendian start bar
+002 04 number of division
+003 03 number of notes (3/4)
+
 =======================================
 E block
 Metrum 
