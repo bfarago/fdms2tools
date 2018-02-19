@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "..\test\test\test.v
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fdms2view", "..\fdms2view\fdms2view.vcxproj", "{8D206803-A84C-4463-8E00-F8476AC5A2CB}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{733E8B44-28A6-4095-A7DA-7C39173183A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -27,6 +29,8 @@ Global
 		{8D206803-A84C-4463-8E00-F8476AC5A2CB}.Debug|Win32.Build.0 = Debug|Win32
 		{8D206803-A84C-4463-8E00-F8476AC5A2CB}.Release|Win32.ActiveCfg = Release|Win32
 		{8D206803-A84C-4463-8E00-F8476AC5A2CB}.Release|Win32.Build.0 = Release|Win32
+		{733E8B44-28A6-4095-A7DA-7C39173183A8}.Debug|Win32.ActiveCfg = Debug
+		{733E8B44-28A6-4095-A7DA-7C39173183A8}.Release|Win32.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
