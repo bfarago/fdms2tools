@@ -30,6 +30,8 @@ void CWaveArea::DrawYMarker(unsigned short valueY, const CString & str,
 	int width=50;
 	int height2=8;
     int y=m_Rect.CenterPoint().y;
+	if (!m_pDoc) return;
+	if (!m_pDoc->m_DisplayLevelValue) m_pDoc->m_DisplayLevelValue = 1;
 	int ny= valueY * m_my / m_pDoc->m_DisplayLevelValue;
     
 	if (bTopLeft){
@@ -57,6 +59,8 @@ void CWaveArea::DrawYMarker(unsigned short valueY, const CString & str,
 void CWaveArea::DrawSniped(int px, int py, short val){
     int ny=0;
     int my=m_my;
+	if (!m_pDoc) return;
+	if (!m_pDoc->m_DisplayLevelValue) m_pDoc->m_DisplayLevelValue = 1;
     ny= val*my/m_pDoc->m_DisplayLevelValue;
 	if (ny>my){
 		ny=my;
@@ -77,6 +81,8 @@ void CWaveArea::DrawPeek(int px, int py, short iMax, short iMin){
     int nyMax=0;
     int nyMin=0;
     int my=m_my;
+	if (!m_pDoc) return;
+	if (!m_pDoc->m_DisplayLevelValue) m_pDoc->m_DisplayLevelValue = 1;
     nyMax= iMax * my / m_pDoc->m_DisplayLevelValue;
     nyMin= iMin * my / m_pDoc->m_DisplayLevelValue;
 	if (nyMax>my){

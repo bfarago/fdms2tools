@@ -1,3 +1,6 @@
+/* Written by Barna Farago <brown@weblapja.com> 2006-2018
+*
+*/
 // testermfc_fdms2libDoc.cpp : implementation of the CFdms2View_Doc class
 //
 
@@ -88,6 +91,7 @@ CFdms2View_Doc::~CFdms2View_Doc()
 {
     killPlayer();
     if (m_MixConsole) m_MixConsole->registerMixer(NULL);
+	if (m_player) m_player->setFdms2(NULL);
 	m_bPlayable=false;
 	m_bRecordable=false;
     m_fdms2.stop();
@@ -236,6 +240,7 @@ void CFdms2View_Doc::SetFileName(const CString & sFileName){
 	int iRet=m_fdms2.start();
     if (!iRet){
 	    m_bPlayable= m_fdms2.getDiskAudioSize()>10000;
+		if (m_player) m_player->setFdms2(&m_fdms2);
 	    m_bRecordable=false;
         m_cache.setFdms2(&m_fdms2, m_SelectedProgram, this);
 	    UpdateAllViews(NULL);
@@ -520,7 +525,7 @@ void CFdms2View_Doc::initPlayer(){
 void CFdms2View_Doc::killPlayer(){
     m_player->killPlayer();
 }
-//TODO: mire kell meg?
+//TODO: mire kell meg? // refactoring needed
 UINT64  CFdms2View_Doc::getMaxPos(){
     INT64 len;
 	t1_toffset start;
@@ -555,8 +560,10 @@ void CFdms2View_Doc::addDisplayXZoom(CFdms2View_View* pView, short zDelta){
 			m_DisplayXMul=m_DisplayXMul*zDelta/50;
             if (m_DisplayXMul>MAXXMUL) m_DisplayXMul=MAXXMUL;
     }else{
-			m_DisplayXMul= m_DisplayXMul /((-zDelta)/50);
-		    if (m_DisplayXMul<1) m_DisplayXMul=1;
+		double r = (-zDelta) / 50;
+		if (0.0 == r) r = 0.1;
+		m_DisplayXMul= m_DisplayXMul /(r);
+		if (m_DisplayXMul<1) m_DisplayXMul=1;
     }
     if (m_DisplayXMul != prevX){
         if (pView){

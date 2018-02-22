@@ -60,7 +60,7 @@ SUITE(TestFdms2Reader)
 		fdms2 f1;
 		f1.setFileName(img.getFilename());
 		long long s = f1.getDiskSize();
-		CHECK_EQUAL(s , img.getSize());
+		CHECK_EQUAL(img.getSize(), s);
 
 		printf_s("size:%lli\n", s);
 		f1.start();

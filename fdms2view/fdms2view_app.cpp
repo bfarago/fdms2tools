@@ -1,3 +1,6 @@
+/* Written by Barna Farago <brown@weblapja.com> 2006-2018
+*
+*/
 // testermfc_fdms2lib.cpp : Defines the class behaviors for the application.
 //
 

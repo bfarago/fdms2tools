@@ -21,7 +21,25 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_257F1E92DEEB48828DEB61689885C23C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9646FD3AA2434F338EF208A821028FC9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_98319EAB73EA4F159F0CC0E283418155"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9904F9C880034992AB94985CF6084ECE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -49,13 +67,29 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
+                    }
+                }
+            }
         }
         "Release"
         {
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\Fdms2ViewSetup_r_1_0_0_7.msi"
+        "OutputFilename" = "8:Release\\Fdms2ViewSetup_r_1_0_0_x.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -102,10 +136,70 @@
         }
         "File"
         {
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_257F1E92DEEB48828DEB61689885C23C"
+            {
+            "SourcePath" = "8:..\\..\\fdms2view\\dd.exe"
+            "TargetName" = "8:dd.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_D652F0DD96A84B038E5403909426E664"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9646FD3AA2434F338EF208A821028FC9"
+            {
+            "SourcePath" = "8:..\\..\\fdms2view\\ddlist.bat"
+            "TargetName" = "8:ddlist.bat"
+            "Tag" = "8:"
+            "Folder" = "8:_D652F0DD96A84B038E5403909426E664"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_98319EAB73EA4F159F0CC0E283418155"
             {
             "SourcePath" = "8:..\\..\\fdms2view\\Release\\fdms2view.chm"
             "TargetName" = "8:fdms2view.chm"
+            "Tag" = "8:"
+            "Folder" = "8:_D652F0DD96A84B038E5403909426E664"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9904F9C880034992AB94985CF6084ECE"
+            {
+            "SourcePath" = "8:..\\..\\fdms2view\\dd.bat"
+            "TargetName" = "8:dd.bat"
             "Tag" = "8:"
             "Folder" = "8:_D652F0DD96A84B038E5403909426E664"
             "Condition" = "8:"
@@ -159,6 +253,17 @@
                 {
                 }
             }
+            "{1525181F-901A-416C-8A58-119130FE478E}:_3BA155D963DD4EF3A42C0E94F7EF6085"
+            {
+            "Name" = "8:#1915"
+            "AlwaysCreate" = "11:FALSE"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Property" = "8:AppDataFolder"
+                "Folders"
+                {
+                }
+            }
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_D652F0DD96A84B038E5403909426E664"
             {
             "DefaultLocation" = "8:[ProgramFilesFolder]MYND-ideal\\Fdms2viewer"
@@ -199,7 +304,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Fdms2Viewer"
         "ProductCode" = "8:{D39E1CD9-490F-4BA4-835B-BBF0D77D68E1}"
-        "PackageCode" = "8:{A4F4D34B-AD1F-419F-9DA1-440ADD0C3419}"
+        "PackageCode" = "8:{2A6D8B69-7909-4C90-A4D7-22AD369F9D74}"
         "UpgradeCode" = "8:{3C44C577-9B9C-4380-9186-8A0B036EED69}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
@@ -321,7 +426,7 @@
         {
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_1FEA88F818E44B28BA97CCFCB3132851"
             {
-            "Name" = "8:Shortcut to Primary Output from fdms2view (Active)"
+            "Name" = "8:fdms2view"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
@@ -335,7 +440,7 @@
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_874E52E2940644FC809C7DD1A92A5979"
             {
-            "Name" = "8:Shortcut to Primary Output from fdms2view (Active)"
+            "Name" = "8:fdms2view"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"

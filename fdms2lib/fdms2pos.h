@@ -1,4 +1,4 @@
-/*Writed by Barna Farago <brown@weblapja.com>
+/*Written by Barna Farago <brown@weblapja.com> 2006-2018
 */
 #ifndef _FDMS2POS_H
 #define _FDMS2POS_H

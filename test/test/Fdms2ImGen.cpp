@@ -3,7 +3,7 @@
 #include <malloc.h>
 
 Fdms2ImGen::Fdms2ImGen()
-	:m_fname("test.img"), m_f(NULL), m_size(0)
+	:m_fname("test.img"), m_f(NULL), m_size(0), m_maxsample(44100 * 60)
 {
 }
 
@@ -67,6 +67,19 @@ size_t Fdms2ImGen::addDwBigendian(int len, unsigned long long dw)
 	m_size += size;
 	return size;
 }
+size_t Fdms2ImGen::addDwLittleendian(int len, unsigned long long dw)
+{
+	unsigned char buf[8];
+	unsigned long long b = dw;
+	unsigned char* p = (unsigned char*)&b;
+	if (len > 8)len = 8;
+	for (int i = 0; i < len; i++) {
+		buf[i] = p[i];
+	}
+	size_t size = fwrite(buf, 1, len, m_f);
+	m_size += size;
+	return size;
+}
 int Fdms2ImGen::addCatalog()
 {
 	int r = 0;
@@ -104,8 +117,12 @@ int Fdms2ImGen::addProgram()
 	size = addSameByte(0x600, 'X'); //X
 
 	size = 0; //B block: index
-	size += addDwBigendian(4, 0x00050060); //todo: startpos
-	size += addDwBigendian(4, 0x00000100); //todo: len
+	size += addSameByte(8, 'B');
+	unsigned int startpos = 0x00050060;
+	unsigned int length = startpos+ (m_maxsample * 16);
+
+	size += addDwLittleendian(4, startpos/512); //todo: startpos
+	size += addDwLittleendian(4, length/512); //todo: len
 	size += addDwBigendian(4, 0x00000000); //stop
 	size += addDwBigendian(4, 0x00000000); //
 	size += addSameByte(0x800-size, 'B'); //B
@@ -138,6 +155,7 @@ int Fdms2ImGen::addGapFF()
 	size = addSameByte(0x30000, 0xFF); //gap
 	return r;
 }
+#include <math.h>
 int Fdms2ImGen::addAudio()
 {
 #ifndef MAPPAGELENGTH
@@ -145,6 +163,12 @@ int Fdms2ImGen::addAudio()
 #endif
 	int r = 0;
 	size_t size = MAPPAGELENGTH - m_size;
-	size = addSameByte(size, 0x00); //audio
+	for (int sample=0; sample<m_maxsample/2; sample++){
+		for (int ch=0; ch<8; ch++){
+			short d = 0x7fff * (sin(6.28*(double)sample / 44 / (ch + 1)) *( (sample*4)%m_maxsample) /(double)m_maxsample);
+			size += addDwLittleendian(2, d);
+			size += addDwLittleendian(2, d);
+		}
+	}
 	return r;
 }

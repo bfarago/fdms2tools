@@ -1,5 +1,6 @@
-// fdms2view_view.h : interface of the CFdms2View_View class
-//
+/* Written by Barna Farago <brown@weblapja.com> 2006-2018
+ * fdms2view_view.h : interface of the CFdms2View_View class
+ */
 
 
 #pragma once

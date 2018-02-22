@@ -228,6 +228,9 @@
     <Image Include="hlp\Images\Bullet.gif">
       <Filter>HTML Help Files</Filter>
     </Image>
+    <Image Include="res\Fostex-d_80.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="fdms2view.rc">

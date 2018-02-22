@@ -1,3 +1,6 @@
+/* Written by Barna Farago <brown@weblapja.com> 2006-2018
+*
+*/
 // testermfc_fdms2libView.cpp : implementation of the CFdms2View_View class
 //
 //#define _WIN32_WINNT 0x0500
@@ -323,6 +326,7 @@ void CFdms2View_View::OnDrawRegion(CDC* pDC){
 	int dx=rect.Width();
     CPen* pOldPen =NULL;
     COLORREF crPenLine=RGB(0, 0x70,0);
+	if (!pDoc->m_DisplayXMul)pDoc->m_DisplayXMul = 1;
 	int x1=rect.left + (pDoc->m_PosRegionStart.m_Sample-m_PosDisplayStart.m_Sample)/pDoc->m_DisplayXMul;
 	int x2=rect.left + (pDoc->m_PosRegionStop.m_Sample-m_PosDisplayStart.m_Sample)/pDoc->m_DisplayXMul;
 	int xp=rect.left + (pDoc->m_PosEditCursor.m_Sample-m_PosDisplayStart.m_Sample)/pDoc->m_DisplayXMul;
@@ -402,6 +406,7 @@ void CFdms2View_View::OnDrawDiskMap(CDC* pDC)
 	int dx=rect.right-rect.left-16;
 	fdms2pos pLen;
 	t1_toffset start;
+	if (!dx) dx = 1;
 	int ddx=pDoc->getMaxPos() / dx;
 	if (ddx<1) ddx=1;
 	int y=m_yRulerBottom+4;

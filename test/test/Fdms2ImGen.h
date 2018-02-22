@@ -19,8 +19,10 @@ private:
 	int addAudio();
 	size_t addSameByte(int len, unsigned char bdata);
 	size_t addDwBigendian(int len, unsigned long long dw);
+	size_t addDwLittleendian(int len, unsigned long long dw);
 	const char* m_fname;
 	FILE * m_f;
 	size_t	m_size;
+	int m_maxsample;
 };
 

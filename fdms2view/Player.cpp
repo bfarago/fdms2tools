@@ -1,5 +1,6 @@
-// testermfc_fdms2libDoc.cpp : implementation of the CFdms2View_Doc class
-//
+/* Written by Barna Farago <brown@weblapja.com> 2006-2018
+ * Player.cpp : implementation of the CPlayer class
+ */
 
 #include "stdafx.h"
 #include "Player.h"
@@ -17,7 +18,12 @@
 
 #define PERSECBUFFERSIZE (4)
 #define MMM (25)
+#define SLEEP_WAIT_DONE (10)
+#define WADOG_WAIT_DONE (100)
 
+#define SLEEP_WAIT_EXITCODE (50)
+#define SLEEP_WAIT_BEFOREQUEUE (10)
+#define SLEEP_WAIT_AFTERQUEUE (50)
 // CPlayer construction/destruction
 CPlayer* g_Player;
 
@@ -74,7 +80,7 @@ void CPlayer::Dump(CDumpContext& dc) const
 //Transport
 //---------------------------------------------------------------
 void CPlayer::OnUpdateCmdIfPlayable(CCmdUI *pCmdUI){
-	BOOL bEn=	m_bPlayable;
+	BOOL bEn=	getPlayable();
 	pCmdUI->Enable(bEn);
 }
 void CPlayer::OnUpdateCmdIfPlayNow(CCmdUI *pCmdUI){
@@ -82,7 +88,7 @@ void CPlayer::OnUpdateCmdIfPlayNow(CCmdUI *pCmdUI){
 	pCmdUI->Enable(bEn);
 }
 void CPlayer::OnUpdateCmdIfPlayableButNotPlayNow(CCmdUI *pCmdUI){
-	BOOL bEn=	m_bPlayable & !m_bPlayNow;
+	BOOL bEn= getPlayable() & !m_bPlayNow;
 	pCmdUI->Enable(bEn);
 }
 void CPlayer::InitMixer(){
@@ -173,7 +179,7 @@ void CPlayer::initPlayer(){
     m_waveFormat.wFormatTag = WAVE_FORMAT_PCM ; //WAVE_FORMAT_44S16|
     m_waveFormat.nChannels = 2;
     m_waveFormat.nSamplesPerSec = 44100;
-    m_waveFormat.wBitsPerSample = 16;
+    m_waveFormat.wBitsPerSample = 16; //todo: per channel or per N channel ?
     m_waveFormat.nBlockAlign = m_waveFormat.nChannels * (m_waveFormat.wBitsPerSample/8);
     m_waveFormat.nAvgBytesPerSec = m_waveFormat.nSamplesPerSec * m_waveFormat.nBlockAlign;
     m_waveFormat.cbSize = 0;
@@ -213,7 +219,7 @@ void CPlayer::initPlayer(){
 	for (int i=0; i<FOSTEXMAXCHANNELS; i++){
 		m_waveMultiChannel[i]=(short*)malloc(sizeof(short) * m_waveSampleMax );
 	}
-    result = waveOutSetVolume(m_waveOutHandle, 0xFFFF );
+    result = waveOutSetVolume(m_waveOutHandle, 0xFFFFffff );
     m_bPlayNow=true;
     if (!m_thHandle){
         m_bRun=true;
@@ -221,9 +227,9 @@ void CPlayer::initPlayer(){
         SetPriorityClass(GetCurrentProcess(), REALTIME_PRIORITY_CLASS);
     }
     SetEvent(m_waveEvent);
-    Sleep(200);
+    Sleep(SLEEP_WAIT_BEFOREQUEUE);
     QueueWaveData(&m_waveHdr[0]);
-    Sleep(100);
+    Sleep(SLEEP_WAIT_AFTERQUEUE);
     SetEvent(m_waveEvent);
     //QueueWaveData(&m_waveHdr[1]);
 
@@ -234,7 +240,7 @@ void CPlayer::stopWorker(){
         DWORD dwTmp=STILL_ACTIVE;
         while (m_thHandle &&(STILL_ACTIVE == dwTmp )){
             m_bRun=false;
-            Sleep(50);
+            Sleep(SLEEP_WAIT_EXITCODE);
             GetExitCodeThread(m_thHandle, &dwTmp);
         }
     }
@@ -332,6 +338,7 @@ DWORD CPlayer::mixWaveData(short* buf, DWORD size){
     
 	return oPtr<<1; //end
 }
+
 long CPlayer::QueueWaveData(WAVEHDR * waveHeader)
 {
     if (!m_bRun) goto bad;
@@ -357,11 +364,11 @@ long CPlayer::QueueWaveData(WAVEHDR * waveHeader)
         waveHeader = &m_waveHdr[m_iStreamer];
     }
     if (!(waveHeader->dwFlags & WHDR_DONE )) goto good;
-    int wd=100;
+    int wd= WADOG_WAIT_DONE;
     while(wd--){
         SetEvent(m_waveEvent);
         if (!m_bRun) goto bad;
-        Sleep(200);
+        Sleep(SLEEP_WAIT_DONE);
         if (!(waveHeader->dwFlags & WHDR_DONE )) goto good;
     }
 bad:	

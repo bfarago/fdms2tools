@@ -1,4 +1,4 @@
-/*Writed by Barna Farago <brown@weblapja.com>
+/*Written by Barna Farago <brown@weblapja.com> 2006-2018
 */
 #include "fdms2.h"
 #include "fdms2disk.h"
@@ -23,7 +23,10 @@
 #include <string.h>
 #endif
 
-
+#ifndef ASSERT
+#define ASSERT(x) if(!x) return;
+#define ASSERT1(x,y) if(!x) return y;
+#endif
 
 #define ROUND_UP_SIZE(Value,Pow2) \
    ((SIZE_T) ((((ULONG)(Value)) + (Pow2) - 1) \
@@ -90,8 +93,10 @@ void fdms2::logError(char* err){
     //printf("err: fdms2lib : %s \n", err); 
 }
 t1_toffset fdms2::pagealign(t1_toffset v){
- t1_toffset t=g_pagesize * (t1_toffset)(( v / g_pagesize));
- return  t; 
+	t1_toffset t;
+	if (g_pagesize)t=g_pagesize * (t1_toffset)(( v / g_pagesize));
+	else t = v;
+	return  t; 
 }
 void fdms2::dumphex(t1_toffset pos, long len){
  for (int i = 0 ; i<len; i++){
@@ -420,9 +425,10 @@ void fdms2::SigBusOccured(int sig){
  m_badsector=true;
 }
 
-/**
+/** debug dump
 */
 void fdms2::dump(){
+ if (m_step < 1) m_step = 1;
  t1_toffset d=m_step; //division 
  t1_toffset pos=m_startpos; 
  for (t1_toffset p= 0; p< d; p++){
@@ -442,9 +448,11 @@ void fdms2::dump(){
     printf("\n");
  } 
 }
+
 t1_toffset fdms2::getDiskAudioSize(){
-	return getDiskSize()-FIRSTDATABLOCK;
+	return getDiskSize()-FIRSTDATABLOCK; //TODO: check if disk size is the image file size or the audio block size
 }
+
 /** Returns By size of the specified Disk or file.
 @return 64bit wide size.
 */
@@ -452,9 +460,11 @@ t1_toffset fdms2::getDiskSize(){
     t1_toffset s= m_fdms2disk.getDiskSize();
     return s;
 }
+
 EDiskType fdms2::getDiskType(){
     return m_fdms2disk.getDiskType();
 }
+
 int fdms2::dumpABlock(unsigned char* pC){
  unsigned int vDW=0;
  unsigned int vDW2=0;
@@ -495,9 +505,11 @@ int fdms2::dumpBBlock(unsigned char* pC){
  printf("\n");
  return iIndx;
 }
+
 void fdms2::killPrgPartTable(int iPrg){
     m_partTable[iPrg].kill();
 }
+
 int fdms2::initPrgPartTable(int iPrg, unsigned char* pC){
  unsigned int vDW=0;
  unsigned int vDW2=0;
@@ -548,6 +560,7 @@ int fdms2::initPrgPartTable(int iPrg, unsigned char* pC){
  m_ProgramSampleCount[iPrg]=sampleCount;
  return iIdx;
 }
+
 void fdms2::setPartitionMode(enPartitionMode pm){
     m_partitionMode=pm;
     if (m_filename){
@@ -555,10 +568,12 @@ void fdms2::setPartitionMode(enPartitionMode pm){
         startDirectory();
     }
 }
+
 int fdms2::get2BCD2i(unsigned char* p){
     return (p[0]&0x0F) +
     ((int)(p[0]&0xF0) >>4)*10;
 }
+
 void fdms2::set2BCD(unsigned char* p, int v){
     p[0]= (v%10) | ((v/10)%10 <<4);
 }
@@ -574,10 +589,12 @@ void fdms2::set4BCD(unsigned char* p, int v){
     p[0]= (v%10) | ((v/10)%10 <<4);
     p[1]= ((v/100)%10) | ((v/1000)%10 <<4);
 }
+
 unsigned int fdms2::getDW(unsigned char* p){
   return p[2] | p[3]<<8 | p[1]<<24 | p[0]<<16;
  //return p[3] | p[2]<<8 | p[1]<<16 | p[0]<<24;
 }
+
 void fdms2::setDW(unsigned char* p, unsigned int v){
   p[2]= v & 0xff;
   p[3]= (v >>8) & 0xff;
@@ -595,6 +612,7 @@ int fdms2::getPart(int iPrg, int iIdx, t1_toffset& riStart, t1_toffset& riLen){
     riLen=len.m_Pos;    //TODO: nem sok ertelme van hogy byteposban adjuk vissza??? megnézni.
     return iRet;
 }
+
 int fdms2::getPart(int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rpLen){
     if (!m_pDirMap) return -1;
     if (iPrg>=5) return -3;
@@ -604,6 +622,7 @@ int fdms2::getPart(int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rpLen){
     p->getStartLength(riStart, rpLen);
     return 0;
 }
+
 int fdms2::getPartFromDisk(int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rpLen){
 	if (!m_pDirMap) return -1;
     unsigned char* pC=(unsigned char*)m_pDirMap + FIRSTDIRBLOCK+BOFFSDIRBLOCK +
@@ -616,6 +635,7 @@ int fdms2::getPartFromDisk(int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rp
 	rpLen.setPos(vDW2*512);
     return 0;
 }
+
 int fdms2::getMetrum(int iPrg, int iIdx, int& riBar, int& riNumer, int& riDenom){
 	if (!m_pDirMap) return -1;
     unsigned char* pC=(unsigned char*)m_pDirMap + FIRSTDIRBLOCK+DOFFSDIRBLOCK +
@@ -637,6 +657,7 @@ void fdms2::setMetrum(int iPrg, int iIdx, int& riBar, int& riNumer, int& riDenom
     pC[2]= riDenom;
     pC[3]= riNumer;
 }
+
 int fdms2::getTempo(int iPrg, int iIdx, int& riBar, int& riBeat, int& riTempo){
 	if (!m_pDirMap) return -1;
     unsigned char* pC=(unsigned char*)m_pDirMap + FIRSTDIRBLOCK+EOFFSDIRBLOCK +
@@ -658,6 +679,7 @@ void fdms2::setTempo(int iPrg, int iIdx, int& riBar, int& riBeat, int& riTempo){
     pC[3]= riBeat;
     set4BCD(&pC[4], riTempo);
 }
+
 void fdms2::getMtcOffset(int iPrg, int& riH, int& riM, int& riS, int& riF, int& riSF){
 	if (!m_pDirMap) return ;
     unsigned char* pC=(unsigned char*)m_pDirMap + FIRSTDIRBLOCK +
@@ -668,6 +690,7 @@ void fdms2::getMtcOffset(int iPrg, int& riH, int& riM, int& riS, int& riF, int& 
     riF=  get2BCD2i(&pC[4]);
     riSF=  get2BCD2i(&pC[5]);
 }
+
 void fdms2::setMtcOffset(int iPrg,  int& riH, int& riM, int& riS, int& riF, int& riSF){
 	if (!m_pDirMap) return ;
     unsigned char* pC=(unsigned char*)m_pDirMap + FIRSTDIRBLOCK +
@@ -681,12 +704,14 @@ void fdms2::setMtcOffset(int iPrg,  int& riH, int& riM, int& riS, int& riF, int&
     set2BCD(&pC[6], 0);
     set2BCD(&pC[7], 0);
 }
+
 void fdms2::getClick(int iPrg, bool& rbClick){
 	if (!m_pDirMap) return ;
     unsigned char* pC=(unsigned char*)m_pDirMap + FIRSTDIRBLOCK +
     iPrg*LENGTHDIRBLOCK+ 16;
     rbClick=  (pC[0] & 0x08) !=0;
 }
+
 void fdms2::setClick(int iPrg, bool& rbClick){
 	if (!m_pDirMap) return ;
     unsigned char* pC=(unsigned char*)m_pDirMap + FIRSTDIRBLOCK +
@@ -694,6 +719,7 @@ void fdms2::setClick(int iPrg, bool& rbClick){
     if (rbClick) pC[0]|= 0x08;
     else pC[0]&=0xFB;
 }
+
 int fdms2::setPartOnDisk(int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rpLen){
 	if (!m_pDirMap) return -1;
     unsigned char* pC=(unsigned char*)m_pDirMap + FIRSTDIRBLOCK+BOFFSDIRBLOCK +
@@ -705,6 +731,7 @@ int fdms2::setPartOnDisk(int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rpLe
     setDW(pC+4,vDW2);
     return 0;
 }
+
 void fdms2::quickFormat(){
     stop();
     start();
@@ -740,14 +767,17 @@ void fdms2::quickFormat(){
         getTempo(iProg, 1, iBar, iBeat, iTempo);
               
     }//for iProg
+	ASSERT(m_ptrDir);
     m_ptrDir->writeBack();
     stop();
     start();
 }
+
 int fdms2::startDirectory(){
  int iRet=0;
  m_lDirMap=0x020000;
  m_oDirMap=0;
+ ASSERT1(m_ptrDir, -1);
  iRet= (int) m_ptrDir->startPtr(m_pDirMap, m_oDirMap, m_lDirMap, m_lDirMap, RWReadWrite);
  if (iRet) return iRet;
  if (!m_pDirMap) return -1;
@@ -809,7 +839,7 @@ void fdms2::stopDirectory(){
      for (int iPrg=0; iPrg< FOSTEXMAXPROGRAMM; iPrg++){
          killPrgPartTable(iPrg);
      }
-     m_ptrDir->stopPtr(m_pDirMap);
+	 if (m_ptrDir) m_ptrDir->stopPtr(m_pDirMap); //TODO: I got an exception here  in destruction phase. (referenced obj missing?)
  }
 }
 

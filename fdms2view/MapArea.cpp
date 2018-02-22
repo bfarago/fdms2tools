@@ -12,6 +12,7 @@ CMapArea::~CMapArea(void)
 void CMapArea::Draw(IViewTimeLine *pTl){
     t1_toffset maxSample=m_pFdms2->getLongestProgramSampleCount();
     t1_toffset s=pTl->getDisplayStart().m_Sample; //*16?
+	if (m_RectWidth < 1) m_RectWidth = 1;
     if (maxSample < s) maxSample=s+m_RectWidth*m_pDoc->m_DisplayXMul;
 
     int ddx= maxSample / m_RectWidth;
@@ -27,10 +28,10 @@ void CMapArea::Draw(IViewTimeLine *pTl){
     for (int i=0; i<5; i++){
         int iIdx=0;
          if (iPrg == i){
-            m_pDC->FillSolidRect(m_Rect.left + s /ddx-1, y,
-                m_RectWidth*m_pDoc->m_DisplayXMul /ddx +1 ,3, RGB(80, 80, 255));
+            m_pDC->FillSolidRect(m_Rect.left + s / ddx -1, y,
+                m_RectWidth*m_pDoc->m_DisplayXMul / ddx +1 ,3, RGB(80, 80, 255));
             m_pDC->FillSolidRect(m_Rect.left, y+3,
-                pTl->getPeekMaxLength().m_Sample / ddx,3, RGB(0, 255, 0));
+                pTl->getPeekMaxLength().m_Sample / ddx, 3, RGB(0, 255, 0));
             
         }
         int x=m_Rect.left;

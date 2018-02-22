@@ -1,5 +1,6 @@
-// fdms2view_doc.h : interface of the CFdms2View_Doc class
-//
+/* Written by Barna Farago <brown@weblapja.com> 2006-2018
+* Player.h : interface of the CPlayer class
+*/
 #pragma once
 #include <fdms2lib.h>
 #include <mmsystem.h>
@@ -10,7 +11,7 @@
 #include "DMix1.h"
 */
 
-class CPlayer //: public CDocument, public ICacheUser
+class CPlayer //: public Cparent
 {
 //Interface
 public:
@@ -24,10 +25,16 @@ public:
     CPlayer();
     static CPlayer* getInstance();
     // TODO: doc valtas miatt egy struktúrába tegyük? vagy hogy?
+	void updatePlayable() {
+		if (m_fdms2) 
+			m_bPlayable = m_fdms2->getDiskAudioSize()>10000;
+		else 
+			m_bPlayable = false;
+	}
     void setFdms2(fdms2* fdms2){
         m_fdms2=fdms2;
-        m_bPlayable= m_fdms2->getDiskAudioSize()>10000;
-    }
+		updatePlayable();
+	}
     void setMixer(CMixer* mixer){
         m_mixer=mixer;
     }
@@ -43,7 +50,7 @@ public:
     void killPlayer();
     
     bool getPlayNow(){ return m_bPlayNow; }
-
+	bool getPlayable() { updatePlayable(); return m_bPlayable; }
 // Operations
 public:
     BOOL OnNewDocument();

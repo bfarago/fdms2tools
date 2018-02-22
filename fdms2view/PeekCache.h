@@ -1,3 +1,5 @@
+/* Written by Barna Farago <brown@weblapja.com> 2006-2018
+*/
 #pragma once
 #include <fdms2lib.h>
 #include "fdms2reader.h"

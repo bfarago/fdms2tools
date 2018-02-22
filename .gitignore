@@ -41,3 +41,11 @@
 *.img
 *.bak
 *.log
+*.tlog
+*.pdb
+*.f2vproj
+*.imgp0
+*.img_p0
+*.iobj
+*.msi
+*ipdb

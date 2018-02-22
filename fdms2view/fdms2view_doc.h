@@ -1,6 +1,7 @@
-// fdms2view_doc.h : interface of the CFdms2View_Doc class
-//
-//\dx\samples\VC70\common\$(OutDir)\DXUT.lib
+/* Written by Barna Farago <brown@weblapja.com> 2006-2018
+ * fdms2view_doc.h : interface of the CFdms2View_Doc class
+ */
+// \dx\samples\VC70\common\$(OutDir)\DXUT.lib
 
 #pragma once
 #include <fdms2lib.h>
@@ -28,11 +29,11 @@ protected: // create from serialization only
 	bool m_bRecordable;
 	int m_DisplayMode;
 
-//ezek a viewba át
+//ezek a viewba át // this will be placed to view
     int m_DisplayLevelValue;
     double m_DisplayXMul;
     void addDisplayXZoom(CFdms2View_View* pView, short zdelta);
-//eddig
+//eddig //til here
 
     CPlayer* m_player; //Applicationtol.
     CMixer m_mixer;
@@ -91,6 +92,7 @@ protected:
     bool isRegionSelected();
     void UpdateDisplay();
     void UpdateCursors();
+
 // Generated message map functions
 protected:
 	DECLARE_MESSAGE_MAP()

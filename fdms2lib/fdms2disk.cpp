@@ -1,3 +1,5 @@
+/*Written by Barna Farago <brown@weblapja.com> 2006-2018
+*/
 #include "fdms2.h"
 #include "fdms2disk.h"
 
@@ -260,6 +262,7 @@ EErrorCode fdms2disk::startMapOfFile(ERWType rwType){
     int modemap=0;
     int modeshare=0;
     int attr=0;
+	if (!m_pszFileName) return ErrFileNotFound;
     if (rwType == RWReadWrite){
         mode= GENERIC_READ | GENERIC_WRITE;
         modeshare=FILE_SHARE_READ | FILE_SHARE_WRITE;
@@ -296,7 +299,7 @@ EErrorCode fdms2disk::startMapOfFile(ERWType rwType){
                      attr, 
                      NULL);
     readDiskInfo(); //TODO: hova tegyük
-    if (rHFile == INVALID_HANDLE_VALUE){
+    if (INVALID_HANDLE_VALUE == rHFile ){
         checkLastError();
         return ErrFileNotFound;
     }else{
@@ -396,7 +399,7 @@ fdms2diskPtrIF* fdms2disk::getNewPtr(){
 }
 //---
 fdms2diskPtr::fdms2diskPtr(): m_hFile(NULL), m_hMap(NULL), m_disk(NULL), m_bVerbose(false),
-m_refCount(0)
+m_refCount(0), m_oMap(NULL), m_lMap(0), m_lastPtr(0)
 {
 }
 fdms2diskPtr::~fdms2diskPtr(){
@@ -504,7 +507,7 @@ void fdms2diskPtr::stopPtr(void* &rPtr){
         if (m_hMap){
             BOOL ret=UnmapViewOfFile(rPtr);
         }else{
-            free(rPtr);
+            //if (m_refCount>=0) free(rPtr);	//TODO: BUG:error when m_hMap is null.
         }
         rPtr=NULL;
     }
@@ -514,8 +517,13 @@ void fdms2diskPtr::setVerbose(bool verbose){
 }
 void fdms2diskPtr::setDisk(fdms2disk* disk){
     m_disk= disk;
-    m_hFile=m_disk->getFileHandle();
-    m_hMap= m_disk->getMapHandle();
+	if (disk){
+     m_hFile=m_disk->getFileHandle();
+     m_hMap= m_disk->getMapHandle();
+	} else {
+		m_hFile = 0;
+		m_hMap = NULL;
+	}
 }
 DWORD fdms2diskPtr::checkLastError(){
     DWORD dwError=  GetLastError();

@@ -1,5 +1,6 @@
-// fdms2view_app.h : main header file for the testermfc_fdms2lib application
-//
+/* Written by Barna Farago <brown@weblapja.com> 2006-2018
+ * fdms2view_app.h : main header file for the testermfc_fdms2lib application
+ */
 #pragma once
 
 #ifndef __AFXWIN_H__

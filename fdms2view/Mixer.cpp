@@ -1,3 +1,5 @@
+/* Written by Barna Farago <brown@weblapja.com> 2006-2018
+*/
 #include "StdAfx.h"
 #include "Mixer.h"
 

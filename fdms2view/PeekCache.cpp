@@ -1,3 +1,6 @@
+/* Written by Barna Farago <brown@weblapja.com> 2006-2018
+*
+*/
 #include "StdAfx.h"
 #include "PeekCache.h"
 
@@ -205,8 +208,8 @@ bool PeekCache::load(){
 #include <math.h>
 signed short PeekCache::val2db(signed short val){
     int s=1;
-    if (val<0) s=-1; 
-    return short(log((double)abs(val))/log((double)2)*64*1024/96*s);
+    if (val<0) s=-1;
+    return short( log((double)abs(val)) / log((double)2)*64*1024/96*s );
 }
 fdms2pos PeekCache::getPeekMaxLength(){
     fdms2pos p;

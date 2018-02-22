@@ -243,6 +243,7 @@ makehm /h /a afxhh.h IDW_,HIDW_,0x50000 "%(Filename)%(Extension)" &gt;&gt; "hlp\
     <Image Include="res\fdms2view.ico" />
     <Image Include="res\fdms2viewDoc.ico" />
     <Image Include="res\fdms2view_doc.ico" />
+    <Image Include="res\Fostex-d_80.bmp" />
     <Image Include="res\Toolbar.bmp" />
     <Image Include="res\toolbar1.bmp" />
   </ItemGroup>

@@ -57,8 +57,8 @@ F800 - FFFF	E	2k  4block
 =======================================
 B block
 Index?
-000  S4 S3 S2 S1 start (bigendian) 0:end
-004  L4 L3 L2 L1 len bytes         ffffffff: err ?
+000  S4 S3 S2 S1 start block(512byte) (bigendian) 0:end
+004  L4 L3 L2 L1 len in blocks        ffffffff: err ?
 
 =======================================
 C block
@@ -87,3 +87,16 @@ Metrum
  01 00 00 01 20 01 00 00:
  start bar: 0001, tempo: 120, 1/4
 =======================================
+Audio data
+32*samples in one 512 byte long block.
+this 512 bytes organised in 16 rows, in one row:
+32 byte: 2byte* 2sample* 8 channel
+
+one row:
+CH1.sample1  byte low, byte high (little-endian)
+CH1.sample2
+CH2.sample1
+CH2.sample2
+..
+CH8.sample1
+CH8.sample2
