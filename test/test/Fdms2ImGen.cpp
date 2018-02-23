@@ -54,15 +54,28 @@ size_t Fdms2ImGen::addSameByte(int len, unsigned char bdata)
 	free(buf);
 	return size;
 }
+
 size_t Fdms2ImGen::addDwBigendian(int len, unsigned long long dw)
 {
+
 	unsigned char buf[8];
+#if 0
 	unsigned long long b=dw;
 	unsigned char* p = (unsigned char*)&b;
 	if (len > 8)len = 8;
 	for (int i = 0; i < len; i++) {
 		buf[i] = p[len-1-i];
 	}
+#else
+	int p = 0;
+	if (len > 2) { //4
+		buf[p++] = (dw >> 16) & 0xff;
+		buf[p++] = (dw >> 24) & 0xff;
+	}
+	buf[p++] = dw & 0xff;
+	buf[p++] = (dw >> 8) & 0xff;
+	
+#endif
 	size_t size = fwrite(buf, 1, len, m_f);
 	m_size += size;
 	return size;
@@ -121,15 +134,15 @@ int Fdms2ImGen::addProgram()
 	unsigned int startpos = 0x00050060;
 	unsigned int length = startpos+ (m_maxsample * 16);
 
-	size += addDwLittleendian(4, startpos/512); //todo: startpos
-	size += addDwLittleendian(4, length/512); //todo: len
+	size += addDwBigendian(4, startpos/512); //todo: startpos
+	size += addDwBigendian(4, length/512); //todo: len
 	size += addDwBigendian(4, 0x00000000); //stop
 	size += addDwBigendian(4, 0x00000000); //
 	size += addSameByte(0x800-size, 'B'); //B
 
 	size = 0;
-	size += addSameByte(1, 0x01); // 0001 bar
-	size += addSameByte(1, 0x00); 
+	size += addDwBigendian(2, 0x01); // 0001 bar
+
 	size += addSameByte(1, 0x04); // 2/4
 	size += addSameByte(1, 0x03);
 	size += addDwBigendian(4, 0x00000000); //stop
