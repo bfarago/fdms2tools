@@ -13,7 +13,7 @@
 
 fdms2disk::fdms2disk(void): m_dtMode(DTUninitialized), m_pszFileName(NULL),m_pszInfo(NULL),m_iDiskId(0),
 m_iEof(0), m_iBadSector(0),m_rwType(RWReadOnly), m_hFile(NULL), m_hMap(NULL),m_bVerbose(false),
-m_usedPtrs(0), m_lDiskSize(0)
+m_usedPtrs(0), m_lDiskSize(0), m_atMode(EAccessType::ATUninitialized)
 {
     for(int i=0; i<MAXNUMFDMS2DISKPTRS; i++) m_ptrs[i]=NULL;
 }
@@ -186,7 +186,7 @@ EErrorCode fdms2disk::readDiskInfo(){
                     break;
             }
             sprintf_s(tmp2, 128, ("Pn:%i)"), liex->PartitionCount);
-            PARTITION_INFORMATION_EX* piex= liex->PartitionEntry;
+            const PARTITION_INFORMATION_EX* piex= liex->PartitionEntry;
             if (!liex->PartitionCount){
                 LARGE_INTEGER li;
                 li.QuadPart = 2*512;
@@ -198,7 +198,7 @@ EErrorCode fdms2disk::readDiskInfo(){
                 DWORD dwByteRead=0;
                 DWORD ret=0;
                 char buf[1024];
-                int count=1024;
+                const int count=1024;
 
                 ret=ReadFile(hFile, buf, count,&dwByteRead,NULL);
                 checkLastError();
@@ -420,9 +420,9 @@ EErrorCode fdms2diskPtr::readViewFromFile(void*& rpMap, t_offset oMap, t_offset 
     LARGE_INTEGER li;
     li.QuadPart=oMap;
     m_oMap=oMap;
-    DWORD dwPos = SetFilePointer ( m_hFile, li.LowPart, &li.HighPart, FILE_BEGIN);
+    const DWORD dwPos = SetFilePointer ( m_hFile, li.LowPart, &li.HighPart, FILE_BEGIN);
     if (dwPos == INVALID_SET_FILE_POINTER){
-        DWORD dwE=GetLastError();
+        const DWORD dwE=GetLastError();
         if (dwE) {
             if (rpMap) {
                 free(rpMap);
@@ -452,7 +452,7 @@ void fdms2diskPtr::writeBack(){
     if (!m_lMap) return; //zerosize
     LARGE_INTEGER li;
     li.QuadPart=m_oMap;
-    DWORD dwPos = SetFilePointer ( m_hFile, li.LowPart, &li.HighPart, FILE_BEGIN);
+    const DWORD dwPos = SetFilePointer ( m_hFile, li.LowPart, &li.HighPart, FILE_BEGIN);
     if (dwPos == INVALID_SET_FILE_POINTER){
         if (checkLastError()){
             return ;
@@ -506,6 +506,7 @@ void fdms2diskPtr::stopPtr(void* &rPtr){
     if (rPtr) {
         if (m_hMap){
             BOOL ret=UnmapViewOfFile(rPtr);
+			ASSERT(ret);
         }else{
             //if (m_refCount>=0) free(rPtr);	//TODO: BUG:error when m_hMap is null.
         }
@@ -526,7 +527,7 @@ void fdms2diskPtr::setDisk(fdms2disk* disk){
 	}
 }
 DWORD fdms2diskPtr::checkLastError(){
-    DWORD dwError=  GetLastError();
+    const DWORD dwError=  GetLastError();
     if (!m_bVerbose) return dwError;
     if (!dwError) return 0;
 	LPVOID lpMsgBuf;

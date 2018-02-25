@@ -39,11 +39,11 @@
 
 /**Default constructor.
 */
-fdms2::fdms2()
+fdms2::fdms2() noexcept
 :m_partitionMode(NormalPartitionMode),m_badBlock(NULL),m_pMap(NULL),m_filename(NULL),m_startpos(0),
 m_length(0), m_badsector(true),m_eof(false),m_pDirMap(NULL),m_oDirMap(0),m_bWriteable(false),
 m_oMap(0), m_lMap(0), m_lDirMap(0), m_required(0), 
-g_pagesize(DEFAULT_PAGESIZE), m_endpos(0),m_bMap(false), m_step(0)
+g_pagesize(DEFAULT_PAGESIZE), m_endpos(0), m_bMap(false), m_step(0), m_ProgramSampleCount()
 // m_pDirectMap(NULL),
 {
  m_ptr=NULL;
@@ -54,13 +54,15 @@ g_pagesize(DEFAULT_PAGESIZE), m_endpos(0),m_bMap(false), m_step(0)
  m_fdInput=0;
  m_fdDirectory=0;
 #endif
- for(int i=0; i<FOSTEXMAXPROGRAMM; i++){
+ for( int i=0; i<FOSTEXMAXPROGRAMM; i++){
      m_partTable[i].kill();
 	 m_ProgramSampleCount[i]=0;
  }
 }
 fdms2::~fdms2(){
+	stop();
     m_fdms2disk.stop();
+
 }
 void fdms2::setFileName(const char* s){
     m_fdms2disk.setFileName(s);
@@ -70,8 +72,10 @@ const char* fdms2::getFileName()const{
 }
 fdms2streamerIF* fdms2::duplicate(){
     fdms2* p=new fdms2;
-    p->copy(this);
-    p->start();
+	if (p) {
+		p->copy(this);
+		p->start();
+	}
     return p;
 }
 
@@ -88,19 +92,20 @@ void fdms2::copy(fdms2streamerIF* pIF){
 }
 /**Error logger.
 */
-void fdms2::logError(char* err){
+void fdms2::logError(const char* err){
     messageBox("Err", err);
     //printf("err: fdms2lib : %s \n", err); 
 }
-t1_toffset fdms2::pagealign(t1_toffset v){
-	t1_toffset t;
+t1_toffset fdms2::pagealign(t1_toffset v) noexcept
+{
+	t1_toffset t=0;
 	if (g_pagesize)t=g_pagesize * (t1_toffset)(( v / g_pagesize));
 	else t = v;
 	return  t; 
 }
 void fdms2::dumphex(t1_toffset pos, long len){
  for (int i = 0 ; i<len; i++){
-  unsigned char *b=(unsigned char*)mapPtr(pos+i,0); 
+  const unsigned char *b=(const unsigned char*)mapPtr(pos+i,0); 
   if (b) printf("%02X ", *b);
  }
 }
@@ -113,18 +118,18 @@ short fdms2::getValue(t1_toffset pos, int channel, int samplenum){
   if (pos<0) return 0;
   unsigned short v;
   t1_toffset rowPos;
-  rowPos=32*( (t1_toffset)(pos/32) ); 
+  rowPos = pos & ~31; //rowPos=32*( (t1_toffset)(pos/32) );  // alignment 32
 //  printf("getValue row:%i\n", rowPos);
   unsigned char* pch=0;
   pch=(unsigned char*)mapPtr(rowPos, m_required);
   if( (pch != NULL) && ((int)pch != -1)){
-    unsigned int indxH=4*(8*(samplenum/2) + channel);
+    unsigned int indxH=4*(8*(samplenum>>1) + channel);
     if (indxH >= m_lMap){
        // DLOG("overread");
         return 0;
     }
     pch+= indxH;
-    unsigned int indx=2*(samplenum % 2);
+	const unsigned int indx = (samplenum & 1) << 1;  //2*(samplenum % 2);
     v= (unsigned short)((unsigned char)(pch[1+indx]) <<8) | (unsigned char)(pch[ indx]);
   }else{
     v=0;
@@ -134,9 +139,10 @@ short fdms2::getValue(t1_toffset pos, int channel, int samplenum){
   return (short)v;
 }
 int fdms2::getValues(t1_toffset pos, int channelmap, int samplenum, short* ptrArray, int lenArray){
+  if (!ptrArray) return 0;
   int iCount=0;
   //GET data
-   m_required= (samplenum+1)*2*8; //byte
+  m_required = (samplenum + 1) << FOSTEXSHIFTS2B; // *2 * 8; //byte
   for (int i=0; i< samplenum; i++){
     int chBit=1;
     for(int ch=0; ch < FOSTEXMAXCHANNELS; ch++){
@@ -148,16 +154,16 @@ int fdms2::getValues(t1_toffset pos, int channelmap, int samplenum, short* ptrAr
        if (iCount>lenArray) return iCount;	//BUGBUG: we dont know if buffer overruns.
      }
     }
-    chBit*=2;
+	chBit <<= 1; // *= 2;
   }
   return iCount;
 }
 int fdms2::getValueArrays(t1_toffset pos, int samplenum, short** ptrArray){
   if (!ptrArray) return 0;
-  int iCount=0;
+  // int iCount=0;
   //GET data
   reset();
-  m_required= (samplenum+1)*2*8; //byte
+  m_required = (samplenum + 1) << FOSTEXSHIFTS2B;  // *2 * 8; //byte
   for (int i=0; i< samplenum; i++){
         if (!m_badsector) reset();
         for(int ch=0; ch < FOSTEXMAXCHANNELS; ch++){
@@ -174,7 +180,8 @@ int fdms2::getValueArrays(t1_toffset pos, int samplenum, short** ptrArray){
 @param riLastPart Last partition index
 */
 int fdms2::getValuesPrg(int iPrg, t1_toffset pos, int channelmap, int samplenum, short* ptrArray, int lenArray, int& riLastPart){
-  int iCount=0;
+	if (!ptrArray) return 0;
+	int iCount=0;
   //GET data
   for (int i=0; i< samplenum; i++){
     int chBit=1;
@@ -187,23 +194,23 @@ int fdms2::getValuesPrg(int iPrg, t1_toffset pos, int channelmap, int samplenum,
        if (iCount>lenArray) return iCount;	//BUGBUG: we dont know if buffer overruns.
      }
     }
-    chBit*=2;
+	chBit <<= 1; // chBit*=2;
   }
   return iCount;
 }
-t1_toffset fdms2::getProgramSampleCount(int iPrg){
+t1_toffset fdms2::getProgramSampleCount(const int iPrg)const noexcept
+{
     return m_ProgramSampleCount[iPrg];
 }
-t1_toffset fdms2::getLongestProgramSampleCount(){
-    t1_toffset len=0;
+t1_toffset fdms2::getLongestProgramSampleCount()const noexcept{
     t1_toffset lenMax=0;
     for (int i=0; i< FOSTEXMAXPROGRAMM; i++){
-        len=getProgramSampleCount(i);
-        if (lenMax<len) lenMax=len;
+		const t1_toffset len = getProgramSampleCount(i);
+        if (lenMax < len) lenMax = len;
     }
     return lenMax;
 }
-int fdms2::convertLogical2Abs(int iPrg, fdms2pos posLogic, t1_toffset& iOffs, t1_toffset& iStart, t1_toffset& iMaxLen, int& iLastPart){
+int fdms2::convertLogical2Abs(const int iPrg, fdms2pos posLogic, t1_toffset& iOffs, t1_toffset& iStart, t1_toffset& iMaxLen, int& iLastPart){
     INT64 pz= 0;
     INT64 pzLogic= posLogic.m_Pos;
     iLastPart=0;
@@ -225,13 +232,13 @@ void fdms2::dumpfostex(t1_toffset pos){
   pch=(char*)mapPtr(pos,8*8);
   if (!pch) return; //overrun
   for (int ch1=0; ch1 < 8 ; ch1++, pch+=4){
-        chval1[ch1]= pch[0] <<8 | pch[1];
+        chval1[ch1]= pch[0] <<8 | pch[1]; //TODO: wrong byte order ?
         chval2[ch1]= pch[2] <<8 | pch[3];
   }
   printf("|");
   for (int ch=0; ch <8 ; ch++){
-    long av=abs((short)(chval1[ch]))+ abs((short)(chval1[ch]));
-    int v= abs( av /2 / VUMETERDIV );
+    const long av=abs((short)(chval1[ch]))+ abs((short)(chval1[ch]));
+    const int v= abs( av / VUMETERDIV2);
     for (int j1=0; j1< v; j1++){
      printf("%c", '1'+ch);
     }
@@ -243,20 +250,23 @@ void fdms2::dumpfostex(t1_toffset pos){
 }
 
 int fdms2::unmap(){
-   if (m_ptr) m_ptr->stopPtr(m_pMap);
+
+   if (m_ptr)
+	   if (m_pMap) 
+		   m_ptr->stopPtr(m_pMap);
    return 0;
 }
 
 int fdms2::map(t1_toffset offset){
   int iRet=0;
   m_bMap=true;
-  printf("map(%lli)\n",offset);
+  // printf("map(%lli)\n",offset);
   unmap();
   m_lMap= MAPPAGELENGTH;
   m_badsector=false;
   m_eof=false;
   m_oMap=pagealign(offset);
-  t1_toffset offs=m_oMap+FIRSTDATABLOCK;
+  const t1_toffset offs=m_oMap+FIRSTDATABLOCK;
 //  printf("offs: %lli  m_length: %lli m_lMap: %lli\n",offs, m_length, m_lMap);
 
   if ((m_lMap+offs) >= (m_length))
@@ -271,7 +281,7 @@ int fdms2::map(t1_toffset offset){
     m_lMap=MAPPAGELENGTH;	//hack
   }
   m_lMap=pagealign(m_lMap);
-  printf("m_lMap: %lli\n", m_lMap);
+  //printf("m_lMap: %lli\n", m_lMap);
 
   if (m_lMap<=1) m_lMap=g_pagesize;
 #ifndef WIN32
@@ -298,7 +308,7 @@ void* fdms2::mapPtr(t1_toffset pos, t1_toffset max){
     iRet|=map(pos);
    }
    if ((pos+max)>=m_length){
-       DLOG("eof");
+       //DLOG("eof");
        return 0;
    }
    if (iRet){
@@ -389,7 +399,7 @@ int fdms2::start(){
     if (m_fdms2disk.start() != ErrNone) return -1;
     m_ptr = m_fdms2disk.getNewPtr();
     m_ptrDir=m_fdms2disk.getNewPtr();
-    t1_toffset mdisksize = getDiskSize();
+    const t1_toffset mdisksize = getDiskSize();
     if (mdisksize){
         m_length=mdisksize;
     }
@@ -421,7 +431,8 @@ int fdms2::stop(){
  return 0;
 }
 
-void fdms2::SigBusOccured(int sig){
+void fdms2::SigBusOccured(int sig) noexcept
+{
  m_badsector=true;
 }
 
@@ -429,7 +440,7 @@ void fdms2::SigBusOccured(int sig){
 */
 void fdms2::dump(){
  if (m_step < 1) m_step = 1;
- t1_toffset d=m_step; //division 
+ const t1_toffset d=m_step; //division 
  t1_toffset pos=m_startpos; 
  for (t1_toffset p= 0; p< d; p++){
     pos=m_startpos+ p*m_length/d;
@@ -457,8 +468,7 @@ t1_toffset fdms2::getDiskAudioSize(){
 @return 64bit wide size.
 */
 t1_toffset fdms2::getDiskSize(){
-    t1_toffset s= m_fdms2disk.getDiskSize();
-    return s;
+    return m_fdms2disk.getDiskSize();
 }
 
 EDiskType fdms2::getDiskType(){
@@ -470,6 +480,7 @@ int fdms2::dumpABlock(unsigned char* pC){
  unsigned int vDW2=0;
  unsigned int iIndx=0;
  unsigned int iMaxIndx=0;
+ if (!pC) return 0;
  iMaxIndx=pC[2] | pC[1]<<8 | pC[0]<<16;
  pC+=4;
  do{
@@ -487,7 +498,7 @@ int fdms2::dumpBBlock(unsigned char* pC){
  unsigned int vDW2=0;
  unsigned int vQW=0;
  unsigned int iIndx=0;
- 
+ if (!pC) return 0;
  do{
     vDW=pC[3] | pC[2]<<8 | pC[1]<<16 | pC[0]<<24;
     vDW2=pC[7] | pC[6]<<8 | pC[5]<<16 | pC[4]<<24;
@@ -506,14 +517,14 @@ int fdms2::dumpBBlock(unsigned char* pC){
  return iIndx;
 }
 
-void fdms2::killPrgPartTable(int iPrg){
+void fdms2::killPrgPartTable(const int iPrg){
     m_partTable[iPrg].kill();
 }
 
-int fdms2::initPrgPartTable(int iPrg, unsigned char* pC){
- unsigned int vDW=0;
- unsigned int vDW2=0;
- unsigned int vQW=0;
+int fdms2::initPrgPartTable(const int iPrg, unsigned char* pC){
+ //unsigned int vDW=0;
+ //unsigned int vDW2=0;
+ //unsigned int vQW=0;
  unsigned int iIdx=0;
  t1_toffset Start=0;
  t1_toffset sampleCount=0;
@@ -613,7 +624,7 @@ int fdms2::getPart(int iPrg, int iIdx, t1_toffset& riStart, t1_toffset& riLen){
     return iRet;
 }
 
-int fdms2::getPart(int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rpLen){
+int fdms2::getPart(const int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rpLen){
     if (!m_pDirMap) return -1;
     if (iPrg>=5) return -3;
     if (iIdx >= m_partTable[iPrg].m_length) return -2;
@@ -725,8 +736,8 @@ int fdms2::setPartOnDisk(int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rpLe
     unsigned char* pC=(unsigned char*)m_pDirMap + FIRSTDIRBLOCK+BOFFSDIRBLOCK +
     iPrg*LENGTHDIRBLOCK + iIdx*8 + 8;
 
-    unsigned long vDW= riStart/512;
-    unsigned long vDW2=rpLen.m_Pos/512;
+    unsigned long vDW= unsigned long(riStart/512);
+    unsigned long vDW2=unsigned long(rpLen.m_Pos/512);
     setDW(pC, vDW);
     setDW(pC+4,vDW2);
     return 0;
@@ -836,10 +847,11 @@ int fdms2::startDirectory(){
 
 void fdms2::stopDirectory(){
  if (m_pDirMap) {
-     for (int iPrg=0; iPrg< FOSTEXMAXPROGRAMM; iPrg++){
+	 if (m_ptrDir) m_ptrDir->stopPtr(m_pDirMap); //TODO: I got an exception here  in destruction phase. (referenced obj missing?)
+	 for (int iPrg=0; iPrg< FOSTEXMAXPROGRAMM; iPrg++){
          killPrgPartTable(iPrg);
      }
-	 if (m_ptrDir) m_ptrDir->stopPtr(m_pDirMap); //TODO: I got an exception here  in destruction phase. (referenced obj missing?)
+	 
  }
 }
 

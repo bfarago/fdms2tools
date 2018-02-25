@@ -11,13 +11,25 @@
 #include "DMix1.h"
 */
 
+#define MAX_WHSIZE (1<<1)
+#define MASK_WHSIZE (MAX_WHSIZE-1)
+
 class CPlayer //: public Cparent
 {
 //Interface
 public:
     typedef union{ 
         struct {
-            unsigned char mixerFault:1;
+            unsigned char mixerFault : 1;
+			unsigned char internalBufferOverrun : 1;
+			unsigned char docref_fdms : 1;
+			unsigned char wdog_wait : 1;
+			unsigned char worker_unknown : 1;
+			unsigned char worker_timeout : 1;
+			unsigned char readMultiChannelCatch : 1;
+			unsigned char worker_set : 1;
+			unsigned char worker_reset : 1;
+			unsigned char pool_order : 1;
         } flags;
         DWORD dw;
     }tErrorCode;
@@ -51,6 +63,9 @@ public:
     
     bool getPlayNow(){ return m_bPlayNow; }
 	bool getPlayable() { updatePlayable(); return m_bPlayable; }
+	void setBufferedSamples(DWORD samplenum);
+	DWORD getBufferedSamples();
+	DWORD getAdaptiveWait() { return m_actualWait; }
 // Operations
 public:
     BOOL OnNewDocument();
@@ -63,8 +78,7 @@ protected:
 	fdms2* m_fdms2;
     CMixer* m_mixer;
     IVUMeters* m_VUMeters;
-    //m_MixConsole; //TODO: vumeter tema
-    int m_SelectedProgram; //nem lehetne atvenni a disktol?
+    int m_SelectedProgram; //get from the doc/disk ?
 
 //inside    
     fdms2 m_waveFdms2;
@@ -73,8 +87,10 @@ protected:
 	bool m_bRecordable;
     //TODO:refactoring needed
     fdms2pos m_PosEditCursor;
+	DWORD m_actualWait;
+	DWORD m_requiredBufferedSamples;
 	
-//    DMix1 *m_MixConsole;
+protected:
 //TODO:inside must be protected soon.
     HWAVEOUT      m_waveOutHandle;
     WAVEFORMATEX  m_waveFormat;
@@ -82,9 +98,6 @@ protected:
     DWORD   m_waveSize;
     DWORD   m_waveSampleMax;
     short** m_waveMultiChannel;
-
-    #define MAX_WHSIZE (1<<3)
-    #define MASK_WHSIZE (MAX_WHSIZE-1)
     WAVEHDR m_waveHdr[MAX_WHSIZE];
     WAVEHDR* m_waveLastHdr;
     HANDLE m_thHandle;
@@ -94,7 +107,9 @@ protected:
     bool m_bRun;
     DWORD worker();
     static DWORD __stdcall ThreadEntry(void* ptr);
-    DWORD mixWaveData(short* buf, DWORD size);
+	int readMultiChannel();
+	int calcMixbus(short * buf, DWORD size, DWORD &opos, int ipos, short* peak);
+	DWORD mixWaveData(short* buf, DWORD size);
     long QueueWaveData(WAVEHDR * waveHeader);
     void stopWorker();
     void waveHandler(HWAVEOUT waveOut, UINT uMsg, DWORD dwParam1, DWORD dwParam2);

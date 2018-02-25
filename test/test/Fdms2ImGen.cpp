@@ -3,7 +3,7 @@
 #include <malloc.h>
 
 Fdms2ImGen::Fdms2ImGen()
-	:m_fname("test.img"), m_f(NULL), m_size(0), m_maxsample(44100 * 60)
+	:m_fname("test.img"), m_f(NULL), m_size(0), m_maxsample(44100 * 60* 90)
 {
 }
 
@@ -132,10 +132,15 @@ int Fdms2ImGen::addProgram()
 	size = 0; //B block: index
 	size += addSameByte(8, 'B');
 	unsigned int startpos = 0x00050060;
-	unsigned int length = startpos+ (m_maxsample * 16);
+	unsigned int length = (m_maxsample * 16 / 2);
+	unsigned int endpos = startpos + length;
 
 	size += addDwBigendian(4, startpos/512); //todo: startpos
-	size += addDwBigendian(4, length/512); //todo: len
+	size += addDwBigendian(4, endpos/512); //todo: len
+	
+	size += addDwBigendian(4, (startpos + length) / 512); //todo: startpos
+	size += addDwBigendian(4, length / 512); //todo: len
+
 	size += addDwBigendian(4, 0x00000000); //stop
 	size += addDwBigendian(4, 0x00000000); //
 	size += addSameByte(0x800-size, 'B'); //B

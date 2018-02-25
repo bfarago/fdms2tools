@@ -15,16 +15,28 @@ fdms2stream::fdms2stream():iChannels(FOSTEXMAXCHANNELS), iSamples(0), pFdms2Read
     }
 }
 fdms2stream::~fdms2stream(){
-    for (int i=0; i<FOSTEXMAXCHANNELS; i++){
-        if (pBuff[i]) free(pBuff[i]);
-    }
+	close();
+}
+void fdms2stream::close() {
+	for (int i = 0; i<FOSTEXMAXCHANNELS; i++) {
+		if (pBuff[i]) {
+			free(pBuff[i]);
+			pBuff[i] = 0;
+		}
+	}
+	iSamples = 0; iMaxSamples = 0;
 }
 void fdms2stream::init(int sampleSize){
+	iSamples = sampleSize;
+	if (iMaxSamples >= sampleSize) return;
+	if (iMaxSamples) close();
+
     for (int i=0; i<FOSTEXMAXCHANNELS; i++){
-        //bCh[i] = m_bnCh[i].GetCheck()== BST_CHECKED;
+		ASSERT(!pBuff[i]);
 		pBuff[i]= (short*)malloc(sampleSize*sizeof(short));
 	}
-    iSamples=sampleSize;
+	iMaxSamples = sampleSize;
+	iSamples = sampleSize;
 }
 
 //-----------------------------

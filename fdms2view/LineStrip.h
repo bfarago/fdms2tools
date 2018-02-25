@@ -14,5 +14,8 @@ public:
     long getAmp(long v);
     void getAmpStereo(long& l, long& r);
     void Serialize(CArchive &ar);
+	void setFader(int f);
+private:
+	double m_s;
 };
 

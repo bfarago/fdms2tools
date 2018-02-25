@@ -38,6 +38,7 @@
 #define HID_DEVICE_GRAB                         0x1801A
 #define HID_VIEW_RECREATEPEEKFILE               0x1801B
 #define HID_DEVICE_QUICKFORMAT                  0x18021
+#define HID_EDIT_SELECTALL                      0x18022
  
 // Prompts (IDP_*) 
 #define HIDP_OLE_INIT_FAILED                    0x30064

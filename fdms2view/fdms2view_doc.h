@@ -141,4 +141,6 @@ public:
     afx_msg void OnViewRecreatepeekfile();
     afx_msg void OnUpdateDeviceQuickformat(CCmdUI *pCmdUI);
     afx_msg void OnDeviceQuickformat();
+	afx_msg void OnEditSelectall();
+	afx_msg void OnUpdateEditSelectall(CCmdUI *pCmdUI);
 };

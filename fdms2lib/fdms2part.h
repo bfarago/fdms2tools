@@ -47,6 +47,7 @@ private:
 class fdms2parttable{
 public:
  fdms2parttable();
+ ~fdms2parttable();
  void kill();
  void init(int n);
  fdms2part& operator[](int i){return m_parts[i];}

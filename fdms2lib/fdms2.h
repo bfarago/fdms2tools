@@ -29,8 +29,8 @@ public:
 class fdms2:public fdms2streamerIF
 {
 public:
- fdms2();
- ~fdms2();
+ fdms2()noexcept;
+ virtual ~fdms2();
  void setFileName(const char* s);
  const char* getFileName()const;
  virtual void setWriteable(bool bWrite){
@@ -40,19 +40,20 @@ public:
  t1_toffset  m_length;
  t1_toffset  m_step; //only for dumping feature
  void dump();
- void logError(char* err);
+ void logError(const char* err);
  short getValue(t1_toffset pos, int channel, int samplenum);
  int getValues(t1_toffset pos, int channelmap, int samplenum, short* ptrArray, int lenArray);
  t1_toffset getDiskAudioSize();
  t1_toffset getDiskSize();
- t1_toffset getProgramSampleCount(int iPrg);
- t1_toffset getLongestProgramSampleCount();
+ t1_toffset getProgramSampleCount(const int iPrg)const noexcept ;
+ t1_toffset getLongestProgramSampleCount()const noexcept;
  EDiskType getDiskType();
- void SigBusOccured(int sig);
+ void SigBusOccured(int sig) noexcept;
+ bool wasBadSector()const noexcept { return m_badsector; }
+private:
  long g_pagesize;
  bool m_badsector;
  bool m_eof;
-private:
  int getValuesPrg(int iPrg, t1_toffset pos, int channelmap, int samplenum, short* ptrArray, int lenArray, int& riLastPart);
  void* m_badBlock;
  bool m_bWriteable;
@@ -88,7 +89,7 @@ private:
  int mapFile(int &rhMap, bool bWrite, void* &rpMap,t1_toffset oMap,t1_toffset lMap);
 #endif
 
- t1_toffset pagealign(t1_toffset v);
+ t1_toffset pagealign(t1_toffset v) noexcept;
  void dumphex(t1_toffset pos, long len);
  void dumpfostex(t1_toffset pos);
 
@@ -109,8 +110,8 @@ private:
  void stopDirectory();
  int dumpABlock(unsigned char* pC);
  int dumpBBlock(unsigned char* pC);
- int initPrgPartTable(int iPrg, unsigned char* pC);
- void killPrgPartTable(int iPrg);
+ int initPrgPartTable(const int iPrg, unsigned char* pC);
+ void killPrgPartTable(const int iPrg);
 public:
  virtual void reset();
  virtual int start();
@@ -119,8 +120,8 @@ public:
  virtual fdms2streamerIF* duplicate();
  virtual void copy(fdms2streamerIF* p);
  virtual int getValueArrays(t1_toffset pos, int samplenum, short** ptrArray);
- virtual int convertLogical2Abs(int iPrg, fdms2pos posLogic, t1_toffset& iOffs, t1_toffset& iStart, t1_toffset& iMaxLen, int& iLastPart);
- virtual int getPart(int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rpLen);
+ virtual int convertLogical2Abs(const int iPrg, fdms2pos posLogic, t1_toffset& iOffs, t1_toffset& iStart, t1_toffset& iMaxLen, int& iLastPart);
+ virtual int getPart(const int iPrg, int iIdx, t1_toffset& riStart, fdms2pos& rpLen);
 
 public:
  int getPart(int iPrg, int iIdx, t1_toffset& riStart, t1_toffset& riLen);

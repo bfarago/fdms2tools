@@ -23,6 +23,8 @@
 #ifndef OutputDebugStr
 #define OutputDebugStr(x)
 #endif
+
+
 #ifdef UNICODE
    #define DLOG(format,...) { wchar_t b[1024]; \
     swprintf_s(b, 1024, TEXT("%s(%i):"), __FILE__, __LINE__); OutputDebugStr(b); \
@@ -30,11 +32,12 @@
     swprintf_s(b, 1024, TEXT("\n")); OutputDebugStr(b); \
    }
 #else
-   #define DLOG(format,...) { char b[1024]; \
+   #define DLOG(format,...)
+   /*#define DLOG(format,...) { char b[1024]; \
     sprintf_s(b, 1024, ("%s(%i):"), __FILE__, __LINE__); OutputDebugStr(b); \
     sprintf_s(b, 1023, (format), ## __VA_ARGS__); OutputDebugStr(b); \
     sprintf_s(b, 1024, ("\n")); OutputDebugStr(b); \
-   }
+   }*/
 #endif
 
 
@@ -59,10 +62,17 @@
 
 #define VUMETERMAX 20
 #define VUMETERDIV (0x7FFF/VUMETERMAX)
+#define VUMETERDIV2 (0xFFFF/VUMETERMAX)
 #define FOSTEXFRAMERATE (25)
 #define FOSTEXSAMPLERATE 44100
 #define FOSTEXSAMPLEINBLOCK 32
 #define FOSTEXMAXCHANNELS 8
 #define FOSTEXMAXPROGRAMM 5
+#define FOSTEXSHIFTS2B (4)  //shift sampleNr to byte address log2(2*8)
+#define FOSTEXSHIFTCH (3)  //shift log2(8)
 //#define VERBOSE_MAPPING
 #endif
+
+#define _CRTDBG_MAP_ALLOC  
+#include <stdlib.h>  
+#include <crtdbg.h> 

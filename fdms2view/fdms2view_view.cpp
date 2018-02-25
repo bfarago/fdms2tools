@@ -120,7 +120,7 @@ void CFdms2View_View::ResizeAreas(){
     m_PosDisplayStop=getDisplayPos(dx);
     int y=m_yRulerBottom+10;
 	for (unsigned int i=0; i<FOSTEXMAXCHANNELS; i++){
-        //TODO: wavelabel es wave legyen egy osztalyban?
+        //TODO: could be the wavelabel and wave in the same class?
         int ay=m_my;
         if (m_WaveLabelArea[i].getHide()){
             ay=10;
@@ -201,17 +201,31 @@ void CFdms2View_View::OnDrawOrdinata(CDC* pDC)
 	int dy=rect.Height();
 	fdms2pos pLen;
 	COLORREF crBack=RGB(0xd0, 0xd0, 0xd0);
+	COLORREF crGray = RGB(0xb0, 0xb0, 0xb0);
 	int ny=0;
 	int my=(dy-10)/18-5;
 	int y=5;
 	int x=10;
+	pDC->TextOut(0, y,		_T("hh:mm:ss"));
+	pDC->TextOut(0, y + 16, _T("ss.frame"));
+	pDC->TextOut(0, y + 32, _T("img size"));
 	pDC->FillSolidRect(rect.left, y, dx,16*3,crBack);
+	pDC->SetBkColor(crGray);
+	CPen rulerPen(PS_DOT, 1, crGray);
+	CPen* oldPen= pDC->SelectObject(&rulerPen);
+
+	for (int i = 0; i < 16; i++) {
+		int xx = rect.left + ((i*dx) >> 4);
+		pDC->MoveTo(xx, y - 1);
+		pDC->LineTo(xx, y + 34);
+	}
+	pDC->SelectObject(oldPen);
 	pDC->SetBkColor(crBack);
     //bytepos 
 	for (int i=0;i<8; i++){
 		int xx=i*dx/8;
         char * str=NULL;
-        getDisplayPos(xx).dumpTimeStrHMSF(str);
+        getDisplayPos(xx).dumpTimeStrHMS(str);
         CString sstr;
 		sstr.Format(L"%S", str);
         OnDrawOneTimeStamp(pDC, rect.left+xx , y, sstr);
@@ -219,7 +233,7 @@ void CFdms2View_View::OnDrawOrdinata(CDC* pDC)
 	}
 	y+=16;
     for (int i=0;i<7; i++){
-		int xx=i*dx/8+ (dx/16);
+		int xx=((i*dx)>>3) + (dx>>4);	// i*dx/8+ (dx/16);
         char * str=NULL;
         getDisplayPos(xx).dumpTimeStrSF(str);
         CString sstr;
@@ -249,7 +263,7 @@ void CFdms2View_View::OnDrawOrdinata(CDC* pDC)
 	olds=-1;
     //frame
 	for (int i=dx; i>0; i--){
-		ps.setSample(i* pDoc->m_DisplayXMul /16);
+		ps.setSample((long long)(i* pDoc->m_DisplayXMul)>>4); //  /16
         ps.addPos(m_PosDisplayStart.m_Pos);
 		if (ps.m_Frame<1)
 		if (ps.m_Sec!=olds){
@@ -287,8 +301,8 @@ void CFdms2View_View::OnDrawOrdinata(CDC* pDC)
 }
 void CFdms2View_View::OnDrawOneTimeStamp(CDC* pDC, int x, int y, const CString &str){
 	pDC->TextOut(x, y, str);	
-	pDC->MoveTo(x,y);
-	pDC->LineTo(x,y+14);
+	pDC->MoveTo(x,y-1);
+	pDC->LineTo(x,y+17);
 }
 
 void CFdms2View_View::OnDrawMouse(CDC* pDC){
@@ -299,8 +313,8 @@ void CFdms2View_View::OnDrawMouse(CDC* pDC){
 	for (int i=4 ; i; i--){
 		pDC->SetPixel(m_pointMouseOld.x,i,crBack);
 		pDC->SetPixel(m_pointMouse.x,i,crFore);
-		pDC->SetPixel(i,m_pointMouseOld.y,crBack);
-		pDC->SetPixel(i,m_pointMouse.y,crFore);
+		//pDC->SetPixel(i,m_pointMouseOld.y,crBack);
+		//pDC->SetPixel(i,m_pointMouse.y,crFore);
 	}
 	m_pointMouseOld= m_pointMouse;
 }
@@ -327,9 +341,9 @@ void CFdms2View_View::OnDrawRegion(CDC* pDC){
     CPen* pOldPen =NULL;
     COLORREF crPenLine=RGB(0, 0x70,0);
 	if (!pDoc->m_DisplayXMul)pDoc->m_DisplayXMul = 1;
-	int x1=rect.left + (pDoc->m_PosRegionStart.m_Sample-m_PosDisplayStart.m_Sample)/pDoc->m_DisplayXMul;
-	int x2=rect.left + (pDoc->m_PosRegionStop.m_Sample-m_PosDisplayStart.m_Sample)/pDoc->m_DisplayXMul;
-	int xp=rect.left + (pDoc->m_PosEditCursor.m_Sample-m_PosDisplayStart.m_Sample)/pDoc->m_DisplayXMul;
+	int x1=rect.left + (int)((pDoc->m_PosRegionStart.m_Sample - m_PosDisplayStart.m_Sample)/pDoc->m_DisplayXMul);
+	int x2=rect.left + (int)((pDoc->m_PosRegionStop.m_Sample - m_PosDisplayStart.m_Sample)/pDoc->m_DisplayXMul);
+	int xp=rect.left + (int)((pDoc->m_PosEditCursor.m_Sample - m_PosDisplayStart.m_Sample)/pDoc->m_DisplayXMul);
 	if (x2<x1){
 		//crPenLine=RGB(0xff, 0,0);
 		//CBrush brushLine(RGB(255, 0, 0));
@@ -370,8 +384,8 @@ void CFdms2View_View::OnDrawRegion(CDC* pDC){
 }
 		
 fdms2pos CFdms2View_View::getDisplayPos(int posx){
-    UINT64 pos=m_PosDisplayStart.m_Sample+ (UINT64(posx)) * GetDocument()->m_DisplayXMul;
-    return fdms2pos(pos*16);
+    UINT64 pos=m_PosDisplayStart.m_Sample+ (UINT64)( (UINT64(posx)) * GetDocument()->m_DisplayXMul );
+    return fdms2pos(pos<<4); //*16
 }
 void CFdms2View_View::getDisplayStartPartOffs(int &iPart, INT64 &iOffs){
     CFdms2View_Doc* pDoc=GetDocument();
@@ -407,13 +421,16 @@ void CFdms2View_View::OnDrawDiskMap(CDC* pDC)
 	fdms2pos pLen;
 	t1_toffset start;
 	if (!dx) dx = 1;
-	int ddx=pDoc->getMaxPos() / dx;
-	if (ddx<1) ddx=1;
+	UINT64 ddx = pDoc->getMaxPos() / dx;
+	//if (ddx > INT_MAX) ddx = INT_MAX;
+	if (ddx < 1) {
+		ddx = 1;
+	}
 	int y=m_yRulerBottom+4;
 	int iIdx=0;
 	while(!pDoc->m_fdms2.getPart(iPrg, iIdx, start, pLen)){
-		int x=start/ddx;
-		int x2=(start+pLen.m_Pos)/ddx;
+		int x=(int)(start/ddx);
+		int x2=(int)((start + pLen.m_Pos) / ddx);
 		CString s;
 		s.Format(L"%i", iIdx);
 		pDC->TextOut(x, y, s);
@@ -421,8 +438,8 @@ void CFdms2View_View::OnDrawDiskMap(CDC* pDC)
 	}
 	y=0;iIdx=0;
 	while(!pDoc->m_fdms2.getPart(iPrg, iIdx, start, pLen)){
-		int x=start/ddx;
-		int x2=(start+pLen.m_Pos)/ddx;
+		int x=(int)(start/ddx);
+		int x2=(int)((start+pLen.m_Pos)/ddx);
 		pDC->MoveTo(x2, 0+y);
 		pDC->LineTo(x2,5+y);
 		pDC->MoveTo(x, 1+y+(iIdx%4));
@@ -437,7 +454,7 @@ void CFdms2View_View::OnDrawDiskMap(CDC* pDC)
         int x=0;
 	    while(!pDoc->m_fdms2.getPart(i, iIdx, start, pLen)){
 		    //int x=start/ddx;
-		    int x2=x+(pLen.m_Pos)/ddx;
+		    int x2=x+(int)((pLen.m_Pos)/ddx);
 		    pDC->MoveTo(x2, 0+y);
 		    pDC->LineTo(x2,5+y);
 		    pDC->MoveTo(x, 1+y+(iIdx%4));
@@ -485,7 +502,7 @@ BOOL CFdms2View_View::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
 		if (pDoc->m_DisplayLevelValue>0x7fff) pDoc->m_DisplayLevelValue=0x7fff;
 	}
     if ((nFlags & (MK_SHIFT | MK_CONTROL))==0){
-         m_PosDisplayStart.addPos( zDelta* pDoc->m_DisplayXMul);
+         m_PosDisplayStart.addPos( (__int64)(zDelta* pDoc->m_DisplayXMul));
     }
     pDoc->ValidatePos(m_PosDisplayStart);
     pDoc->ValidatePos(m_PosDisplayStop);
@@ -517,7 +534,7 @@ void CFdms2View_View::OnLButtonUp(UINT nFlags, CPoint point)
         CView::OnLButtonUp(nFlags, point);
         return;
     }
-    INT64 s=((point.x-WAVELEFTPADX)* pDoc->m_DisplayXMul)+m_PosDisplayStart.m_Sample; //TODO: van rá függvény
+    INT64 s= (__int64)((point.x-WAVELEFTPADX)* pDoc->m_DisplayXMul) + m_PosDisplayStart.m_Sample; //TODO: van rá függvény
     if (m_MapArea.getRect()->PtInRect(point)){
         m_MapArea.OnLButtonUp(nFlags, point, m_pointLMouseDown);// TODO return value about handling.
         return;
@@ -531,7 +548,7 @@ void CFdms2View_View::OnLButtonUp(UINT nFlags, CPoint point)
     if ((nFlags & (MK_CONTROL | MK_SHIFT))==0){
 
         if (abs(point.x-m_pointLMouseDown.x)>2){
-            m_PosDisplayStart.addSample( -(point.x-m_pointLMouseDown.x)* pDoc->m_DisplayXMul);
+            m_PosDisplayStart.addSample((__int64)(-(point.x - m_pointLMouseDown.x) * pDoc->m_DisplayXMul));
                 //(point.x-m_WaveArea[0].m_dx/2) * pDoc->m_DisplayXMul);
             if (m_PosDisplayStart.m_Pos<0) m_PosDisplayStart.setPos(0);
             Invalidate();
@@ -595,7 +612,10 @@ signed short CFdms2View_View::val2db(signed short val){
     int s=1;
     if (val<0) s=-1; 
     //return log((double)abs(val))/log((double)2)*64*1024/96*s;
-    return log((double)abs(val))*32*1024/log((double)0x7FFF)*s;
+	double l= log((double)abs(val))*32*1024/log((double)0x7FFF)*s;
+	if (l > SHORT_MAX) l = SHORT_MAX;
+	if (l < SHORT_MIN) l = SHORT_MIN;
+	return (signed short)l;
 }
 bool CFdms2View_View::getPeek(INT64 iOffs, unsigned int uiDiff, short iCh, short &iMax, short &iMin){
     bool bRet=false;

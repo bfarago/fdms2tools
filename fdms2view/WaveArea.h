@@ -22,7 +22,7 @@ private:
 	COLORREF m_ColorScale;
 	void DrawError(int px, int py);
     void DrawSniped(int px, int py, short val);
-    void DrawPeek(int px, int py, short iMax, short iMin);
+    void DrawPeak(int px, int py, short iMax, short iMin);
     void DrawSeparator(int px, int py);
 	void DrawYMarker(unsigned short valueY, const CString & str,
 							bool bTopLeft, bool bBottomLeft,

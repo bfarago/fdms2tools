@@ -20,5 +20,8 @@ private:
     CLineStrip* m_lineStrip; 
 	COLORREF m_ColorScale;
     CFont m_fontSmall;
+	CBitmap m_bmpButtonR;
+	CBitmap m_bmpButtonP;
 	void DrawOneFader(CRect &r,CString label, int val);
+	void DrawOneButton(CRect &r, CString label, bool val, bool active, bool focused);
 };

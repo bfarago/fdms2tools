@@ -9,7 +9,8 @@ class fdms2stream{
 public:
     fdms2stream();
     ~fdms2stream();
-    void init(int sampleSize);
+    void init(int sampleSize); //malloc
+	void close(); //free
     ///Streaming source
     fdms2reader* pFdms2Reader; 
     ///Actual program number
@@ -32,6 +33,8 @@ public:
     bool bError;
     ///TimeStamp of the buffer creation
     DWORD tsProduced;
+private:
+	int iMaxSamples;
 };
 
 class fdms2streamingIF{

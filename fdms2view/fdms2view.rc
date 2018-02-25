@@ -55,6 +55,7 @@ BEGIN
     BUTTON      ID_VIEW_DB
     BUTTON      ID_ZOOM_FULL
     BUTTON      ID_ZOOM_2
+    BUTTON      ID_EDIT_SELECT_ALL
     SEPARATOR
     BUTTON      ID_DEVICE_GRAB
     BUTTON      ID_EXPORT_MULTITRACK
@@ -99,6 +100,26 @@ BEGIN
 END
 
 #endif    // Neutral (Default) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// Hungarian (Hungary) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_HUN)
+LANGUAGE LANG_HUNGARIAN, SUBLANG_DEFAULT
+#pragma code_page(1250)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP_BN_R         BITMAP                  "res\\bitmap_bn_r.bmp"
+
+IDB_BITMAP_BN_P         BITMAP                  "res\\bitmap_bn_p.bmp"
+
+#endif    // Hungarian (Hungary) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
@@ -181,8 +202,10 @@ BEGIN
         MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
         MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
         MENUITEM SEPARATOR
-        MENUITEM "Play",                        ID_EDIT_PLAY
-        MENUITEM "Stop",                        ID_EDIT_STOP
+        MENUITEM "P&lay",                       ID_EDIT_PLAY
+        MENUITEM "&Stop",                       ID_EDIT_STOP
+        MENUITEM SEPARATOR
+        MENUITEM "Select &All\tCtrl+A",         ID_EDIT_SELECT_ALL
     END
     POPUP "&View"
     BEGIN
@@ -260,6 +283,7 @@ BEGIN
     "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
     VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
     VK_SPACE,       ID_EDIT_PLAY_TOGGLE,    VIRTKEY, NOINVERT
+    "A",            ID_EDIT_SELECT_ALL,     VIRTKEY, CONTROL, NOINVERT
     VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
     "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
     "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
@@ -284,8 +308,8 @@ CAPTION "About Fdms2View"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     CONTROL         IDB_BITMAP1,IDC_STATIC,"Static",SS_BITMAP,11,7,67,34
-    LTEXT           "Fdms2View Version 1.0.0.8",IDC_STATIC,81,5,113,8,SS_NOPREFIX
-    LTEXT           "Copyright (C) 2006-2008 Barna Faragó",IDC_STATIC,80,33,169,8
+    LTEXT           "Fdms2View Version 1.0.0.9",IDC_STATIC,81,5,113,8,SS_NOPREFIX
+    LTEXT           "Copyright (C) 2006-2018 Barna Faragó",IDC_STATIC,80,33,169,8
     DEFPUSHBUTTON   "OK",IDOK,199,7,50,16,WS_GROUP
     LTEXT           "This program is aim to view and export Fostex D80 disk images.",IDC_STATIC,80,14,117,20
 END
@@ -480,8 +504,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,8
- PRODUCTVERSION 1,0,0,8
+ FILEVERSION 1,0,0,9
+ PRODUCTVERSION 1,0,0,9
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x3L
@@ -498,12 +522,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "MYND-ideal"
             VALUE "FileDescription", "FDMS2 Viewer"
-            VALUE "FileVersion", "1.0.0.8"
+            VALUE "FileVersion", "1.0.0.9"
             VALUE "InternalName", "fdms2view.exe"
             VALUE "LegalCopyright", "(c) Barna Faragó, MYND-ideal ltd.  All rights reserved."
             VALUE "OriginalFilename", "fdms2view.exe"
             VALUE "ProductName", "fdms2view"
-            VALUE "ProductVersion", "1.0.0.8"
+            VALUE "ProductVersion", "1.0.0.9"
         END
     END
     BLOCK "VarFileInfo"
@@ -721,7 +745,7 @@ BEGIN
     ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
     ID_EDIT_REPEAT          "Repeat the last action\nRepeat"
     ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
-    ID_EDIT_SELECT_ALL      "Select the entire document\nSelect All"
+    ID_EDIT_SELECT_ALL      "Select the entire waves of the actual program.\nSelect All"
     ID_EDIT_UNDO            "Undo the last action\nUndo"
     ID_EDIT_REDO            "Redo the previously undone action\nRedo"
 END
@@ -780,6 +804,7 @@ END
 STRINGTABLE
 BEGIN
     ID_DEVICE_QUICKFORMAT   "Format disk!\nFormat"
+    ID_EDIT_SELECTALL       "Select all waveform as region."
 END
 
 #endif    // English (United States) resources

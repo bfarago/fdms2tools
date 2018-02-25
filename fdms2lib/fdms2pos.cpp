@@ -2,7 +2,11 @@
 */
 #include "fdms2pos.h"
 #include <string.h>
+
+#ifndef strdup
 #define strdup _strdup
+#endif
+
 fdms2pos::fdms2pos(){
     setPos(0);
 }
@@ -21,7 +25,7 @@ void fdms2pos::setPos(t1_toffset pos){
 }
 void fdms2pos::setSample(t1_toffset sample){
     if (sample<0) sample=0;
-    m_Pos=sample*2*FOSTEXMAXCHANNELS;
+	m_Pos = sample << FOSTEXSHIFTS2B; // sample * 2 * FOSTEXMAXCHANNELS;
     m_Sample= sample;
     m_Hour=(int)(m_Sample/3600/FOSTEXSAMPLERATE);
     m_Min=(int)(m_Sample/60/FOSTEXSAMPLERATE - m_Hour*60);
@@ -45,7 +49,8 @@ fdms2pos fdms2pos::operator -(const fdms2pos &pos2) const{
     return m_Pos - pos2.m_Pos;
 }
 void fdms2pos::addSample(t1_toffset sample){
-    addPos(sample *2*FOSTEXMAXCHANNELS);
+    //addPos(sample *2*FOSTEXMAXCHANNELS);
+	addPos(sample << FOSTEXSHIFTS2B);
 }
 void fdms2pos::operator +=(const fdms2pos& pos){
 	addPos(pos);

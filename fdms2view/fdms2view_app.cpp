@@ -31,17 +31,21 @@ CFdms2View_App theApp;
 
 
 // CFdms2View_App construction
-
+//CMemoryState msOld;
 CFdms2View_App::CFdms2View_App()
 :m_pDocTemplate(NULL),m_pMainFrame(NULL)
 {
 	EnableHtmlHelp();
-
+	//msOld.Checkpoint();
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
 }
 
 CFdms2View_App::~CFdms2View_App(){
+
+#ifdef _DEBUG
+	//msOld.DumpAllObjectsSince();
+#endif
 }
 
 // CFdms2View_App initialization

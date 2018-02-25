@@ -29,7 +29,7 @@ extern "C" LIBSPEC int fdms2_init(const char* pszFname, int iStartPos, int iLeng
 }
 
 extern "C" LIBSPEC int fdms2_done(){
- int iRet=0;
+ const int iRet=0;
  if (g_f2){
 // g_f2=new fdms2();
  }

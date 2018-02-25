@@ -153,9 +153,11 @@ int PeekCache::getPeekFileName(char* s, int max){
 void PeekCache::store(){
     char s[512];
     if (!getPeekFileName(s, 512))return;
-    FILE* f=fopen(s, "wb");
+	FILE* f = NULL;
+	errno_t ret=fopen_s(&f,s, "wb");
+
     //TODO: disk eseten hibas
-    if (f){
+    if (f && !ret){
         fwrite(&m_iPrg,sizeof(m_iPrg), 1, f);
         fwrite(&m_div,sizeof(m_div), 1, f);
         fwrite(&m_cPos,sizeof(m_cPos), 1, f);
@@ -182,8 +184,9 @@ void PeekCache::regenerate(ICacheUser* pUser){
 bool PeekCache::load(){
     char s[512];
     if (!getPeekFileName(s, 512))return false;
-    FILE* f=fopen(s, "rb");
-    if (f){
+	FILE* f = NULL;
+	errno_t ret=fopen_s(&f, s, "rb");
+    if (f&&!ret){
         bool bError=false;
         int cpos=0;
         fread(&m_iPrg,sizeof(m_iPrg), 1, f);

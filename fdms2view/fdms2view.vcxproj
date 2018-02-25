@@ -87,6 +87,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
+      <GenerateMapFile>true</GenerateMapFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -240,10 +241,16 @@ makehm /h /a afxhh.h IDW_,HIDW_,0x50000 "%(Filename)%(Extension)" &gt;&gt; "hlp\
   </ItemGroup>
   <ItemGroup>
     <Image Include="hlp\Images\Bullet.gif" />
+    <Image Include="res\bitmap2.bmp" />
+    <Image Include="res\bitmap3.bmp" />
+    <Image Include="res\bitmap_bn_p.bmp" />
+    <Image Include="res\bitmap_bn_r.bmp" />
     <Image Include="res\fdms2view.ico" />
     <Image Include="res\fdms2viewDoc.ico" />
     <Image Include="res\fdms2view_doc.ico" />
     <Image Include="res\Fostex-d_80.bmp" />
+    <Image Include="res\icon1.ico" />
+    <Image Include="res\icon_Solo_r.ico" />
     <Image Include="res\Toolbar.bmp" />
     <Image Include="res\toolbar1.bmp" />
   </ItemGroup>

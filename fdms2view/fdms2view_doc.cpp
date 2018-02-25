@@ -74,6 +74,8 @@ BEGIN_MESSAGE_MAP(CFdms2View_Doc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_VIEW_MODE, &CFdms2View_Doc::OnUpdateViewMode)
     ON_UPDATE_COMMAND_UI(ID_DEVICE_QUICKFORMAT, &CFdms2View_Doc::OnUpdateDeviceQuickformat)
     ON_COMMAND(ID_DEVICE_QUICKFORMAT, &CFdms2View_Doc::OnDeviceQuickformat)
+	ON_COMMAND(ID_EDIT_SELECT_ALL, &CFdms2View_Doc::OnEditSelectall)
+	ON_UPDATE_COMMAND_UI(ID_EDIT_SELECT_ALL, &CFdms2View_Doc::OnUpdateEditSelectall)
 END_MESSAGE_MAP()
 
 // CFdms2View_Doc construction/destruction
@@ -567,13 +569,13 @@ void CFdms2View_Doc::addDisplayXZoom(CFdms2View_View* pView, short zDelta){
     }
     if (m_DisplayXMul != prevX){
         if (pView){
-            pView->getDisplayStart().addSample(-(m_DisplayXMul-prevX)*200);
+            pView->getDisplayStart().addSample((__int64)(-(m_DisplayXMul-prevX)*200));
         }
     }
 }
 void CFdms2View_Doc::OnZoomFull()
 {
-	m_DisplayXMul=m_fdms2.getDiskAudioSize()/12800;
+	m_DisplayXMul=(double)m_fdms2.getDiskAudioSize()/12800;
 	UpdateAllViews(NULL, 0);
 }
 
@@ -670,4 +672,20 @@ void CFdms2View_Doc::OnUpdateDeviceQuickformat(CCmdUI *pCmdUI)
 void CFdms2View_Doc::OnDeviceQuickformat()
 {
    m_fdms2.quickFormat();
+}
+
+
+void CFdms2View_Doc::OnEditSelectall()
+{
+	// ID_EDIT_SELECTALL
+	m_PosRegionStart.setSample(0);
+	m_PosRegionStop.setSample(m_fdms2.getProgramSampleCount(m_SelectedProgram));
+	UpdateCursors();
+}
+
+
+void CFdms2View_Doc::OnUpdateEditSelectall(CCmdUI *pCmdUI)
+{
+	BOOL bEn = m_bPlayable;
+	pCmdUI->Enable(bEn);
 }

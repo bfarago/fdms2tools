@@ -6,21 +6,24 @@
 
 CLineStrip::CLineStrip(void):m_iFader(16), m_iPan(0), m_bMute(false), m_bSolo(false)
 {
+	setFader(m_iFader); //calc scale
 }
 
 CLineStrip::~CLineStrip(void)
 {
 }
+void CLineStrip::setFader(int f) {
+	m_iFader = f;
+	m_s = pow(1.04, double(16 - m_iFader));
+}
 long CLineStrip::getAmp(long v){
     long ret=v;
-    double s=pow(1.04,double(16-m_iFader )) ;
-    ret=v*s;
+    ret=v*m_s;
     return ret;
 }
 void CLineStrip::getAmpStereo(long& l, long& r){
-    double s=pow(1.04,double(16-m_iFader )) ;
-    l=l*s;
-    r=r*s;
+    l=l* m_s;
+    r=r* m_s;
 }
 void CLineStrip::Serialize(CArchive &ar){
     if (ar.IsStoring())
@@ -34,5 +37,6 @@ void CLineStrip::Serialize(CArchive &ar){
         ar>> m_iPan;
         ar>> m_bMute;
         ar>> m_bSolo;
+		setFader(m_iFader); //calc scale
     }
 }

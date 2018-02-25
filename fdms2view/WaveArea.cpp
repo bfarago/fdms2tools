@@ -8,10 +8,6 @@
 #include "fdms2view_view.h"
 
 
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
-
 
 CWaveArea::CWaveArea(void)
 {
@@ -77,7 +73,7 @@ void CWaveArea::DrawSniped(int px, int py, short val){
 }
 
 
-void CWaveArea::DrawPeek(int px, int py, short iMax, short iMin){
+void CWaveArea::DrawPeak(int px, int py, short iMax, short iMin){
     int nyMax=0;
     int nyMin=0;
     int my=m_my;
@@ -161,10 +157,9 @@ void CWaveArea::DrawOneData(IViewTimeLine *pTl){
                     DrawError(px+1, y);
                     return;
                 }
-			    DrawPeek(px, y, iMax, iMin);
+			    DrawPeak(px, y, iMax, iMin);
                 x++;
-//                if (pos.m_Sample > m_displayMax.m_Sample) break;
-                pos.addSample(m_pDoc->m_DisplayXMul); // 16
+                pos.addSample(m_pDoc->m_DisplayXMul);
 		    }
 		}catch(...){
             DrawError(px+1, y);

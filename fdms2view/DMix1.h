@@ -15,11 +15,9 @@ public:
 	DMix1(CWnd* pParent = NULL);   // standard constructor
 	virtual ~DMix1();
     void registerMixer(CMixer* mixer);
-    long getAmp(long v, int ch);
+    //long getAmp(long v, int ch);
 // Dialog Data
 	enum { IDD = IDD_DIALOG_MIX1 };
-	//int m_aGain[9];
-	//int m_aVU[10];
 	virtual void DoReset();
 	void DoGet();
 	void DoSetVumeters();

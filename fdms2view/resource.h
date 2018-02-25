@@ -38,6 +38,9 @@
 #define IDD_DIALOG_GRAB                 159
 #define IDD_DIALOG_NEW                  160
 #define IDB_BITMAP1                     161
+#define IDB_BITMAP_BN_R                 165
+#define IDB_BITMAP3                     166
+#define IDB_BITMAP_BN_P                 166
 #define IDC_EDIT_FileName               1001
 #define IDC_BUTTON_FN_Browse            1002
 #define IDC_LIST_METR                   1004
@@ -128,13 +131,14 @@
 #define ID_DEVICE_GRAB                  32794
 #define ID_VIEW_RECREATEPEEKFILE        32795
 #define ID_DEVICE_QUICKFORMAT           32801
+#define ID_EDIT_SELECTALL               32802
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        162
-#define _APS_NEXT_COMMAND_VALUE         32802
+#define _APS_NEXT_RESOURCE_VALUE        167
+#define _APS_NEXT_COMMAND_VALUE         32806
 #define _APS_NEXT_CONTROL_VALUE         1061
 #define _APS_NEXT_SYMED_VALUE           101
 #endif

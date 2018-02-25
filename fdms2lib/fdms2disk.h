@@ -49,18 +49,18 @@ public:
 class fdms2disk: public fdms2errorIF{
 public:
     fdms2disk(void);
-    ~fdms2disk(void);
+    virtual ~fdms2disk(void);
     fdms2disk* duplicate();
-    bool isInvalidFdms2Disk(){ return m_diskButNotFdms2!=0;}
+    bool isInvalidFdms2Disk()const { return m_diskButNotFdms2!=0;}
     void setFileName(const char* s);
     const char* getFileName()const;
     char* getInfo(){ return m_pszInfo; }
     int getNumDisk(int* ids, int maxnum, bool all=false);
-    EDiskType getDiskType(){ return m_dtMode; }
+    EDiskType getDiskType()const { return m_dtMode; }
     void setDiskId(int iDiskId);
-    int getDiskId(){ return m_iDiskId;}
-    ERWType getRWType(){ return m_rwType; }
-    t_length getDiskSize(){ return m_lDiskSize; }
+    int getDiskId()const { return m_iDiskId;}
+    ERWType getRWType()const { return m_rwType; }
+    t_length getDiskSize()const { return m_lDiskSize; }
     EErrorCode start();
     void stop();
     void reset();
@@ -68,8 +68,8 @@ public:
 public: // interface
     fdms2diskPtrIF* getNewPtr();
     virtual void setVerbose(bool verbose);
-    HANDLE getFileHandle(){ return m_hFile;}
-    HANDLE getMapHandle(){ return m_hMap;}
+    HANDLE getFileHandle()const { return m_hFile;}
+    HANDLE getMapHandle()const { return m_hMap;}
 protected:
     char*       m_pszFileName;
     char*       m_pszInfo;
