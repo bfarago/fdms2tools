@@ -639,7 +639,7 @@ void CFdms2View_Doc::OnDeviceSoundcard()
 void CFdms2View_Doc::OnViewMode()
 {
     m_DisplayMode++;
-    if (m_DisplayMode>1)m_DisplayMode=0;
+    if (m_DisplayMode>2)m_DisplayMode=0;
     UpdateAllViews(NULL);
 }
 

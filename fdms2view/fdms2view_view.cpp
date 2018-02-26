@@ -414,57 +414,93 @@ void CFdms2View_View::OnDrawDiskMap(CDC* pDC)
 {
 	CFdms2View_Doc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc);
-    int iPrg= pDoc->getSelectedProgram();
-    CRect rect;
+	int iPrg = pDoc->getSelectedProgram();
+	CRect rect;
 	this->GetClientRect(rect);
-	int dx=rect.right-rect.left-16;
+	int dx = rect.right - rect.left - 16;
 	fdms2pos pLen;
 	t1_toffset start;
 	if (!dx) dx = 1;
-	UINT64 ddx = pDoc->getMaxPos() / dx;
+	UINT64 maxpos =  pDoc->getMaxPos();
+	for (int i = 0; i < 5; i++) {
+		int iIdx = 0;
+		while (!pDoc->m_fdms2.getPart(i, iIdx, start, pLen)) {
+			UINT64 dwTmp = start + pLen.m_Pos;
+			if (maxpos < dwTmp) maxpos = dwTmp;
+			iIdx++;
+		}
+	}
+
+	UINT64 ddx = maxpos / dx;
 	//if (ddx > INT_MAX) ddx = INT_MAX;
 	if (ddx < 1) {
 		ddx = 1;
 	}
-	int y=m_yRulerBottom+4;
-	int iIdx=0;
-	while(!pDoc->m_fdms2.getPart(iPrg, iIdx, start, pLen)){
-		int x=(int)(start/ddx);
-		int x2=(int)((start + pLen.m_Pos) / ddx);
-		CString s;
-		s.Format(L"%i", iIdx);
-		pDC->TextOut(x, y, s);
-		iIdx++; y+=2; 
-	}
-	y=0;iIdx=0;
-	while(!pDoc->m_fdms2.getPart(iPrg, iIdx, start, pLen)){
-		int x=(int)(start/ddx);
-		int x2=(int)((start+pLen.m_Pos)/ddx);
-		pDC->MoveTo(x2, 0+y);
-		pDC->LineTo(x2,5+y);
-		pDC->MoveTo(x, 1+y+(iIdx%4));
-		pDC->LineTo(x2,1+y+(iIdx%4));
-		pDC->MoveTo(x, 0+y);
-		pDC->LineTo(x,5+y);
-		iIdx++; y+=2;
-	};
+	int y = m_yRulerBottom + 4;
+	y = 20;
+	int iIdx = 0;
+	CString s;
+	s.Format(L"Relative Program map");
+	pDC->TextOut(0, 0, s);
 
-    for (int i=0; i<5; i++){
-        iIdx=0;
-        int x=0;
-	    while(!pDoc->m_fdms2.getPart(i, iIdx, start, pLen)){
-		    //int x=start/ddx;
-		    int x2=x+(int)((pLen.m_Pos)/ddx);
-		    pDC->MoveTo(x2, 0+y);
-		    pDC->LineTo(x2,5+y);
-		    pDC->MoveTo(x, 1+y+(iIdx%4));
-		    pDC->LineTo(x2,1+y+(iIdx%4));
-		    pDC->MoveTo(x, 0+y);
-		    pDC->LineTo(x,5+y);
-		    iIdx++; x=x2+1;
-	    }
-        y+=15;
-    }
+	for (int i = 0; i < 5; i++) {
+		iIdx = 0;
+		int x = 0;
+		s.Format(L"Program%i:", i);
+		pDC->TextOut(0, y, s);
+		y += 13;
+		while (!pDoc->m_fdms2.getPart(i, iIdx, start, pLen)) {
+			//int x=start/ddx;
+			int x2 = x + (int)((pLen.m_Pos) / ddx);
+			pDC->MoveTo(x2, 0 + y);
+			pDC->LineTo(x2, 5 + y);
+			pDC->MoveTo(x, 1 + y + (iIdx % 4));
+			pDC->LineTo(x2, 1 + y + (iIdx % 4));
+			pDC->MoveTo(x, 0 + y);
+			pDC->LineTo(x, 5 + y);
+			iIdx++; x = x2 + 1;
+		}
+		y -= 13;
+		pDC->MoveTo(0, y);
+		pDC->LineTo(x, y);
+
+		pDC->MoveTo(0, y + 20);
+		pDC->LineTo(x, y + 20);
+		pDC->MoveTo(x, y);
+		pDC->LineTo(x, y + 20);
+		y += 22;
+	}
+	s.Format(L"Absolute Program map");
+	pDC->TextOut(0, y, s);
+	y += 16;
+	for (iPrg = 0; iPrg < 5; iPrg++) {
+		iIdx = 0;
+		y += 10;
+#define BYTEPERSEC 0xac440ul
+		s.Format(L"Program%i:(%llis)", iPrg, pDoc->m_fdms2.getProgramSampleCount(iPrg) / 44100 );
+		pDC->TextOut(0, y, s);
+		y += 13;
+		int ytop = y;
+		y += 20;
+		while (!pDoc->m_fdms2.getPart(iPrg, iIdx, start, pLen)) {
+			int x = (int)(start / ddx);
+			int x2 = (int)((start + pLen.m_Pos) / ddx);
+			s.Format(L"%i(blk:%llx+ %llis)", iIdx, start >> 9, pLen.m_Pos / BYTEPERSEC);
+			pDC->TextOut(x, y, s);
+			y += 12;
+			pDC->MoveTo(x2, 0 + y);
+			pDC->LineTo(x2, 5 + y);
+			pDC->MoveTo(x, 1 + y + (iIdx % 4));
+			pDC->LineTo(x2, 1 + y + (iIdx % 4));
+			pDC->MoveTo(x, 0 + y);
+			pDC->LineTo(x, 5 + y);
+			pDC->MoveTo(x, ytop);
+			pDC->LineTo(x, ytop + 20);
+			pDC->MoveTo(x2, ytop);
+			pDC->LineTo(x2, ytop + 20);
+			iIdx++; y += 2;
+		};
+	}
 }
 
 // CFdms2View_View diagnostics
@@ -667,14 +703,15 @@ void CFdms2View_View::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
     CFdms2View_Doc* pDoc = GetDocument();
 	ASSERT_VALID(pDoc); //TODO: a display level lehetne-e a view-ban? mert arra vonatkozik.
     pDoc->DoOrderRegion();
-
+	bool alt = (nFlags&KF_ALTDOWN);
     switch (nChar){
         case VK_HOME: m_PosDisplayStart.setPos( pDoc->m_PosRegionStart.m_Pos); break;
         case VK_END: m_PosDisplayStart.setPos( pDoc->m_PosRegionStop.m_Pos); break;
-        case VK_LEFT: m_PosDisplayStart.addSample(-44100); break;
-        case VK_RIGHT: m_PosDisplayStart.addSample(44100); break;
-        case VK_UP: pDoc->addDisplayXZoom(this, 40); break;
-        case VK_DOWN: pDoc->addDisplayXZoom(this, 70); break;
+		case VK_LEFT: m_PosDisplayStart.addSample(-44100*(alt?10:1)); break;
+        case VK_RIGHT: m_PosDisplayStart.addSample(44100 * (alt ? 10 : 1)); break;
+        case VK_UP: pDoc->addDisplayXZoom(this, 40 * (alt ? 0.5 : 1)); break;
+        case VK_DOWN: pDoc->addDisplayXZoom(this, 70 * (alt ? 5 : 1)); break;
+			
     }
     Invalidate();
     __super::OnKeyDown(nChar, nRepCnt, nFlags);
