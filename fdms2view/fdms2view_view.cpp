@@ -648,7 +648,10 @@ signed short CFdms2View_View::val2db(signed short val){
     int s=1;
     if (val<0) s=-1; 
     //return log((double)abs(val))/log((double)2)*64*1024/96*s;
-	double l= log((double)abs(val))*32*1024/log((double)0x7FFF)*s;
+	double l= log((double)abs(val))*32*1024/log((double)0x7FFF);
+	/*Bug fixed: in case of small value, wrong display with dB scale. */
+	if (l < 0) l = 0; // exponent is negativ, not viewable.
+	l = l * s; //sign
 	if (l > SHORT_MAX) l = SHORT_MAX;
 	if (l < SHORT_MIN) l = SHORT_MIN;
 	return (signed short)l;

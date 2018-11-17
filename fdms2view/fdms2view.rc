@@ -308,7 +308,7 @@ CAPTION "About Fdms2View"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     CONTROL         IDB_BITMAP1,IDC_STATIC,"Static",SS_BITMAP,11,7,67,34
-    LTEXT           "Fdms2View Version 1.0.0.9",IDC_STATIC,81,5,113,8,SS_NOPREFIX
+    LTEXT           "Fdms2View Version 1.0.0.10",IDC_STATIC,81,5,113,8,SS_NOPREFIX
     LTEXT           "Copyright (C) 2006-2018 Barna Faragó",IDC_STATIC,80,33,169,8
     DEFPUSHBUTTON   "OK",IDOK,199,7,50,16,WS_GROUP
     LTEXT           "This program is aim to view and export Fostex D80 disk images.",IDC_STATIC,80,14,117,20
@@ -504,8 +504,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,9
- PRODUCTVERSION 1,0,0,9
+ FILEVERSION 1,0,0,10
+ PRODUCTVERSION 1,0,0,10
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x3L
@@ -522,12 +522,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "MYND-ideal"
             VALUE "FileDescription", "FDMS2 Viewer"
-            VALUE "FileVersion", "1.0.0.9"
+            VALUE "FileVersion", "1.0.0.10"
             VALUE "InternalName", "fdms2view.exe"
             VALUE "LegalCopyright", "(c) Barna Faragó, MYND-ideal ltd.  All rights reserved."
             VALUE "OriginalFilename", "fdms2view.exe"
             VALUE "ProductName", "fdms2view"
-            VALUE "ProductVersion", "1.0.0.9"
+            VALUE "ProductVersion", "1.0.0.10"
         END
     END
     BLOCK "VarFileInfo"

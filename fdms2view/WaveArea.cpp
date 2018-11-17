@@ -76,28 +76,41 @@ void CWaveArea::DrawSniped(int px, int py, short val){
 void CWaveArea::DrawPeak(int px, int py, short iMax, short iMin){
     int nyMax=0;
     int nyMin=0;
+	int peekMax = 0;
+	int peekMin = 0;
     int my=m_my;
 	if (!m_pDoc) return;
 	if (!m_pDoc->m_DisplayLevelValue) m_pDoc->m_DisplayLevelValue = 1;
-    nyMax= iMax * my / m_pDoc->m_DisplayLevelValue;
-    nyMin= iMin * my / m_pDoc->m_DisplayLevelValue;
+	int lDisplayLevelValue = m_pDoc->m_DisplayLevelValue;
+    nyMax= iMax * my / lDisplayLevelValue;
+    nyMin= iMin * my / lDisplayLevelValue;
+	
 	if (nyMax>my){
 		nyMax=my;
+		peekMax = nyMax;
 	}
-	if (-nyMax>my){
-		nyMax=-my;
+	else if (nyMax < -my) {
+		nyMax = -my;
+		peekMax = nyMax;
 	}
+	
     if (nyMin>my){
 		nyMin=my;
+		peekMin = nyMin;
 	}
-	if (-nyMin>my){
-		nyMin=-my;
+	else if (nyMin < -my) {
+		nyMin = -my;
+		peekMin = nyMin;
 	}
-    if (nyMax == nyMin){
-        m_pDC->SetPixel(px,py, 0);
+	
+	
+	if (nyMax == nyMin){
+        m_pDC->SetPixel(px,py+ nyMin, 0);
     }else{
 	    m_pDC->MoveTo(px,py+nyMin);
 	    m_pDC->LineTo(px,py+nyMax);
+		if (peekMax) m_pDC->SetPixel(px, py + peekMax+1, RGB(255, 0, 0));
+		if (peekMin) m_pDC->SetPixel(px, py + peekMin-1, RGB(255, 0, 0));
     }
 	
 }
